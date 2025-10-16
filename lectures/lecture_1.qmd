@@ -7,8 +7,8 @@ format:
     theme: theme/metropolis.scss
     highlight-style: zenburn
     slide-number: true
-# title-slide-attributes:
-#     data-background-iframe: theme/flow-field/index.html
+title-slide-attributes:
+    data-background-iframe: theme/flow-field/index.html
 ---
 
 ```{r}
