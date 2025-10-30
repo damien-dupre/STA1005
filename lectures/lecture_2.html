@@ -1,0 +1,3885 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="lecture_2_files/libs/clipboard/clipboard.min.js"></script>
+<script src="lecture_2_files/libs/quarto-html/tabby.min.js"></script>
+<script src="lecture_2_files/libs/quarto-html/popper.min.js"></script>
+<script src="lecture_2_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="lecture_2_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="lecture_2_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="lecture_2_files/libs/quarto-html/quarto-syntax-highlighting-43623146b196eaba70cfe7d1c24286b6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="lecture_2_files/libs/quarto-contrib/fontawesome6-6.7.2/all.min.css" rel="stylesheet">
+<link href="lecture_2_files/libs/quarto-contrib/fontawesome6-6.7.2/latex-fontsize.css" rel="stylesheet"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.25">
+
+  <meta name="author" content="Damien Dupré | DCU Business School">
+  <title>STA1005 - Quantitative Research Methods</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="lecture_2_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="lecture_2_files/libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+      }
+    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+    div.sourceCode
+      { color: #cccccc; background-color: #303030; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ffcfaf; } /* Alert */
+    code span.an { color: #7f9f7f; font-weight: bold; } /* Annotation */
+    code span.at { } /* Attribute */
+    code span.bn { color: #dca3a3; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #f0dfaf; } /* ControlFlow */
+    code span.ch { color: #dca3a3; } /* Char */
+    code span.cn { color: #dca3a3; font-weight: bold; } /* Constant */
+    code span.co { color: #7f9f7f; } /* Comment */
+    code span.cv { color: #7f9f7f; font-weight: bold; } /* CommentVar */
+    code span.do { color: #7f9f7f; } /* Documentation */
+    code span.dt { color: #dfdfbf; } /* DataType */
+    code span.dv { color: #dcdccc; } /* DecVal */
+    code span.er { color: #c3bf9f; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #c0bed1; } /* Float */
+    code span.fu { color: #efef8f; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #7f9f7f; font-weight: bold; } /* Information */
+    code span.kw { color: #f0dfaf; } /* Keyword */
+    code span.op { color: #f0efd0; } /* Operator */
+    code span.ot { color: #efef8f; } /* Other */
+    code span.pp { color: #ffcfaf; font-weight: bold; } /* Preprocessor */
+    code span.sc { color: #dca3a3; } /* SpecialChar */
+    code span.ss { color: #cc9393; } /* SpecialString */
+    code span.st { color: #cc9393; } /* String */
+    code span.va { } /* Variable */
+    code span.vs { color: #cc9393; } /* VerbatimString */
+    code span.wa { color: #7f9f7f; font-weight: bold; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="lecture_2_files/libs/revealjs/dist/theme/quarto-a422b0ec4d33f76272dd6bd1314f9877.css">
+  <link href="lecture_2_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="lecture_2_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="lecture_2_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="lecture_2_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+  <script src="lecture_2_files/libs/quarto-diagram/mermaid.min.js"></script>
+  <script src="lecture_2_files/libs/quarto-diagram/mermaid-init.js"></script>
+  <link href="lecture_2_files/libs/quarto-diagram/mermaid.css" rel="stylesheet">
+  <link href="lecture_2_files/libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+  <script src="lecture_2_files/libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+  <script src="lecture_2_files/libs/plotly-binding-4.10.4/plotly.js"></script>
+  <script src="lecture_2_files/libs/typedarray-0.1/typedarray.min.js"></script>
+  <script src="lecture_2_files/libs/jquery-3.5.1/jquery.min.js"></script>
+  <link href="lecture_2_files/libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet">
+  <script src="lecture_2_files/libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
+  <link href="lecture_2_files/libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet">
+  <script src="lecture_2_files/libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
+  <link href="lecture_2_files/libs/countdown-0.4.0/countdown.css" rel="stylesheet">
+  <script src="lecture_2_files/libs/countdown-0.4.0/countdown.js"></script>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" data-background-iframe="theme/flow-field/index.html" class="quarto-title-block center">
+  <h1 class="title">STA1005 - Quantitative Research Methods</h1>
+  <p class="subtitle">Lecture 2: Understanding Models and Equations</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Damien Dupré | DCU Business School 
+</div>
+</div>
+</div>
+
+</section>
+<section id="essential-concepts-to-master" class="slide level2">
+<h2>Essential Concepts to Master</h2>
+<p>In research outputs, all sections are linked:</p>
+<div class="cell" data-reveal="true" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+  A[Introduction] --&gt; B[Literature&lt;br&gt;Review]
+  B --&gt; C[Methods]
+  C --&gt; D[Results]
+  D --&gt; E[Discussion &amp;&lt;br&gt;Conclusion]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<div class="fragment">
+<p>To understand the statistics in the results section it is essential to identify the concepts presented in each section:</p>
+<div class="cell" data-reveal="true" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+  A[Introduction] -- Variables --&gt; B[Literature&lt;br&gt;Review]
+  B -- Hypotheses --&gt; C[Methods]
+  C -- Model &amp;&lt;br&gt;Equation --&gt; D[Results]
+  D -- Statistical&lt;br&gt;Test--&gt; E[Discussion &amp;&lt;br&gt;Conclusion]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section>
+<section id="model-representation-in-the-method-section-of-academic-reseach-paper" class="title-slide slide level1 center">
+<h1>1. Model Representation in the Method Section of Academic Reseach Paper</h1>
+
+</section>
+<section id="method-section-in-academic-papers" class="slide level2 smaller">
+<h2>Method Section in Academic Papers</h2>
+<p>The method section is always structured in the same way:</p>
+<h4 id="observations">1. Observations</h4>
+<blockquote>
+<p>Short section presenting where the data are coming from. If they are coming from human participants, then their average age and gender is indicated.</p>
+</blockquote>
+<h4 id="variables">2. Variables</h4>
+<blockquote>
+<p>Short section presenting each variable as well as their type and role.</p>
+</blockquote>
+<h4 id="procedure">3. Procedure</h4>
+<blockquote>
+<p>Short section presenting how data were collected.</p>
+</blockquote>
+<h4 id="data-analytics">4. Data Analytics</h4>
+<blockquote>
+<p>Short section to display how the hypotheses are tested by displaying a graphical representation of the Model and its corresponding Equation(s).</p>
+</blockquote>
+</section>
+<section id="model-representation" class="slide level2">
+<h2>Model Representation</h2>
+<p>Models are an overview of the predicted relationship between variables stated in the hypotheses</p>
+<p>You must follow these rules:</p>
+<ul>
+<li><strong>Rule 1</strong>: All the arrows correspond to an hypothesis to be tested</li>
+<li><strong>Rule 2</strong>: All the tested hypotheses have to be represented with an arrow</li>
+<li><strong>Rule 3</strong>: Hypotheses using the same Outcome variable should be included in the same model</li>
+<li><strong>Rule 4</strong>: Only one Outcome variable is included in each model (except for SEM model)</li>
+</ul>
+</section>
+<section id="model-representation-1" class="slide level2">
+<h2>Model Representation</h2>
+<div class="quarto-layout-panel" data-layout="[1,1]">
+<div class="quarto-layout-row">
+<div id="first-column" class="center quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<p><strong>A simple arrow is a main effect</strong></p>
+<div class="cell" data-fig-height="2" data-fig-width="5" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<svg width="480" height="192" viewbox="0.00 0.00 178.63 44.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 40)">
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-40 174.63,-40 174.63,4 -4,4"></polygon>
+<!-- Predictor -->
+<g id="node1" class="node">
+<title>Predictor</title>
+<polygon fill="none" stroke="black" points="67.48,-36 -0.16,-36 -0.16,0 67.48,0 67.48,-36"></polygon>
+<text text-anchor="middle" x="33.66" y="-13.8" font-family="Times,serif" font-size="14.00">Predictor</text>
+</g>
+<!-- Outcome -->
+<g id="node2" class="node">
+<title>Outcome</title>
+<polygon fill="none" stroke="black" points="170.79,-36 103.16,-36 103.16,0 170.79,0 170.79,-36"></polygon>
+<text text-anchor="middle" x="136.98" y="-13.8" font-family="Times,serif" font-size="14.00">Outcome</text>
+</g>
+<!-- Predictor&#45;&gt;Outcome -->
+<g id="edge1" class="edge">
+<title>Predictor-&gt;Outcome</title>
+<path fill="none" stroke="black" d="M67.55,-18C75.69,-18 84.52,-18 93.05,-18"></path>
+<polygon fill="black" stroke="black" points="93.25,-21.5 103.25,-18 93.25,-14.5 93.25,-21.5"></polygon>
+</g>
+</g>
+</svg>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</div>
+<div id="second-column" class="center quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<p><strong>A crossing arrow is an interaction effect</strong></p>
+<div class="cell" data-fig-height="2" data-fig-width="5" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<svg width="480" height="192" viewbox="0.00 0.00 302.95 80.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 76)">
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-76 298.95,-76 298.95,4 -4,4"></polygon>
+<!-- Predictor 1 -->
+<g id="node1" class="node">
+<title>Predictor 1</title>
+<polygon fill="none" stroke="black" points="77.73,-36 0.09,-36 0.09,0 77.73,0 77.73,-36"></polygon>
+<text text-anchor="middle" x="38.91" y="-13.8" font-family="Times,serif" font-size="14.00">Predictor 1</text>
+</g>
+<g id="node4" class="node">
+<title></title>
+<ellipse fill="black" stroke="black" cx="152.73" cy="-18" rx="0" ry="0"></ellipse>
+</g>
+<!-- Predictor 1&#45;&gt; -->
+<g id="edge2" class="edge">
+<title>Predictor 1-&gt;</title>
+<path fill="none" stroke="black" d="M77.76,-18C109.19,-18 149.14,-18 151.61,-18"></path>
+</g>
+<!-- Predictor 2 -->
+<g id="node2" class="node">
+<title>Predictor 2</title>
+<polygon fill="none" stroke="black" points="191.54,-72 113.91,-72 113.91,-36 191.54,-36 191.54,-72"></polygon>
+<text text-anchor="middle" x="152.73" y="-49.8" font-family="Times,serif" font-size="14.00">Predictor 2</text>
+</g>
+<!-- Predictor 2&#45;&gt; -->
+<g id="edge1" class="edge">
+<title>Predictor 2-&gt;</title>
+<path fill="none" stroke="black" d="M152.73,-35.86C152.73,-33.39 152.73,-30.92 152.73,-28.44"></path>
+<polygon fill="black" stroke="black" points="156.23,-28.28 152.73,-18.28 149.23,-28.28 156.23,-28.28"></polygon>
+</g>
+<!-- Outcome -->
+<g id="node3" class="node">
+<title>Outcome</title>
+<polygon fill="none" stroke="black" points="295.11,-36 227.48,-36 227.48,0 295.11,0 295.11,-36"></polygon>
+<text text-anchor="middle" x="261.29" y="-13.8" font-family="Times,serif" font-size="14.00">Outcome</text>
+</g>
+<!-- &#45;&gt;Outcome -->
+<g id="edge3" class="edge">
+<title>-&gt;Outcome</title>
+<path fill="none" stroke="black" d="M153.8,-18C155.6,-18 188.39,-18 217.12,-18"></path>
+<polygon fill="black" stroke="black" points="217.45,-21.5 227.45,-18 217.45,-14.5 217.45,-21.5"></polygon>
+</g>
+</g>
+</svg>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>Note: By default, an interaction effect involves the test of the main effect hypotheses of all Predictors involved</p>
+</div>
+</div>
+</div>
+</section>
+<section id="structure-of-models" class="slide level2">
+<h2>Structure of Models</h2>
+<p>Distinguish square and circles</p>
+<ul>
+<li><strong>squares</strong> are actual <strong>measures/items</strong></li>
+<li><strong>circles</strong> are <strong>latent variables</strong> related to measures/items</li>
+</ul>
+<p>Example:</p>
+<ul>
+<li><span class="math inline">\(Salary\)</span> is directly measured (in $, €, or £) so it”s a square.</li>
+<li><span class="math inline">\(Job\,Satisfaction\)</span> is a latent variable with several questions so it’s a circle.</li>
+</ul>
+<p>Items used for latent variables can be omitted in a model, variables are the most important.</p>
+</section>
+<section id="main-effect-relationship" class="slide level2">
+<h2>Main Effect Relationship</h2>
+<div class="quarto-layout-panel" data-layout="[1,1]">
+<div class="quarto-layout-row">
+<div id="first-column" class="center quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<p><strong>Relationship between one Predictor and one Outcome variable</strong></p>
+<div class="cell" data-fig-height="2" data-fig-width="5" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<svg width="480" height="192" viewbox="0.00 0.00 189.13 44.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 40)">
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-40 185.13,-40 185.13,4 -4,4"></polygon>
+<!-- Predictor 1 -->
+<g id="node1" class="node">
+<title>Predictor 1</title>
+<polygon fill="none" stroke="black" points="77.73,-36 0.09,-36 0.09,0 77.73,0 77.73,-36"></polygon>
+<text text-anchor="middle" x="38.91" y="-13.8" font-family="Times,serif" font-size="14.00">Predictor 1</text>
+</g>
+<!-- Outcome -->
+<g id="node2" class="node">
+<title>Outcome</title>
+<polygon fill="none" stroke="black" points="181.29,-36 113.66,-36 113.66,0 181.29,0 181.29,-36"></polygon>
+<text text-anchor="middle" x="147.48" y="-13.8" font-family="Times,serif" font-size="14.00">Outcome</text>
+</g>
+<!-- Predictor 1&#45;&gt;Outcome -->
+<g id="edge1" class="edge">
+<title>Predictor 1-&gt;Outcome</title>
+<path fill="none" stroke="black" d="M77.78,-18C86.12,-18 95,-18 103.52,-18"></path>
+<polygon fill="black" stroke="black" points="103.67,-21.5 113.67,-18 103.67,-14.5 103.67,-21.5"></polygon>
+</g>
+</g>
+</svg>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>This model tests one main effect hypothesis</p>
+</div>
+<div id="second-column" class="center quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<p><strong>Relationship between two Predictors and one Outcome variable</strong></p>
+<div class="cell" data-fig-height="2" data-fig-width="5" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<svg width="480" height="192" viewbox="0.00 0.00 189.13 98.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 94)">
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-94 185.13,-94 185.13,4 -4,4"></polygon>
+<!-- Predictor 1 -->
+<g id="node1" class="node">
+<title>Predictor 1</title>
+<polygon fill="none" stroke="black" points="77.73,-90 0.09,-90 0.09,-54 77.73,-54 77.73,-90"></polygon>
+<text text-anchor="middle" x="38.91" y="-67.8" font-family="Times,serif" font-size="14.00">Predictor 1</text>
+</g>
+<!-- Outcome -->
+<g id="node2" class="node">
+<title>Outcome</title>
+<polygon fill="none" stroke="black" points="181.29,-63 113.66,-63 113.66,-27 181.29,-27 181.29,-63"></polygon>
+<text text-anchor="middle" x="147.48" y="-40.8" font-family="Times,serif" font-size="14.00">Outcome</text>
+</g>
+<!-- Predictor 1&#45;&gt;Outcome -->
+<g id="edge1" class="edge">
+<title>Predictor 1-&gt;Outcome</title>
+<path fill="none" stroke="black" d="M77.78,-62.4C86.21,-60.27 95.2,-57.99 103.8,-55.81"></path>
+<polygon fill="black" stroke="black" points="104.84,-59.16 113.67,-53.31 103.12,-52.37 104.84,-59.16"></polygon>
+</g>
+<!-- Predictor 2 -->
+<g id="node3" class="node">
+<title>Predictor 2</title>
+<polygon fill="none" stroke="black" points="77.73,-36 0.09,-36 0.09,0 77.73,0 77.73,-36"></polygon>
+<text text-anchor="middle" x="38.91" y="-13.8" font-family="Times,serif" font-size="14.00">Predictor 2</text>
+</g>
+<!-- Predictor 2&#45;&gt;Outcome -->
+<g id="edge2" class="edge">
+<title>Predictor 2-&gt;Outcome</title>
+<path fill="none" stroke="black" d="M77.78,-27.6C86.21,-29.73 95.2,-32.01 103.8,-34.19"></path>
+<polygon fill="black" stroke="black" points="103.12,-37.63 113.67,-36.69 104.84,-30.84 103.12,-37.63"></polygon>
+</g>
+</g>
+</svg>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>This model tests two main effect hypotheses</p>
+</div>
+</div>
+</div>
+</section>
+<section id="interaction-effect-relationship" class="slide level2">
+<h2>Interaction Effect Relationship</h2>
+<p>An interaction means that <strong>the effect of a Predictor 1 on the Outcome variable will be different according the possibilities of a Predictor 2</strong> (also called Moderation).</p>
+<div class="quarto-layout-panel" data-layout="[1,1]">
+<div class="quarto-layout-row">
+<div id="first-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<p>Effects representation:</p>
+<div class="cell" data-fig-height="2" data-fig-width="5" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<svg width="480" height="192" viewbox="0.00 0.00 302.95 80.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 76)">
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-76 298.95,-76 298.95,4 -4,4"></polygon>
+<!-- Predictor 1 -->
+<g id="node1" class="node">
+<title>Predictor 1</title>
+<polygon fill="none" stroke="black" points="77.73,-36 0.09,-36 0.09,0 77.73,0 77.73,-36"></polygon>
+<text text-anchor="middle" x="38.91" y="-13.8" font-family="Times,serif" font-size="14.00">Predictor 1</text>
+</g>
+<g id="node4" class="node">
+<title></title>
+<ellipse fill="black" stroke="black" cx="152.73" cy="-18" rx="0" ry="0"></ellipse>
+</g>
+<!-- Predictor 1&#45;&gt; -->
+<g id="edge2" class="edge">
+<title>Predictor 1-&gt;</title>
+<path fill="none" stroke="black" d="M77.76,-18C109.19,-18 149.14,-18 151.61,-18"></path>
+</g>
+<!-- Predictor 2 -->
+<g id="node2" class="node">
+<title>Predictor 2</title>
+<polygon fill="none" stroke="black" points="191.54,-72 113.91,-72 113.91,-36 191.54,-36 191.54,-72"></polygon>
+<text text-anchor="middle" x="152.73" y="-49.8" font-family="Times,serif" font-size="14.00">Predictor 2</text>
+</g>
+<!-- Predictor 2&#45;&gt; -->
+<g id="edge1" class="edge">
+<title>Predictor 2-&gt;</title>
+<path fill="none" stroke="black" d="M152.73,-35.86C152.73,-33.39 152.73,-30.92 152.73,-28.44"></path>
+<polygon fill="black" stroke="black" points="156.23,-28.28 152.73,-18.28 149.23,-28.28 156.23,-28.28"></polygon>
+</g>
+<!-- Outcome -->
+<g id="node3" class="node">
+<title>Outcome</title>
+<polygon fill="none" stroke="black" points="295.11,-36 227.48,-36 227.48,0 295.11,0 295.11,-36"></polygon>
+<text text-anchor="middle" x="261.29" y="-13.8" font-family="Times,serif" font-size="14.00">Outcome</text>
+</g>
+<!-- &#45;&gt;Outcome -->
+<g id="edge3" class="edge">
+<title>-&gt;Outcome</title>
+<path fill="none" stroke="black" d="M153.8,-18C155.6,-18 188.39,-18 217.12,-18"></path>
+<polygon fill="black" stroke="black" points="217.45,-21.5 227.45,-18 217.45,-14.5 217.45,-21.5"></polygon>
+</g>
+</g>
+</svg>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</div>
+<div id="second-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<p>Exactly the same results:</p>
+<div class="cell" data-fig-height="2" data-fig-width="5" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<svg width="480" height="192" viewbox="0.00 0.00 268.06 152.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 148)">
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-148 264.06,-148 264.06,4 -4,4"></polygon>
+<!-- Predictor 1 -->
+<g id="node1" class="node">
+<title>Predictor 1</title>
+<polygon fill="none" stroke="black" points="117.19,-144 39.55,-144 39.55,-108 117.19,-108 117.19,-144"></polygon>
+<text text-anchor="middle" x="78.37" y="-121.8" font-family="Times,serif" font-size="14.00">Predictor 1</text>
+</g>
+<!-- Outcome -->
+<g id="node2" class="node">
+<title>Outcome</title>
+<polygon fill="none" stroke="black" points="260.22,-90 192.59,-90 192.59,-54 260.22,-54 260.22,-90"></polygon>
+<text text-anchor="middle" x="226.4" y="-67.8" font-family="Times,serif" font-size="14.00">Outcome</text>
+</g>
+<!-- Predictor 1&#45;&gt;Outcome -->
+<g id="edge1" class="edge">
+<title>Predictor 1-&gt;Outcome</title>
+<path fill="none" stroke="black" d="M117.26,-113.11C129.86,-108.73 143.94,-103.75 156.75,-99 165.3,-95.83 174.4,-92.33 183.09,-88.94"></path>
+<polygon fill="black" stroke="black" points="184.65,-92.09 192.68,-85.17 182.09,-85.57 184.65,-92.09"></polygon>
+</g>
+<!-- Predictor 2 -->
+<g id="node3" class="node">
+<title>Predictor 2</title>
+<polygon fill="none" stroke="black" points="117.19,-90 39.55,-90 39.55,-54 117.19,-54 117.19,-90"></polygon>
+<text text-anchor="middle" x="78.37" y="-67.8" font-family="Times,serif" font-size="14.00">Predictor 2</text>
+</g>
+<!-- Predictor 2&#45;&gt;Outcome -->
+<g id="edge2" class="edge">
+<title>Predictor 2-&gt;Outcome</title>
+<path fill="none" stroke="black" d="M117.36,-72C137.31,-72 161.84,-72 182.48,-72"></path>
+<polygon fill="black" stroke="black" points="182.57,-75.5 192.57,-72 182.57,-68.5 182.57,-75.5"></polygon>
+</g>
+<!-- Predictor 1 X Predictor 2 -->
+<g id="node4" class="node">
+<title>Predictor 1 X Predictor 2</title>
+<polygon fill="none" stroke="black" points="156.62,-36 0.13,-36 0.13,0 156.62,0 156.62,-36"></polygon>
+<text text-anchor="middle" x="78.37" y="-13.8" font-family="Times,serif" font-size="14.00">Predictor 1 X Predictor 2</text>
+</g>
+<!-- Predictor 1 X Predictor 2&#45;&gt;Outcome -->
+<g id="edge3" class="edge">
+<title>Predictor 1 X Predictor 2-&gt;Outcome</title>
+<path fill="none" stroke="black" d="M131.91,-36.02C140.24,-38.97 148.74,-42.03 156.75,-45 165.3,-48.17 174.4,-51.67 183.09,-55.06"></path>
+<polygon fill="black" stroke="black" points="182.09,-58.43 192.68,-58.83 184.65,-51.91 182.09,-58.43"></polygon>
+</g>
+</g>
+</svg>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>This model tests three hypotheses: 2 main effects and 1 interaction effect</p>
+</section>
+<section id="types-of-model" class="slide level2 smaller">
+<h2>Types of Model</h2>
+<h3 id="simple-model">Simple Model</h3>
+<ul>
+<li>One or more predictors</li>
+<li>Only one outcome</li>
+<li>Made of main or/and interaction effects</li>
+</ul>
+<h3 id="mediation-model-simple-or-moderated">Mediation Model (simple or moderated)</h3>
+<ul>
+<li>At least 2 predictors (one call Mediator)</li>
+<li>Only one outcome</li>
+<li>Made of main effects only for simple mediation / main and interaction effects for moderated mediation</li>
+</ul>
+<h3 id="structural-equation-model-sem">Structural Equation Model (SEM)</h3>
+<ul>
+<li>At least 2 predictors (usually latent variables)</li>
+<li>One or more outcome</li>
+<li>Made of main or/and interaction effects</li>
+</ul>
+</section>
+<section id="simple-model-1" class="slide level2">
+<h2>Simple Model</h2>
+<p>Simple Models are the most statistically powerful, easy to test and reliable models. Always prefer a simple model compared to a more complicated solution.</p>
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Warning</strong></p>
+</div>
+<div class="callout-content">
+<p>Including interaction effect requires a significantly higher sample size.</p>
+</div>
+</div>
+</div>
+<div class="quarto-layout-panel" data-layout="[1,1]">
+<div class="quarto-layout-row">
+<div id="first-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<p>Example:</p>
+<div class="cell" data-fig-height="2" data-fig-width="5" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<svg width="480" height="192" viewbox="0.00 0.00 263.20 125.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 121)">
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-121 259.2,-121 259.2,4 -4,4"></polygon>
+<!-- Salary -->
+<g id="node1" class="node">
+<title>Salary</title>
+<polygon fill="none" stroke="black" points="54,-94 0,-94 0,-58 54,-58 54,-94"></polygon>
+<text text-anchor="middle" x="27" y="-71.8" font-family="Times,serif" font-size="14.00">Salary</text>
+</g>
+<g id="node5" class="node">
+<title></title>
+<ellipse fill="black" stroke="black" cx="118.6" cy="-63" rx="0" ry="0"></ellipse>
+</g>
+<!-- Salary&#45;&gt; -->
+<g id="edge3" class="edge">
+<title>Salary-&gt;</title>
+<path fill="none" stroke="black" d="M54.4,-72.17C80,-68.46 115.31,-63.33 117.49,-63.02"></path>
+</g>
+<!-- Gender -->
+<g id="node2" class="node">
+<title>Gender</title>
+<polygon fill="none" stroke="black" points="147.3,-117 89.9,-117 89.9,-81 147.3,-81 147.3,-117"></polygon>
+<text text-anchor="middle" x="118.6" y="-94.8" font-family="Times,serif" font-size="14.00">Gender</text>
+</g>
+<!-- Gender&#45;&gt; -->
+<g id="edge2" class="edge">
+<title>Gender-&gt;</title>
+<path fill="none" stroke="black" d="M118.6,-80.86C118.6,-78.39 118.6,-75.92 118.6,-73.44"></path>
+<polygon fill="black" stroke="black" points="122.1,-73.28 118.6,-63.28 115.1,-73.28 122.1,-73.28"></polygon>
+</g>
+<!-- Age -->
+<g id="node3" class="node">
+<title>Age</title>
+<polygon fill="none" stroke="black" points="54,-40 0,-40 0,-4 54,-4 54,-40"></polygon>
+<text text-anchor="middle" x="27" y="-17.8" font-family="Times,serif" font-size="14.00">Age</text>
+</g>
+<!-- Job\nSatisfaction -->
+<g id="node4" class="node">
+<title>Job\nSatisfaction</title>
+<ellipse fill="none" stroke="black" cx="219.2" cy="-36" rx="36" ry="36"></ellipse>
+<text text-anchor="middle" x="219.2" y="-40.2" font-family="Times,serif" font-size="14.00">Job</text>
+<text text-anchor="middle" x="219.2" y="-23.4" font-family="Times,serif" font-size="14.00">Satisfaction</text>
+</g>
+<!-- Age&#45;&gt;Job\nSatisfaction -->
+<g id="edge1" class="edge">
+<title>Age-&gt;Job\nSatisfaction</title>
+<path fill="none" stroke="black" d="M54.05,-23.92C84.64,-26.17 135.93,-29.94 173.04,-32.68"></path>
+<polygon fill="black" stroke="black" points="172.88,-36.17 183.11,-33.42 173.39,-29.19 172.88,-36.17"></polygon>
+</g>
+<!-- &#45;&gt;Job\nSatisfaction -->
+<g id="edge4" class="edge">
+<title>-&gt;Job\nSatisfaction</title>
+<path fill="none" stroke="black" d="M119.67,-62.98C121.26,-62.55 149.01,-54.95 174.66,-47.92"></path>
+<polygon fill="black" stroke="black" points="175.6,-51.29 184.32,-45.28 173.75,-44.54 175.6,-51.29"></polygon>
+</g>
+</g>
+</svg>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</div>
+<div id="second-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<p>This model tests four hypotheses:</p>
+<ul>
+<li>3 main effects</li>
+<li>1 interaction effect</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="mediation-models" class="slide level2">
+<h2>Mediation Models</h2>
+<p>A Mediation model is a complex path analysis between 3 variables, where one of them explains the relationship between the other two. It is usually used to identify cognitive process in psychology.</p>
+<p>Example:</p>
+<div class="cell" data-fig-height="2" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<svg width="960" height="192" viewbox="0.00 0.00 392.38 67.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 63)">
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-63 388.38,-63 388.38,4 -4,4"></polygon>
+<!-- Exam Results -->
+<g id="node1" class="node">
+<title>Exam Results</title>
+<polygon fill="none" stroke="black" points="93.58,-36 -0.19,-36 -0.19,0 93.58,0 93.58,-36"></polygon>
+<text text-anchor="middle" x="46.69" y="-13.8" font-family="Times,serif" font-size="14.00">Exam Results</text>
+</g>
+<!-- Self&#45;Esteem -->
+<g id="node2" class="node">
+<title>Self-Esteem</title>
+<ellipse fill="none" stroke="black" cx="187.61" cy="-41" rx="58.46" ry="18"></ellipse>
+<text text-anchor="middle" x="187.61" y="-36.8" font-family="Times,serif" font-size="14.00">Self-Esteem</text>
+</g>
+<!-- Exam Results&#45;&gt;Self&#45;Esteem -->
+<g id="edge1" class="edge">
+<title>Exam Results-&gt;Self-Esteem</title>
+<path fill="none" stroke="black" d="M93.57,-25.59C103.97,-27.32 115.18,-29.17 126.09,-30.98"></path>
+<polygon fill="black" stroke="black" points="125.56,-34.44 136,-32.62 126.7,-27.53 125.56,-34.44"></polygon>
+</g>
+<!-- Happiness -->
+<g id="node3" class="node">
+<title>Happiness</title>
+<ellipse fill="none" stroke="black" cx="333.11" cy="-18" rx="51.04" ry="18"></ellipse>
+<text text-anchor="middle" x="333.11" y="-13.8" font-family="Times,serif" font-size="14.00">Happiness</text>
+</g>
+<!-- Exam Results&#45;&gt;Happiness -->
+<g id="edge2" class="edge">
+<title>Exam Results-&gt;Happiness</title>
+<path fill="none" stroke="black" d="M93.48,-15.36C105.18,-14.8 117.74,-14.28 129.38,-14 181.13,-12.73 194.1,-12.8 245.85,-14 254.36,-14.2 263.34,-14.5 272.16,-14.86"></path>
+<polygon fill="black" stroke="black" points="272.26,-18.37 282.4,-15.3 272.56,-11.38 272.26,-18.37"></polygon>
+</g>
+<!-- Self&#45;Esteem&#45;&gt;Happiness -->
+<g id="edge3" class="edge">
+<title>Self-Esteem-&gt;Happiness</title>
+<path fill="none" stroke="black" d="M239.61,-32.83C251.44,-30.93 264.1,-28.9 276.13,-26.97"></path>
+<polygon fill="black" stroke="black" points="276.74,-30.42 286.06,-25.38 275.63,-23.51 276.74,-30.42"></polygon>
+</g>
+</g>
+</svg>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>This model tests one hypothesis:</p>
+<ul>
+<li>1 mediation effect</li>
+<li>but it requires 2 main effects</li>
+</ul>
+</section>
+<section id="structural-equation-model" class="slide level2">
+<h2>Structural Equation Model</h2>
+<div class="quarto-layout-panel" data-layout="[1,1]">
+<div class="quarto-layout-row">
+<div id="first-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<p>A Structural Equation Model (SEM) is a complex path analysis between multiple variables including multiple Outcomes and using factor analysis for latent variable estimation.</p>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Item contribution to a latent variable</strong></p>
+</div>
+<div class="callout-content">
+<p>The relationship between items of a scale and their corresponding latent variable is considered as significant by default if the scale is valid</p>
+</div>
+</div>
+</div>
+</div>
+<div id="second-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="cell" data-fig-width="5" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<svg width="480" height="480" viewbox="0.00 0.00 594.87 584.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 580)">
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-580 590.87,-580 590.87,4 -4,4"></polygon>
+<!-- Perceived Ease&#45;of&#45;use -->
+<g id="node1" class="node">
+<title>Perceived Ease-of-use</title>
+<ellipse fill="none" stroke="black" cx="192.66" cy="-369" rx="97.2" ry="18"></ellipse>
+<text text-anchor="middle" x="192.66" y="-364.8" font-family="Times,serif" font-size="14.00">Perceived Ease-of-use</text>
+</g>
+<!-- Perceived Usefulness -->
+<g id="node2" class="node">
+<title>Perceived Usefulness</title>
+<ellipse fill="none" stroke="black" cx="192.66" cy="-180" rx="93.8" ry="18"></ellipse>
+<text text-anchor="middle" x="192.66" y="-175.8" font-family="Times,serif" font-size="14.00">Perceived Usefulness</text>
+</g>
+<!-- Perceived Ease&#45;of&#45;use&#45;&gt;Perceived Usefulness -->
+<g id="edge13" class="edge">
+<title>Perceived Ease-of-use-&gt;Perceived Usefulness</title>
+<path fill="none" stroke="black" d="M192.66,-350.97C192.66,-303.4 192.66,-255.82 192.66,-208.24"></path>
+<polygon fill="black" stroke="black" points="196.16,-208.09 192.66,-198.09 189.16,-208.09 196.16,-208.09"></polygon>
+</g>
+<!-- Intention to Use -->
+<g id="node3" class="node">
+<title>Intention to Use</title>
+<ellipse fill="none" stroke="black" cx="399.02" cy="-423" rx="73.02" ry="18"></ellipse>
+<text text-anchor="middle" x="399.02" y="-418.8" font-family="Times,serif" font-size="14.00">Intention to Use</text>
+</g>
+<!-- Perceived Ease&#45;of&#45;use&#45;&gt;Intention to Use -->
+<g id="edge14" class="edge">
+<title>Perceived Ease-of-use-&gt;Intention to Use</title>
+<path fill="none" stroke="black" d="M249.23,-383.68C276.93,-391 310.45,-399.86 338.65,-407.31"></path>
+<polygon fill="black" stroke="black" points="337.83,-410.71 348.39,-409.89 339.61,-403.95 337.83,-410.71"></polygon>
+</g>
+<!-- Perceived Usefulness&#45;&gt;Intention to Use -->
+<g id="edge12" class="edge">
+<title>Perceived Usefulness-&gt;Intention to Use</title>
+<path fill="none" stroke="black" d="M208.69,-197.87C244.49,-240.44 334.92,-347.97 376.5,-397.41"></path>
+<polygon fill="black" stroke="black" points="373.85,-399.7 382.97,-405.11 379.21,-395.2 373.85,-399.7"></polygon>
+</g>
+<!-- Actual Use -->
+<g id="node15" class="node">
+<title>Actual Use</title>
+<polygon fill="none" stroke="black" points="586.66,-441 508.48,-441 508.48,-405 586.66,-405 586.66,-441"></polygon>
+<text text-anchor="middle" x="547.57" y="-418.8" font-family="Times,serif" font-size="14.00">Actual Use</text>
+</g>
+<!-- Intention to Use&#45;&gt;Actual Use -->
+<g id="edge15" class="edge">
+<title>Intention to Use-&gt;Actual Use</title>
+<path fill="none" stroke="black" d="M472.44,-423C481.16,-423 489.9,-423 498.16,-423"></path>
+<polygon fill="black" stroke="black" points="498.33,-426.5 508.33,-423 498.33,-419.5 498.33,-426.5"></polygon>
+</g>
+<!-- PU1 -->
+<g id="node4" class="node">
+<title>PU1</title>
+<polygon fill="none" stroke="black" points="56.78,-252 2.78,-252 2.78,-216 56.78,-216 56.78,-252"></polygon>
+<text text-anchor="middle" x="29.78" y="-229.8" font-family="Times,serif" font-size="14.00">PU1</text>
+</g>
+<!-- PU1&#45;&gt;Perceived Usefulness -->
+<g id="edge1" class="edge">
+<title>PU1-&gt;Perceived Usefulness</title>
+<path fill="none" stroke="black" d="M56.99,-225.2C80.85,-217.19 116.63,-205.18 145.31,-195.56"></path>
+</g>
+<!-- PU2 -->
+<g id="node5" class="node">
+<title>PU2</title>
+<polygon fill="none" stroke="black" points="56.78,-198 2.78,-198 2.78,-162 56.78,-162 56.78,-198"></polygon>
+<text text-anchor="middle" x="29.78" y="-175.8" font-family="Times,serif" font-size="14.00">PU2</text>
+</g>
+<!-- PU2&#45;&gt;Perceived Usefulness -->
+<g id="edge2" class="edge">
+<title>PU2-&gt;Perceived Usefulness</title>
+<path fill="none" stroke="black" d="M56.99,-180C68.74,-180 83.38,-180 98.65,-180"></path>
+</g>
+<!-- PU3 -->
+<g id="node6" class="node">
+<title>PU3</title>
+<polygon fill="none" stroke="black" points="56.78,-144 2.78,-144 2.78,-108 56.78,-108 56.78,-144"></polygon>
+<text text-anchor="middle" x="29.78" y="-121.8" font-family="Times,serif" font-size="14.00">PU3</text>
+</g>
+<!-- PU3&#45;&gt;Perceived Usefulness -->
+<g id="edge3" class="edge">
+<title>PU3-&gt;Perceived Usefulness</title>
+<path fill="none" stroke="black" d="M56.99,-134.8C80.85,-142.81 116.63,-154.82 145.31,-164.44"></path>
+</g>
+<!-- PU4 -->
+<g id="node7" class="node">
+<title>PU4</title>
+<polygon fill="none" stroke="black" points="56.78,-90 2.78,-90 2.78,-54 56.78,-54 56.78,-90"></polygon>
+<text text-anchor="middle" x="29.78" y="-67.8" font-family="Times,serif" font-size="14.00">PU4</text>
+</g>
+<!-- PU4&#45;&gt;Perceived Usefulness -->
+<g id="edge4" class="edge">
+<title>PU4-&gt;Perceived Usefulness</title>
+<path fill="none" stroke="black" d="M56.99,-89.59C86.99,-109.74 135.84,-142.53 165.73,-162.59"></path>
+</g>
+<!-- PU5 -->
+<g id="node8" class="node">
+<title>PU5</title>
+<polygon fill="none" stroke="black" points="56.78,-36 2.78,-36 2.78,0 56.78,0 56.78,-36"></polygon>
+<text text-anchor="middle" x="29.78" y="-13.8" font-family="Times,serif" font-size="14.00">PU5</text>
+</g>
+<!-- PU5&#45;&gt;Perceived Usefulness -->
+<g id="edge5" class="edge">
+<title>PU5-&gt;Perceived Usefulness</title>
+<path fill="none" stroke="black" d="M50.39,-36.19C53.48,-39.11 56.62,-42.12 59.56,-45 101.73,-86.3 149.91,-136.26 174.79,-162.29"></path>
+</g>
+<!-- PEOU1 -->
+<g id="node9" class="node">
+<title>PEOU1</title>
+<polygon fill="none" stroke="black" points="59.34,-468 0.22,-468 0.22,-432 59.34,-432 59.34,-468"></polygon>
+<text text-anchor="middle" x="29.78" y="-445.8" font-family="Times,serif" font-size="14.00">PEOU1</text>
+</g>
+<!-- PEOU1&#45;&gt;Perceived Ease&#45;of&#45;use -->
+<g id="edge6" class="edge">
+<title>PEOU1-&gt;Perceived Ease-of-use</title>
+<path fill="none" stroke="black" d="M59.54,-435.52C87.2,-421.59 128.99,-400.55 158.14,-385.88"></path>
+</g>
+<!-- PEOU2 -->
+<g id="node10" class="node">
+<title>PEOU2</title>
+<polygon fill="none" stroke="black" points="59.34,-414 0.22,-414 0.22,-378 59.34,-378 59.34,-414"></polygon>
+<text text-anchor="middle" x="29.78" y="-391.8" font-family="Times,serif" font-size="14.00">PEOU2</text>
+</g>
+<!-- PEOU2&#45;&gt;Perceived Ease&#45;of&#45;use -->
+<g id="edge7" class="edge">
+<title>PEOU2-&gt;Perceived Ease-of-use</title>
+<path fill="none" stroke="black" d="M59.54,-391.17C76.44,-388.34 98.62,-384.61 119.97,-381.03"></path>
+</g>
+<!-- PEOU3 -->
+<g id="node11" class="node">
+<title>PEOU3</title>
+<polygon fill="none" stroke="black" points="59.34,-360 0.22,-360 0.22,-324 59.34,-324 59.34,-360"></polygon>
+<text text-anchor="middle" x="29.78" y="-337.8" font-family="Times,serif" font-size="14.00">PEOU3</text>
+</g>
+<!-- PEOU3&#45;&gt;Perceived Ease&#45;of&#45;use -->
+<g id="edge8" class="edge">
+<title>PEOU3-&gt;Perceived Ease-of-use</title>
+<path fill="none" stroke="black" d="M59.54,-346.83C76.44,-349.66 98.62,-353.39 119.97,-356.97"></path>
+</g>
+<!-- PEOU4 -->
+<g id="node12" class="node">
+<title>PEOU4</title>
+<polygon fill="none" stroke="black" points="59.34,-306 0.22,-306 0.22,-270 59.34,-270 59.34,-306"></polygon>
+<text text-anchor="middle" x="29.78" y="-283.8" font-family="Times,serif" font-size="14.00">PEOU4</text>
+</g>
+<!-- PEOU4&#45;&gt;Perceived Ease&#45;of&#45;use -->
+<g id="edge9" class="edge">
+<title>PEOU4-&gt;Perceived Ease-of-use</title>
+<path fill="none" stroke="black" d="M59.54,-302.48C87.2,-316.41 128.99,-337.45 158.14,-352.12"></path>
+</g>
+<!-- BI1 -->
+<g id="node13" class="node">
+<title>BI1</title>
+<polygon fill="none" stroke="black" points="56.78,-576 2.78,-576 2.78,-540 56.78,-540 56.78,-576"></polygon>
+<text text-anchor="middle" x="29.78" y="-553.8" font-family="Times,serif" font-size="14.00">BI1</text>
+</g>
+<!-- BI1&#45;&gt;Intention to Use -->
+<g id="edge10" class="edge">
+<title>BI1-&gt;Intention to Use</title>
+<path fill="none" stroke="black" d="M57.11,-552.05C104.61,-540.9 207.34,-514.92 289.76,-481 318.35,-469.23 349.28,-452.19 370.73,-439.62"></path>
+</g>
+<!-- BI2 -->
+<g id="node14" class="node">
+<title>BI2</title>
+<polygon fill="none" stroke="black" points="56.78,-522 2.78,-522 2.78,-486 56.78,-486 56.78,-522"></polygon>
+<text text-anchor="middle" x="29.78" y="-499.8" font-family="Times,serif" font-size="14.00">BI2</text>
+</g>
+<!-- BI2&#45;&gt;Intention to Use -->
+<g id="edge11" class="edge">
+<title>BI2-&gt;Intention to Use</title>
+<path fill="none" stroke="black" d="M56.9,-498.24C116.54,-485.08 263.79,-452.61 343.94,-434.93"></path>
+</g>
+</g>
+</svg>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>For example, this model tests four hypotheses</p>
+</div>
+</div>
+</div>
+</section>
+<section id="a-good-model" class="slide level2">
+<h2>A Good Model</h2>
+<ul>
+<li><strong>Comprehensiveness</strong>: Explains a wide range of phenomena</li>
+<li><strong>Internal Consistency</strong>: Propositions and assumptions are consistent and fit together in a coherent manner</li>
+<li><strong>Parsimony</strong>: Contains only those concepts and assumptions essential for the explanation of a phenomenon</li>
+<li><strong>Testability</strong>: Concepts and relational statements are precise.</li>
+<li><strong>Empirical Validity</strong>: Holds up when tested in the real world.</li>
+</ul>
+</section>
+<section id="a-good-model-1" class="slide level2">
+<h2>A Good Model</h2>
+<p>Example:</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<svg width="960" height="480" viewbox="0.00 0.00 499.31 98.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 94)">
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-94 495.31,-94 495.31,4 -4,4"></polygon>
+<!-- Perceived Ease&#45;of&#45;use -->
+<g id="node1" class="node">
+<title>Perceived Ease-of-use</title>
+<ellipse fill="none" stroke="black" cx="97.1" cy="-72" rx="97.2" ry="18"></ellipse>
+<text text-anchor="middle" x="97.1" y="-67.8" font-family="Times,serif" font-size="14.00">Perceived Ease-of-use</text>
+</g>
+<!-- Perceived Usefulness -->
+<g id="node2" class="node">
+<title>Perceived Usefulness</title>
+<ellipse fill="none" stroke="black" cx="97.1" cy="-18" rx="93.8" ry="18"></ellipse>
+<text text-anchor="middle" x="97.1" y="-13.8" font-family="Times,serif" font-size="14.00">Perceived Usefulness</text>
+</g>
+<!-- Perceived Ease&#45;of&#45;use&#45;&gt;Perceived Usefulness -->
+<g id="edge2" class="edge">
+<title>Perceived Ease-of-use-&gt;Perceived Usefulness</title>
+<path fill="none" stroke="black" d="M97.1,-53.79C97.1,-51.31 97.1,-48.83 97.1,-46.34"></path>
+<polygon fill="black" stroke="black" points="100.6,-46.14 97.1,-36.14 93.6,-46.14 100.6,-46.14"></polygon>
+</g>
+<!-- Intention to Use -->
+<g id="node3" class="node">
+<title>Intention to Use</title>
+<ellipse fill="none" stroke="black" cx="303.46" cy="-45" rx="73.02" ry="18"></ellipse>
+<text text-anchor="middle" x="303.46" y="-40.8" font-family="Times,serif" font-size="14.00">Intention to Use</text>
+</g>
+<!-- Perceived Ease&#45;of&#45;use&#45;&gt;Intention to Use -->
+<g id="edge3" class="edge">
+<title>Perceived Ease-of-use-&gt;Intention to Use</title>
+<path fill="none" stroke="black" d="M176.53,-61.64C193.49,-59.4 211.38,-57.03 228.18,-54.81"></path>
+<polygon fill="black" stroke="black" points="229.03,-58.23 238.48,-53.45 228.11,-51.29 229.03,-58.23"></polygon>
+</g>
+<!-- Perceived Usefulness&#45;&gt;Intention to Use -->
+<g id="edge1" class="edge">
+<title>Perceived Usefulness-&gt;Intention to Use</title>
+<path fill="none" stroke="black" d="M174.78,-28.13C192.39,-30.46 211.08,-32.93 228.57,-35.24"></path>
+<polygon fill="black" stroke="black" points="228.34,-38.74 238.71,-36.58 229.25,-31.8 228.34,-38.74"></polygon>
+</g>
+<!-- Actual Use -->
+<g id="node4" class="node">
+<title>Actual Use</title>
+<polygon fill="none" stroke="black" points="491.11,-63 412.92,-63 412.92,-27 491.11,-27 491.11,-63"></polygon>
+<text text-anchor="middle" x="452.01" y="-40.8" font-family="Times,serif" font-size="14.00">Actual Use</text>
+</g>
+<!-- Intention to Use&#45;&gt;Actual Use -->
+<g id="edge4" class="edge">
+<title>Intention to Use-&gt;Actual Use</title>
+<path fill="none" stroke="black" d="M376.88,-45C385.6,-45 394.34,-45 402.6,-45"></path>
+<polygon fill="black" stroke="black" points="402.77,-48.5 412.77,-45 402.77,-41.5 402.77,-48.5"></polygon>
+</g>
+</g>
+</svg>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</section>
+<section id="a-bad-theorymodel" class="slide level2">
+<h2>A Bad Theory/Model</h2>
+<div class="quarto-layout-panel" data-layout="[0.3, 0.7]">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 30.0%;justify-content: flex-start;">
+<ul>
+<li>Too complicated</li>
+<li>Does not explain many things</li>
+<li>Cannot be tested</li>
+</ul>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 70.0%;justify-content: flex-start;">
+<p><img data-src="https://d3i71xaburhd42.cloudfront.net/2a3e4a3024bfc4df27db07a1d48f77a6f371b0c3/8-Figure1-1.png"> Is it bad?</p>
+</div>
+</div>
+</div>
+</section>
+<section id="representing-a-model" class="slide level2">
+<h2>Representing a Model</h2>
+<div class="quarto-layout-panel" data-layout="[0.6,0.4]">
+<div class="quarto-layout-row">
+<div id="first-column" class="quarto-layout-cell" style="flex-basis: 60.0%;justify-content: flex-start;">
+<p>The representation of a model can easily be done directly in a manuscript written with Microsoft Words</p>
+<p>For more details, is it also possible to draw the model in Microsoft PowerPoint and to copy-paste it in Microsoft Words.</p>
+</div>
+<div id="second-column" class="quarto-layout-cell" style="flex-basis: 40.0%;justify-content: flex-start;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="https://www.myofficetricks.com/wp-content/uploads/2020/09/myofficetricks.com_2020-09-23_01-58-57.gif"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Warning</strong></p>
+</div>
+<div class="callout-content">
+<ul>
+<li>Do NOT fill boxes with any color, use only black and white colors.</li>
+<li>Use line arrow, no thick arrows allowed.</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="representing-a-model-1" class="slide level2">
+<h2>Representing a Model</h2>
+<p>Beside MS Words and PowerPoint, there are some ways to draw models in a nicer way.</p>
+<p><strong>Flowchart Software/Websites</strong></p>
+<p>There are many of them and google would find them very quickly but to my knowledge, <a href="https://www.diagrams.net/" class="uri">https://www.diagrams.net/</a> is free, easy to use and very efficient.</p>
+</section>
+<section id="representing-a-model-2" class="slide level2">
+<h2>Representing a Model</h2>
+<p><strong>Flowchart Coding Languages</strong></p>
+<p>Going further into details of how to design academic models, flowchart coding languages are the ultimate steps.</p>
+<p>Instead of using a GUI, it is possible to draw models from a couple of lines of code which is faster after practising a lot.</p>
+<p>To my knowledge, the main flowchart coding language tool implementing the <a href="https://en.wikipedia.org/wiki/DOT_(graph_description_language)">DOT style</a> are:</p>
+<ul>
+<li><a href="http://mermaid-js.github.io/mermaid/##/">mermaid-js</a></li>
+<li><a href="http://viz-js.com/">viz-js</a></li>
+<li><a href="https://www.nomnoml.com/">nomnoml</a></li>
+</ul>
+<p><a href="https://modeling-languages.com/text-uml-tools-complete-list/">But many more alternative can be used</a></p>
+</section>
+<section id="dot-language" class="slide level2">
+<h2>DOT Language</h2>
+<p>It is easy to start by following these rules:</p>
+<ul>
+<li>Variable names must not include space between words</li>
+<li>Arrows are represented by the characters - and &gt;</li>
+</ul>
+<div class="quarto-layout-panel" data-layout="[1,1]">
+<div class="quarto-layout-row">
+<div id="first-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<p>What you type:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource dot number-lines code-with-copy"><code class="sourceCode dot"><span id="cb1-1"><a href=""></a><span class="kw">digraph</span> <span class="ot">{</span></span>
+<span id="cb1-2"><a href=""></a><span class="co">  </span><span class="st">"Predictor 1"</span><span class="co"> </span><span class="ot">-&gt;</span><span class="co"> </span><span class="st">"Outcome"</span></span>
+<span id="cb1-3"><a href=""></a><span class="co">  </span><span class="st">"Predictor 2"</span><span class="co"> </span><span class="ot">-&gt;</span><span class="co"> </span><span class="st">"Outcome"</span></span>
+<span id="cb1-4"><a href=""></a><span class="ot">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="second-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<p>What you get:</p>
+<div class="cell" data-fig-height="2" data-fig-width="5" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<svg width="480" height="192" viewbox="0.00 0.00 240.35 116.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 112)">
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-112 236.35,-112 236.35,4 -4,4"></polygon>
+<!-- Predictor 1 -->
+<g id="node1" class="node">
+<title>Predictor 1</title>
+<ellipse fill="none" stroke="black" cx="53.68" cy="-90" rx="53.85" ry="18"></ellipse>
+<text text-anchor="middle" x="53.68" y="-85.8" font-family="Times,serif" font-size="14.00">Predictor 1</text>
+</g>
+<!-- Outcome -->
+<g id="node2" class="node">
+<title>Outcome</title>
+<ellipse fill="none" stroke="black" cx="115.68" cy="-18" rx="46.37" ry="18"></ellipse>
+<text text-anchor="middle" x="115.68" y="-13.8" font-family="Times,serif" font-size="14.00">Outcome</text>
+</g>
+<!-- Predictor 1&#45;&gt;Outcome -->
+<g id="edge1" class="edge">
+<title>Predictor 1-&gt;Outcome</title>
+<path fill="none" stroke="black" d="M68.37,-72.41C76.09,-63.69 85.7,-52.85 94.24,-43.21"></path>
+<polygon fill="black" stroke="black" points="97.08,-45.28 101.09,-35.47 91.84,-40.64 97.08,-45.28"></polygon>
+</g>
+<!-- Predictor 2 -->
+<g id="node3" class="node">
+<title>Predictor 2</title>
+<ellipse fill="none" stroke="black" cx="178.68" cy="-90" rx="53.85" ry="18"></ellipse>
+<text text-anchor="middle" x="178.68" y="-85.8" font-family="Times,serif" font-size="14.00">Predictor 2</text>
+</g>
+<!-- Predictor 2&#45;&gt;Outcome -->
+<g id="edge2" class="edge">
+<title>Predictor 2-&gt;Outcome</title>
+<path fill="none" stroke="black" d="M163.75,-72.41C155.82,-63.61 145.94,-52.63 137.2,-42.92"></path>
+<polygon fill="black" stroke="black" points="139.79,-40.56 130.5,-35.47 134.59,-45.24 139.79,-40.56"></polygon>
+</g>
+</g>
+</svg>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="dot-language-1" class="slide level2">
+<h2>DOT Language</h2>
+<p>To modify the orientation and the shape of the box, add the following options:</p>
+<div class="quarto-layout-panel" data-layout="[1,1]">
+<div class="quarto-layout-row">
+<div id="first-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource dot number-lines code-with-copy"><code class="sourceCode dot"><span id="cb2-1"><a href=""></a><span class="kw">digraph</span> <span class="ot">{</span></span>
+<span id="cb2-2"><a href=""></a><span class="co">  </span><span class="va">graph</span><span class="co"> </span><span class="ot">[</span><span class="at">rankdir</span><span class="co"> </span><span class="ot">=</span><span class="co"> </span><span class="va">LR</span><span class="ot">]</span></span>
+<span id="cb2-3"><a href=""></a><span class="co">  </span><span class="kw">node</span><span class="co"> </span><span class="ot">[</span><span class="at">shape</span><span class="co"> </span><span class="ot">=</span><span class="co"> </span><span class="va">box</span><span class="ot">]</span></span>
+<span id="cb2-4"><a href=""></a><span class="co">  </span></span>
+<span id="cb2-5"><a href=""></a><span class="co">  </span><span class="st">"Predictor 1"</span><span class="co"> </span><span class="ot">-&gt;</span><span class="co"> </span><span class="st">"Outcome"</span></span>
+<span id="cb2-6"><a href=""></a><span class="co">  </span><span class="st">"Predictor 2"</span><span class="co"> </span><span class="ot">-&gt;</span><span class="co"> </span><span class="st">"Outcome"</span></span>
+<span id="cb2-7"><a href=""></a><span class="ot">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="second-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="cell" data-fig-height="2" data-fig-width="5" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<svg width="480" height="192" viewbox="0.00 0.00 189.13 98.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 94)">
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-94 185.13,-94 185.13,4 -4,4"></polygon>
+<!-- Predictor 1 -->
+<g id="node1" class="node">
+<title>Predictor 1</title>
+<polygon fill="none" stroke="black" points="77.73,-90 0.09,-90 0.09,-54 77.73,-54 77.73,-90"></polygon>
+<text text-anchor="middle" x="38.91" y="-67.8" font-family="Times,serif" font-size="14.00">Predictor 1</text>
+</g>
+<!-- Outcome -->
+<g id="node2" class="node">
+<title>Outcome</title>
+<polygon fill="none" stroke="black" points="181.29,-63 113.66,-63 113.66,-27 181.29,-27 181.29,-63"></polygon>
+<text text-anchor="middle" x="147.48" y="-40.8" font-family="Times,serif" font-size="14.00">Outcome</text>
+</g>
+<!-- Predictor 1&#45;&gt;Outcome -->
+<g id="edge1" class="edge">
+<title>Predictor 1-&gt;Outcome</title>
+<path fill="none" stroke="black" d="M77.78,-62.4C86.21,-60.27 95.2,-57.99 103.8,-55.81"></path>
+<polygon fill="black" stroke="black" points="104.84,-59.16 113.67,-53.31 103.12,-52.37 104.84,-59.16"></polygon>
+</g>
+<!-- Predictor 2 -->
+<g id="node3" class="node">
+<title>Predictor 2</title>
+<polygon fill="none" stroke="black" points="77.73,-36 0.09,-36 0.09,0 77.73,0 77.73,-36"></polygon>
+<text text-anchor="middle" x="38.91" y="-13.8" font-family="Times,serif" font-size="14.00">Predictor 2</text>
+</g>
+<!-- Predictor 2&#45;&gt;Outcome -->
+<g id="edge2" class="edge">
+<title>Predictor 2-&gt;Outcome</title>
+<path fill="none" stroke="black" d="M77.78,-27.6C86.21,-29.73 95.2,-32.01 103.8,-34.19"></path>
+<polygon fill="black" stroke="black" points="103.12,-37.63 113.67,-36.69 104.84,-30.84 103.12,-37.63"></polygon>
+</g>
+</g>
+</svg>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="dot-language-2" class="slide level2 smaller">
+<h2>DOT Language</h2>
+<p>Unfortunately the way to plot an interaction is much trickier. You have to include an invisible box to design the arrow crossing the main arrow:</p>
+<div class="quarto-layout-panel" data-layout="[1,1]">
+<div class="quarto-layout-row">
+<div id="first-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode numberSource dot number-lines code-with-copy"><code class="sourceCode dot"><span id="cb3-1"><a href=""></a><span class="kw">digraph</span> <span class="ot">{</span></span>
+<span id="cb3-2"><a href=""></a><span class="co">  </span><span class="va">graph</span><span class="co"> </span><span class="ot">[</span><span class="at">rankdir</span><span class="co"> </span><span class="ot">=</span><span class="co"> </span><span class="va">LR</span><span class="ot">]</span><span class="co">  </span></span>
+<span id="cb3-3"><a href=""></a><span class="co">  </span><span class="kw">node</span><span class="co"> </span><span class="ot">[</span><span class="at">shape</span><span class="co"> </span><span class="ot">=</span><span class="co"> </span><span class="va">box</span><span class="ot">]</span></span>
+<span id="cb3-4"><a href=""></a><span class="co">  </span><span class="st">"Predictor 1"</span><span class="ot">;</span><span class="co"> </span><span class="st">"Predictor 2"</span><span class="ot">;</span><span class="co"> </span><span class="st">"Outcome"</span></span>
+<span id="cb3-5"><a href=""></a><span class="co">  </span><span class="kw">node</span><span class="co"> </span><span class="ot">[</span><span class="at">shape</span><span class="co"> </span><span class="ot">=</span><span class="co"> </span><span class="va">point</span><span class="co">, </span><span class="at">width</span><span class="co"> </span><span class="ot">=</span><span class="co"> </span><span class="dv">0</span><span class="co">, </span><span class="at">height</span><span class="co"> </span><span class="ot">=</span><span class="co"> </span><span class="dv">0</span><span class="ot">]</span></span>
+<span id="cb3-6"><a href=""></a><span class="co">  </span><span class="st">""</span></span>
+<span id="cb3-7"><a href=""></a><span class="co">  </span></span>
+<span id="cb3-8"><a href=""></a><span class="co">  </span><span class="st">"Predictor 2"</span><span class="co"> </span><span class="ot">-&gt;</span><span class="co"> </span><span class="st">""</span></span>
+<span id="cb3-9"><a href=""></a><span class="co">  </span><span class="st">"Predictor 1"</span><span class="co"> </span><span class="ot">-&gt;</span><span class="co"> </span><span class="st">""</span><span class="co"> </span><span class="ot">[</span><span class="at">arrowhead</span><span class="co"> </span><span class="ot">=</span><span class="co"> </span><span class="va">none</span><span class="ot">]</span></span>
+<span id="cb3-10"><a href=""></a><span class="co">  </span><span class="st">""</span><span class="co"> </span><span class="ot">-&gt;</span><span class="co"> </span><span class="va">Outcome</span></span>
+<span id="cb3-11"><a href=""></a><span class="co">  </span></span>
+<span id="cb3-12"><a href=""></a><span class="co">  </span><span class="kw">subgraph</span><span class="co"> </span><span class="ot">{</span></span>
+<span id="cb3-13"><a href=""></a><span class="co">    </span><span class="at">rank</span><span class="co"> </span><span class="ot">=</span><span class="co"> </span><span class="va">same</span><span class="ot">;</span><span class="co"> </span><span class="st">"Predictor 2"</span><span class="ot">;</span><span class="co"> </span><span class="st">""</span><span class="ot">;</span></span>
+<span id="cb3-14"><a href=""></a><span class="co">  </span><span class="ot">}</span></span>
+<span id="cb3-15"><a href=""></a><span class="ot">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="second-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="cell" data-fig-height="2" data-fig-width="5" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<svg width="480" height="192" viewbox="0.00 0.00 302.95 80.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 76)">
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-76 298.95,-76 298.95,4 -4,4"></polygon>
+<!-- Predictor 1 -->
+<g id="node1" class="node">
+<title>Predictor 1</title>
+<polygon fill="none" stroke="black" points="77.73,-36 0.09,-36 0.09,0 77.73,0 77.73,-36"></polygon>
+<text text-anchor="middle" x="38.91" y="-13.8" font-family="Times,serif" font-size="14.00">Predictor 1</text>
+</g>
+<g id="node4" class="node">
+<title></title>
+<ellipse fill="black" stroke="black" cx="152.73" cy="-18" rx="0" ry="0"></ellipse>
+</g>
+<!-- Predictor 1&#45;&gt; -->
+<g id="edge2" class="edge">
+<title>Predictor 1-&gt;</title>
+<path fill="none" stroke="black" d="M77.76,-18C109.19,-18 149.14,-18 151.61,-18"></path>
+</g>
+<!-- Predictor 2 -->
+<g id="node2" class="node">
+<title>Predictor 2</title>
+<polygon fill="none" stroke="black" points="191.54,-72 113.91,-72 113.91,-36 191.54,-36 191.54,-72"></polygon>
+<text text-anchor="middle" x="152.73" y="-49.8" font-family="Times,serif" font-size="14.00">Predictor 2</text>
+</g>
+<!-- Predictor 2&#45;&gt; -->
+<g id="edge1" class="edge">
+<title>Predictor 2-&gt;</title>
+<path fill="none" stroke="black" d="M152.73,-35.86C152.73,-33.39 152.73,-30.92 152.73,-28.44"></path>
+<polygon fill="black" stroke="black" points="156.23,-28.28 152.73,-18.28 149.23,-28.28 156.23,-28.28"></polygon>
+</g>
+<!-- Outcome -->
+<g id="node3" class="node">
+<title>Outcome</title>
+<polygon fill="none" stroke="black" points="295.11,-36 227.48,-36 227.48,0 295.11,0 295.11,-36"></polygon>
+<text text-anchor="middle" x="261.29" y="-13.8" font-family="Times,serif" font-size="14.00">Outcome</text>
+</g>
+<!-- &#45;&gt;Outcome -->
+<g id="edge3" class="edge">
+<title>-&gt;Outcome</title>
+<path fill="none" stroke="black" d="M153.8,-18C155.6,-18 188.39,-18 217.12,-18"></path>
+<polygon fill="black" stroke="black" points="217.45,-21.5 227.45,-18 217.45,-14.5 217.45,-21.5"></polygon>
+</g>
+</g>
+</svg>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>There are many more rules to make more complicated models, see for more details <a href="https://graphviz.org/doc/info/lang.html" class="uri">https://graphviz.org/doc/info/lang.html</a></p>
+</section>
+<section id="dotuml-extension-for-google-docs" class="slide level2">
+<h2>DotUML Extension for Google Docs</h2>
+<div class="quarto-layout-panel" data-layout="[1,1]">
+<div class="quarto-layout-row">
+<div id="first-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<p>This DOT language can easily be implemented with the DotUML extension in Google Docs.</p>
+<p>DotUML is developed by a company called BML Solutions but as far as I know it is a free plug-in (at least free of money).</p>
+<p>See <a href="https://dotuml.com" class="uri">https://dotuml.com</a> for more details.</p>
+</div>
+<div id="second-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="https://lh3.googleusercontent.com/-Z9ItvyBfmkU/Xrd4cCsLmlI/AAAAAAAABfI/8voEH5bxHYktwF6pM3onNwG2X9JZd9jWwCNcBGAsYHQ/s640-w640-h400/Capture%2Bd%25E2%2580%2599%25C3%25A9cran%2B-%2B2020-05-09%2B%25C3%25A0%2B21.38.49.png"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>After installed the extension, use GraphViz and remove the code corresponding to the default example.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="your-turn" class="slide level2" data-background="#43464B">
+<h2><i class="fa-solid fa-screwdriver-wrench" aria-label="screwdriver-wrench"></i>️ Your Turn!</h2>
+<p>In the research paper you have selected, <strong>draw the model(s) tested.</strong></p>
+<p>Remember, there is only 1 Outcome variable per model and it is not possible to draw two models with the same Outcome variable.</p>
+<p>Send me your figure by email at damien.dupre@dcu.ie <strong>before the next lecture.</strong></p>
+</section></section>
+<section>
+<section id="understanding-the-equation-used-to-test-hypotheses" class="title-slide slide level1 center">
+<h1>2. Understanding the Equation used to Test Hypotheses</h1>
+
+</section>
+<section id="a-basic-equation" class="slide level2">
+<h2>A Basic Equation</h2>
+<p>Let’s imagine the perfect scenario: <strong>your predictor Predictor variable explains perfectly the outcome variable</strong>.</p>
+<p>The corresponding equation is: <span class="math inline">\(Outcome = Predictor\)</span></p>
+<div class="quarto-layout-panel" data-layout="[1,1]">
+<div class="quarto-layout-row">
+<div id="first-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<div class="cell">
+<div class="cell-output-display">
+<div id="qbucpfcdvg" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#qbucpfcdvg table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#qbucpfcdvg thead, #qbucpfcdvg tbody, #qbucpfcdvg tfoot, #qbucpfcdvg tr, #qbucpfcdvg td, #qbucpfcdvg th {
+  border-style: none;
+}
+
+#qbucpfcdvg p {
+  margin: 0;
+  padding: 0;
+}
+
+#qbucpfcdvg .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#qbucpfcdvg .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#qbucpfcdvg .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#qbucpfcdvg .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#qbucpfcdvg .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#qbucpfcdvg .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#qbucpfcdvg .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#qbucpfcdvg .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#qbucpfcdvg .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#qbucpfcdvg .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#qbucpfcdvg .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#qbucpfcdvg .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#qbucpfcdvg .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#qbucpfcdvg .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#qbucpfcdvg .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#qbucpfcdvg .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#qbucpfcdvg .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#qbucpfcdvg .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#qbucpfcdvg .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qbucpfcdvg .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#qbucpfcdvg .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#qbucpfcdvg .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#qbucpfcdvg .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qbucpfcdvg .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#qbucpfcdvg .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#qbucpfcdvg .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#qbucpfcdvg .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qbucpfcdvg .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#qbucpfcdvg .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#qbucpfcdvg .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#qbucpfcdvg .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#qbucpfcdvg .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#qbucpfcdvg .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qbucpfcdvg .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#qbucpfcdvg .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qbucpfcdvg .gt_left {
+  text-align: left;
+}
+
+#qbucpfcdvg .gt_center {
+  text-align: center;
+}
+
+#qbucpfcdvg .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#qbucpfcdvg .gt_font_normal {
+  font-weight: normal;
+}
+
+#qbucpfcdvg .gt_font_bold {
+  font-weight: bold;
+}
+
+#qbucpfcdvg .gt_font_italic {
+  font-style: italic;
+}
+
+#qbucpfcdvg .gt_super {
+  font-size: 65%;
+}
+
+#qbucpfcdvg .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#qbucpfcdvg .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#qbucpfcdvg .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#qbucpfcdvg .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#qbucpfcdvg .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#qbucpfcdvg .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#qbucpfcdvg .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#qbucpfcdvg .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#qbucpfcdvg div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="Observation" class="gt_col_heading gt_columns_bottom_border gt_center" style="text-align: left;" data-quarto-table-cell-role="th" scope="col">Observation</th>
+<th id="Outcome" class="gt_col_heading gt_columns_bottom_border gt_center" style="text-align: left;" data-quarto-table-cell-role="th" scope="col">Outcome</th>
+<th id="Predictor" class="gt_col_heading gt_columns_bottom_border gt_center" style="text-align: left;" data-quarto-table-cell-role="th" scope="col">Predictor</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_center" style="text-align: left;" headers="Observation">a</td>
+<td class="gt_row gt_center" style="text-align: left;" headers="Outcome">10</td>
+<td class="gt_row gt_center" style="text-align: left;" headers="Predictor">10</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center gt_striped" style="text-align: left;" headers="Observation">b</td>
+<td class="gt_row gt_center gt_striped" style="text-align: left;" headers="Outcome">9</td>
+<td class="gt_row gt_center gt_striped" style="text-align: left;" headers="Predictor">9</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" style="text-align: left;" headers="Observation">c</td>
+<td class="gt_row gt_center" style="text-align: left;" headers="Outcome">8</td>
+<td class="gt_row gt_center" style="text-align: left;" headers="Predictor">8</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center gt_striped" style="text-align: left;" headers="Observation">d</td>
+<td class="gt_row gt_center gt_striped" style="text-align: left;" headers="Outcome">7</td>
+<td class="gt_row gt_center gt_striped" style="text-align: left;" headers="Predictor">7</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" style="text-align: left;" headers="Observation">e</td>
+<td class="gt_row gt_center" style="text-align: left;" headers="Outcome">6</td>
+<td class="gt_row gt_center" style="text-align: left;" headers="Predictor">6</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center gt_striped" style="text-align: left;" headers="Observation">f</td>
+<td class="gt_row gt_center gt_striped" style="text-align: left;" headers="Outcome">5</td>
+<td class="gt_row gt_center gt_striped" style="text-align: left;" headers="Predictor">5</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" style="text-align: left;" headers="Observation">g</td>
+<td class="gt_row gt_center" style="text-align: left;" headers="Outcome">4</td>
+<td class="gt_row gt_center" style="text-align: left;" headers="Predictor">4</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center gt_striped" style="text-align: left;" headers="Observation">h</td>
+<td class="gt_row gt_center gt_striped" style="text-align: left;" headers="Outcome">3</td>
+<td class="gt_row gt_center gt_striped" style="text-align: left;" headers="Predictor">3</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" style="text-align: left;" headers="Observation">i</td>
+<td class="gt_row gt_center" style="text-align: left;" headers="Outcome">2</td>
+<td class="gt_row gt_center" style="text-align: left;" headers="Predictor">2</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center gt_striped" style="text-align: left;" headers="Observation">j</td>
+<td class="gt_row gt_center gt_striped" style="text-align: left;" headers="Outcome">1</td>
+<td class="gt_row gt_center gt_striped" style="text-align: left;" headers="Predictor">1</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" style="text-align: left;" headers="Observation">k</td>
+<td class="gt_row gt_center" style="text-align: left;" headers="Outcome">0</td>
+<td class="gt_row gt_center" style="text-align: left;" headers="Predictor">0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<div id="second-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="lecture_2_files/figure-revealjs/unnamed-chunk-21-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="a-basic-equation-1" class="slide level2">
+<h2>A Basic Equation</h2>
+<p>In the equation <span class="math inline">\(Outcome = Predictor\)</span>, <strong>three coefficients are hidden</strong> because they are unused:</p>
+<ul>
+<li>the <strong>intercept coefficient</strong> <span class="math inline">\(b_{0}\)</span> (i.e., the value of the Outcome when the Predictor = 0) which is 0 in our case</li>
+<li>the <strong>estimate coefficient</strong> <span class="math inline">\(b_{1}\)</span> (i.e., how much the Outcome increases when the Predictor increases by 1) which is 1 in our case</li>
+<li>the <strong>error coefficient</strong> <span class="math inline">\(e\)</span> (i.e., how far from the prediction line the values of the Outcome are) which is 0 in our case</li>
+</ul>
+</section>
+<section id="a-basic-equation-2" class="slide level2">
+<h2>A Basic Equation</h2>
+<p>So in general, the relation between a predictor and an outcome can be written as: <span class="math display">\[Outcome = b_{0} + b_{1}\,Predictor + e\]</span></p>
+<p>which is in our case:</p>
+<p><span class="math display">\[Outcome = 0 + 1 * Predictor + 0\]</span></p>
+</section>
+<section id="a-basic-equation-3" class="slide level2">
+<h2>A Basic Equation</h2>
+<div class="quarto-layout-panel" data-layout="[1,1]">
+<div class="quarto-layout-row">
+<div id="first-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<p>The equation <span class="math inline">\(Outcome = b_{0} + b_{1}\,Predictor + e\)</span> is the same as the good old <span class="math inline">\(y = ax + b\)</span> (here ordered as <span class="math inline">\(y = b + ax\)</span>) where <span class="math inline">\(b_{0}\)</span> is <span class="math inline">\(b\)</span> and <span class="math inline">\(b_{1}\)</span> is <span class="math inline">\(a\)</span>.</p>
+<p>It is very important to know that under <strong>EVERY</strong> statistical test, a similar equation is used (t-test, ANOVA, Chi-square are all linear regressions).</p>
+</div>
+<div id="second-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item" id="htmlwidget-91d32615aa8930c7c4b2" style="width:528px;height:528px;"></div>
+<script type="application/json" data-for="htmlwidget-91d32615aa8930c7c4b2">{"x":{"data":[{"x":[0,1,2,3,4,5,6,7,8,9,10],"y":[0,1,2,3,4,5,6,7,8,9,10],"text":["Predictor:  0<br />Outcome:  0","Predictor:  1<br />Outcome:  1","Predictor:  2<br />Outcome:  2","Predictor:  3<br />Outcome:  3","Predictor:  4<br />Outcome:  4","Predictor:  5<br />Outcome:  5","Predictor:  6<br />Outcome:  6","Predictor:  7<br />Outcome:  7","Predictor:  8<br />Outcome:  8","Predictor:  9<br />Outcome:  9","Predictor: 10<br />Outcome: 10"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,0,0,1)","opacity":1,"size":18.897637795275593,"symbol":"circle","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)"}},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0,0.12658227848101267,0.25316455696202533,0.379746835443038,0.50632911392405067,0.63291139240506333,0.759493670886076,0.88607594936708867,1.0126582278481013,1.139240506329114,1.2658227848101267,1.3924050632911393,1.518987341772152,1.6455696202531647,1.7721518987341773,1.89873417721519,2.0253164556962027,2.1518987341772151,2.278481012658228,2.4050632911392409,2.5316455696202533,2.6582278481012658,2.7848101265822787,2.9113924050632916,3.037974683544304,3.1645569620253164,3.2911392405063293,3.4177215189873422,3.5443037974683547,3.6708860759493671,3.79746835443038,3.9240506329113929,4.0506329113924053,4.1772151898734178,4.3037974683544302,4.4303797468354436,4.556962025316456,4.6835443037974684,4.8101265822784818,4.9367088607594942,5.0632911392405067,5.1898734177215191,5.3164556962025316,5.4430379746835449,5.5696202531645573,5.6962025316455698,5.8227848101265831,5.9493670886075956,6.075949367088608,6.2025316455696204,6.3291139240506329,6.4556962025316462,6.5822784810126587,6.7088607594936711,6.8354430379746844,6.9620253164556969,7.0886075949367093,7.2151898734177218,7.3417721518987342,7.4683544303797476,7.59493670886076,7.7215189873417724,7.8481012658227858,7.9746835443037982,8.1012658227848107,8.227848101265824,8.3544303797468356,8.4810126582278489,8.6075949367088604,8.7341772151898738,8.8607594936708871,8.9873417721518987,9.113924050632912,9.2405063291139253,9.3670886075949369,9.4936708860759502,9.6202531645569636,9.7468354430379751,9.8734177215189884,10],"y":[1.6653345369377346e-15,0.12658227848101428,0.25316455696202689,0.37974683544303955,0.50632911392405211,0.63291139240506478,0.75949367088607744,0.88607594936709,1.0126582278481027,1.1392405063291153,1.265822784810128,1.3924050632911404,1.5189873417721531,1.6455696202531658,1.7721518987341784,1.8987341772151911,2.0253164556962036,2.151898734177216,2.2784810126582289,2.4050632911392418,2.5316455696202542,2.6582278481012667,2.7848101265822796,2.9113924050632924,3.0379746835443044,3.1645569620253169,3.2911392405063298,3.4177215189873427,3.5443037974683551,3.6708860759493676,3.7974683544303804,3.9240506329113933,4.0506329113924053,4.1772151898734178,4.3037974683544302,4.4303797468354436,4.556962025316456,4.6835443037974684,4.8101265822784818,4.9367088607594942,5.0632911392405067,5.1898734177215191,5.3164556962025316,5.4430379746835449,5.5696202531645573,5.6962025316455698,5.8227848101265831,5.9493670886075956,6.075949367088608,6.2025316455696204,6.3291139240506329,6.4556962025316453,6.5822784810126578,6.7088607594936702,6.8354430379746836,6.962025316455696,7.0886075949367084,7.2151898734177209,7.3417721518987333,7.4683544303797467,7.5949367088607591,7.7215189873417716,7.8481012658227849,7.9746835443037973,8.1012658227848089,8.2278481012658222,8.3544303797468338,8.4810126582278471,8.6075949367088587,8.734177215189872,8.8607594936708853,8.9873417721518969,9.1139240506329102,9.2405063291139236,9.3670886075949351,9.4936708860759484,9.6202531645569618,9.7468354430379733,9.8734177215189867,9.9999999999999982],"text":["Predictor:  0.0000000<br />Outcome: 1.665335e-15","Predictor:  0.1265823<br />Outcome: 1.265823e-01","Predictor:  0.2531646<br />Outcome: 2.531646e-01","Predictor:  0.3797468<br />Outcome: 3.797468e-01","Predictor:  0.5063291<br />Outcome: 5.063291e-01","Predictor:  0.6329114<br />Outcome: 6.329114e-01","Predictor:  0.7594937<br />Outcome: 7.594937e-01","Predictor:  0.8860759<br />Outcome: 8.860759e-01","Predictor:  1.0126582<br />Outcome: 1.012658e+00","Predictor:  1.1392405<br />Outcome: 1.139241e+00","Predictor:  1.2658228<br />Outcome: 1.265823e+00","Predictor:  1.3924051<br />Outcome: 1.392405e+00","Predictor:  1.5189873<br />Outcome: 1.518987e+00","Predictor:  1.6455696<br />Outcome: 1.645570e+00","Predictor:  1.7721519<br />Outcome: 1.772152e+00","Predictor:  1.8987342<br />Outcome: 1.898734e+00","Predictor:  2.0253165<br />Outcome: 2.025316e+00","Predictor:  2.1518987<br />Outcome: 2.151899e+00","Predictor:  2.2784810<br />Outcome: 2.278481e+00","Predictor:  2.4050633<br />Outcome: 2.405063e+00","Predictor:  2.5316456<br />Outcome: 2.531646e+00","Predictor:  2.6582278<br />Outcome: 2.658228e+00","Predictor:  2.7848101<br />Outcome: 2.784810e+00","Predictor:  2.9113924<br />Outcome: 2.911392e+00","Predictor:  3.0379747<br />Outcome: 3.037975e+00","Predictor:  3.1645570<br />Outcome: 3.164557e+00","Predictor:  3.2911392<br />Outcome: 3.291139e+00","Predictor:  3.4177215<br />Outcome: 3.417722e+00","Predictor:  3.5443038<br />Outcome: 3.544304e+00","Predictor:  3.6708861<br />Outcome: 3.670886e+00","Predictor:  3.7974684<br />Outcome: 3.797468e+00","Predictor:  3.9240506<br />Outcome: 3.924051e+00","Predictor:  4.0506329<br />Outcome: 4.050633e+00","Predictor:  4.1772152<br />Outcome: 4.177215e+00","Predictor:  4.3037975<br />Outcome: 4.303797e+00","Predictor:  4.4303797<br />Outcome: 4.430380e+00","Predictor:  4.5569620<br />Outcome: 4.556962e+00","Predictor:  4.6835443<br />Outcome: 4.683544e+00","Predictor:  4.8101266<br />Outcome: 4.810127e+00","Predictor:  4.9367089<br />Outcome: 4.936709e+00","Predictor:  5.0632911<br />Outcome: 5.063291e+00","Predictor:  5.1898734<br />Outcome: 5.189873e+00","Predictor:  5.3164557<br />Outcome: 5.316456e+00","Predictor:  5.4430380<br />Outcome: 5.443038e+00","Predictor:  5.5696203<br />Outcome: 5.569620e+00","Predictor:  5.6962025<br />Outcome: 5.696203e+00","Predictor:  5.8227848<br />Outcome: 5.822785e+00","Predictor:  5.9493671<br />Outcome: 5.949367e+00","Predictor:  6.0759494<br />Outcome: 6.075949e+00","Predictor:  6.2025316<br />Outcome: 6.202532e+00","Predictor:  6.3291139<br />Outcome: 6.329114e+00","Predictor:  6.4556962<br />Outcome: 6.455696e+00","Predictor:  6.5822785<br />Outcome: 6.582278e+00","Predictor:  6.7088608<br />Outcome: 6.708861e+00","Predictor:  6.8354430<br />Outcome: 6.835443e+00","Predictor:  6.9620253<br />Outcome: 6.962025e+00","Predictor:  7.0886076<br />Outcome: 7.088608e+00","Predictor:  7.2151899<br />Outcome: 7.215190e+00","Predictor:  7.3417722<br />Outcome: 7.341772e+00","Predictor:  7.4683544<br />Outcome: 7.468354e+00","Predictor:  7.5949367<br />Outcome: 7.594937e+00","Predictor:  7.7215190<br />Outcome: 7.721519e+00","Predictor:  7.8481013<br />Outcome: 7.848101e+00","Predictor:  7.9746835<br />Outcome: 7.974684e+00","Predictor:  8.1012658<br />Outcome: 8.101266e+00","Predictor:  8.2278481<br />Outcome: 8.227848e+00","Predictor:  8.3544304<br />Outcome: 8.354430e+00","Predictor:  8.4810127<br />Outcome: 8.481013e+00","Predictor:  8.6075949<br />Outcome: 8.607595e+00","Predictor:  8.7341772<br />Outcome: 8.734177e+00","Predictor:  8.8607595<br />Outcome: 8.860759e+00","Predictor:  8.9873418<br />Outcome: 8.987342e+00","Predictor:  9.1139241<br />Outcome: 9.113924e+00","Predictor:  9.2405063<br />Outcome: 9.240506e+00","Predictor:  9.3670886<br />Outcome: 9.367089e+00","Predictor:  9.4936709<br />Outcome: 9.493671e+00","Predictor:  9.6202532<br />Outcome: 9.620253e+00","Predictor:  9.7468354<br />Outcome: 9.746835e+00","Predictor:  9.8734177<br />Outcome: 9.873418e+00","Predictor: 10.0000000<br />Outcome: 1.000000e+01"],"type":"scatter","mode":"lines","name":"fitted values","line":{"width":3.7795275590551185,"color":"rgba(51,102,255,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0,0.12658227848101267,0.25316455696202533,0.379746835443038,0.50632911392405067,0.63291139240506333,0.759493670886076,0.88607594936708867,1.0126582278481013,1.139240506329114,1.2658227848101267,1.3924050632911393,1.518987341772152,1.6455696202531647,1.7721518987341773,1.89873417721519,2.0253164556962027,2.1518987341772151,2.278481012658228,2.4050632911392409,2.5316455696202533,2.6582278481012658,2.7848101265822787,2.9113924050632916,3.037974683544304,3.1645569620253164,3.2911392405063293,3.4177215189873422,3.5443037974683547,3.6708860759493671,3.79746835443038,3.9240506329113929,4.0506329113924053,4.1772151898734178,4.3037974683544302,4.4303797468354436,4.556962025316456,4.6835443037974684,4.8101265822784818,4.9367088607594942,5.0632911392405067,5.1898734177215191,5.3164556962025316,5.4430379746835449,5.5696202531645573,5.6962025316455698,5.8227848101265831,5.9493670886075956,6.075949367088608,6.2025316455696204,6.3291139240506329,6.4556962025316462,6.5822784810126587,6.7088607594936711,6.8354430379746844,6.9620253164556969,7.0886075949367093,7.2151898734177218,7.3417721518987342,7.4683544303797476,7.59493670886076,7.7215189873417724,7.8481012658227858,7.9746835443037982,8.1012658227848107,8.227848101265824,8.3544303797468356,8.4810126582278489,8.6075949367088604,8.7341772151898738,8.8607594936708871,8.9873417721518987,9.113924050632912,9.2405063291139253,9.3670886075949369,9.4936708860759502,9.6202531645569636,9.7468354430379751,9.8734177215189884,10,10,10,9.8734177215189884,9.7468354430379751,9.6202531645569636,9.4936708860759502,9.3670886075949369,9.2405063291139253,9.113924050632912,8.9873417721518987,8.8607594936708871,8.7341772151898738,8.6075949367088604,8.4810126582278489,8.3544303797468356,8.227848101265824,8.1012658227848107,7.9746835443037982,7.8481012658227858,7.7215189873417724,7.59493670886076,7.4683544303797476,7.3417721518987342,7.2151898734177218,7.0886075949367093,6.9620253164556969,6.8354430379746844,6.7088607594936711,6.5822784810126587,6.4556962025316462,6.3291139240506329,6.2025316455696204,6.075949367088608,5.9493670886075956,5.8227848101265831,5.6962025316455698,5.5696202531645573,5.4430379746835449,5.3164556962025316,5.1898734177215191,5.0632911392405067,4.9367088607594942,4.8101265822784818,4.6835443037974684,4.556962025316456,4.4303797468354436,4.3037974683544302,4.1772151898734178,4.0506329113924053,3.9240506329113929,3.79746835443038,3.6708860759493671,3.5443037974683547,3.4177215189873422,3.2911392405063293,3.1645569620253164,3.037974683544304,2.9113924050632916,2.7848101265822787,2.6582278481012658,2.5316455696202533,2.4050632911392409,2.278481012658228,2.1518987341772151,2.0253164556962027,1.89873417721519,1.7721518987341773,1.6455696202531647,1.518987341772152,1.3924050632911393,1.2658227848101267,1.139240506329114,1.0126582278481013,0.88607594936708867,0.759493670886076,0.63291139240506333,0.50632911392405067,0.379746835443038,0.25316455696202533,0.12658227848101267,0,0],"y":[5.3649934509609278e-16,0.12658227848101317,0.25316455696202578,0.3797468354430385,0.50632911392405111,0.63291139240506378,0.75949367088607644,0.886075949367089,1.0126582278481018,1.1392405063291144,1.2658227848101271,1.3924050632911396,1.5189873417721522,1.6455696202531649,1.7721518987341776,1.8987341772151902,2.0253164556962027,2.1518987341772151,2.278481012658228,2.4050632911392409,2.5316455696202533,2.6582278481012658,2.7848101265822787,2.9113924050632916,3.0379746835443036,3.164556962025316,3.2911392405063289,3.4177215189873418,3.5443037974683547,3.6708860759493671,3.79746835443038,3.9240506329113929,4.0506329113924044,4.1772151898734169,4.3037974683544293,4.4303797468354427,4.5569620253164551,4.6835443037974676,4.8101265822784809,4.9367088607594933,5.0632911392405058,5.1898734177215182,5.3164556962025307,5.443037974683544,5.5696202531645564,5.6962025316455689,5.8227848101265822,5.9493670886075947,6.0759493670886071,6.2025316455696196,6.329113924050632,6.4556962025316444,6.5822784810126569,6.7088607594936693,6.8354430379746827,6.9620253164556951,7.0886075949367076,7.21518987341772,7.3417721518987324,7.4683544303797458,7.5949367088607582,7.7215189873417707,7.848101265822784,7.9746835443037964,8.1012658227848089,8.2278481012658222,8.3544303797468338,8.4810126582278453,8.6075949367088569,8.7341772151898702,8.8607594936708836,8.9873417721518951,9.1139240506329084,9.2405063291139218,9.3670886075949333,9.4936708860759467,9.62025316455696,9.7468354430379716,9.8734177215189849,9.9999999999999964,9.9999999999999964,10,9.8734177215189884,9.7468354430379751,9.6202531645569636,9.4936708860759502,9.3670886075949369,9.2405063291139253,9.113924050632912,8.9873417721518987,8.8607594936708871,8.7341772151898738,8.6075949367088604,8.4810126582278489,8.3544303797468338,8.2278481012658222,8.1012658227848089,7.9746835443037982,7.8481012658227858,7.7215189873417724,7.59493670886076,7.4683544303797476,7.3417721518987342,7.2151898734177218,7.0886075949367093,6.9620253164556969,6.8354430379746844,6.7088607594936711,6.5822784810126587,6.4556962025316462,6.3291139240506338,6.2025316455696213,6.0759493670886089,5.9493670886075964,5.822784810126584,5.6962025316455707,5.5696202531645582,5.4430379746835458,5.3164556962025324,5.18987341772152,5.0632911392405076,4.9367088607594951,4.8101265822784827,4.6835443037974693,4.5569620253164569,4.4303797468354444,4.3037974683544311,4.1772151898734187,4.0506329113924062,3.9240506329113938,3.7974683544303809,3.670886075949368,3.5443037974683556,3.4177215189873436,3.2911392405063307,3.1645569620253178,3.0379746835443053,2.9113924050632933,2.7848101265822804,2.6582278481012676,2.5316455696202551,2.4050632911392427,2.2784810126582298,2.1518987341772169,2.0253164556962044,1.898734177215192,1.7721518987341793,1.6455696202531667,1.518987341772154,1.3924050632911413,1.2658227848101289,1.1392405063291162,1.0126582278481036,0.886075949367091,0.75949367088607844,0.63291139240506578,0.50632911392405311,0.37974683544304061,0.253164556962028,0.12658227848101539,2.7941697287793764e-15,5.3649934509609278e-16],"text":["Predictor:  0.0000000<br />Outcome: 1.665335e-15","Predictor:  0.1265823<br />Outcome: 1.265823e-01","Predictor:  0.2531646<br />Outcome: 2.531646e-01","Predictor:  0.3797468<br />Outcome: 3.797468e-01","Predictor:  0.5063291<br />Outcome: 5.063291e-01","Predictor:  0.6329114<br />Outcome: 6.329114e-01","Predictor:  0.7594937<br />Outcome: 7.594937e-01","Predictor:  0.8860759<br />Outcome: 8.860759e-01","Predictor:  1.0126582<br />Outcome: 1.012658e+00","Predictor:  1.1392405<br />Outcome: 1.139241e+00","Predictor:  1.2658228<br />Outcome: 1.265823e+00","Predictor:  1.3924051<br />Outcome: 1.392405e+00","Predictor:  1.5189873<br />Outcome: 1.518987e+00","Predictor:  1.6455696<br />Outcome: 1.645570e+00","Predictor:  1.7721519<br />Outcome: 1.772152e+00","Predictor:  1.8987342<br />Outcome: 1.898734e+00","Predictor:  2.0253165<br />Outcome: 2.025316e+00","Predictor:  2.1518987<br />Outcome: 2.151899e+00","Predictor:  2.2784810<br />Outcome: 2.278481e+00","Predictor:  2.4050633<br />Outcome: 2.405063e+00","Predictor:  2.5316456<br />Outcome: 2.531646e+00","Predictor:  2.6582278<br />Outcome: 2.658228e+00","Predictor:  2.7848101<br />Outcome: 2.784810e+00","Predictor:  2.9113924<br />Outcome: 2.911392e+00","Predictor:  3.0379747<br />Outcome: 3.037975e+00","Predictor:  3.1645570<br />Outcome: 3.164557e+00","Predictor:  3.2911392<br />Outcome: 3.291139e+00","Predictor:  3.4177215<br />Outcome: 3.417722e+00","Predictor:  3.5443038<br />Outcome: 3.544304e+00","Predictor:  3.6708861<br />Outcome: 3.670886e+00","Predictor:  3.7974684<br />Outcome: 3.797468e+00","Predictor:  3.9240506<br />Outcome: 3.924051e+00","Predictor:  4.0506329<br />Outcome: 4.050633e+00","Predictor:  4.1772152<br />Outcome: 4.177215e+00","Predictor:  4.3037975<br />Outcome: 4.303797e+00","Predictor:  4.4303797<br />Outcome: 4.430380e+00","Predictor:  4.5569620<br />Outcome: 4.556962e+00","Predictor:  4.6835443<br />Outcome: 4.683544e+00","Predictor:  4.8101266<br />Outcome: 4.810127e+00","Predictor:  4.9367089<br />Outcome: 4.936709e+00","Predictor:  5.0632911<br />Outcome: 5.063291e+00","Predictor:  5.1898734<br />Outcome: 5.189873e+00","Predictor:  5.3164557<br />Outcome: 5.316456e+00","Predictor:  5.4430380<br />Outcome: 5.443038e+00","Predictor:  5.5696203<br />Outcome: 5.569620e+00","Predictor:  5.6962025<br />Outcome: 5.696203e+00","Predictor:  5.8227848<br />Outcome: 5.822785e+00","Predictor:  5.9493671<br />Outcome: 5.949367e+00","Predictor:  6.0759494<br />Outcome: 6.075949e+00","Predictor:  6.2025316<br />Outcome: 6.202532e+00","Predictor:  6.3291139<br />Outcome: 6.329114e+00","Predictor:  6.4556962<br />Outcome: 6.455696e+00","Predictor:  6.5822785<br />Outcome: 6.582278e+00","Predictor:  6.7088608<br />Outcome: 6.708861e+00","Predictor:  6.8354430<br />Outcome: 6.835443e+00","Predictor:  6.9620253<br />Outcome: 6.962025e+00","Predictor:  7.0886076<br />Outcome: 7.088608e+00","Predictor:  7.2151899<br />Outcome: 7.215190e+00","Predictor:  7.3417722<br />Outcome: 7.341772e+00","Predictor:  7.4683544<br />Outcome: 7.468354e+00","Predictor:  7.5949367<br />Outcome: 7.594937e+00","Predictor:  7.7215190<br />Outcome: 7.721519e+00","Predictor:  7.8481013<br />Outcome: 7.848101e+00","Predictor:  7.9746835<br />Outcome: 7.974684e+00","Predictor:  8.1012658<br />Outcome: 8.101266e+00","Predictor:  8.2278481<br />Outcome: 8.227848e+00","Predictor:  8.3544304<br />Outcome: 8.354430e+00","Predictor:  8.4810127<br />Outcome: 8.481013e+00","Predictor:  8.6075949<br />Outcome: 8.607595e+00","Predictor:  8.7341772<br />Outcome: 8.734177e+00","Predictor:  8.8607595<br />Outcome: 8.860759e+00","Predictor:  8.9873418<br />Outcome: 8.987342e+00","Predictor:  9.1139241<br />Outcome: 9.113924e+00","Predictor:  9.2405063<br />Outcome: 9.240506e+00","Predictor:  9.3670886<br />Outcome: 9.367089e+00","Predictor:  9.4936709<br />Outcome: 9.493671e+00","Predictor:  9.6202532<br />Outcome: 9.620253e+00","Predictor:  9.7468354<br />Outcome: 9.746835e+00","Predictor:  9.8734177<br />Outcome: 9.873418e+00","Predictor: 10.0000000<br />Outcome: 1.000000e+01","Predictor: 10.0000000<br />Outcome: 1.000000e+01","Predictor: 10.0000000<br />Outcome: 1.000000e+01","Predictor:  9.8734177<br />Outcome: 9.873418e+00","Predictor:  9.7468354<br />Outcome: 9.746835e+00","Predictor:  9.6202532<br />Outcome: 9.620253e+00","Predictor:  9.4936709<br />Outcome: 9.493671e+00","Predictor:  9.3670886<br />Outcome: 9.367089e+00","Predictor:  9.2405063<br />Outcome: 9.240506e+00","Predictor:  9.1139241<br />Outcome: 9.113924e+00","Predictor:  8.9873418<br />Outcome: 8.987342e+00","Predictor:  8.8607595<br />Outcome: 8.860759e+00","Predictor:  8.7341772<br />Outcome: 8.734177e+00","Predictor:  8.6075949<br />Outcome: 8.607595e+00","Predictor:  8.4810127<br />Outcome: 8.481013e+00","Predictor:  8.3544304<br />Outcome: 8.354430e+00","Predictor:  8.2278481<br />Outcome: 8.227848e+00","Predictor:  8.1012658<br />Outcome: 8.101266e+00","Predictor:  7.9746835<br />Outcome: 7.974684e+00","Predictor:  7.8481013<br />Outcome: 7.848101e+00","Predictor:  7.7215190<br />Outcome: 7.721519e+00","Predictor:  7.5949367<br />Outcome: 7.594937e+00","Predictor:  7.4683544<br />Outcome: 7.468354e+00","Predictor:  7.3417722<br />Outcome: 7.341772e+00","Predictor:  7.2151899<br />Outcome: 7.215190e+00","Predictor:  7.0886076<br />Outcome: 7.088608e+00","Predictor:  6.9620253<br />Outcome: 6.962025e+00","Predictor:  6.8354430<br />Outcome: 6.835443e+00","Predictor:  6.7088608<br />Outcome: 6.708861e+00","Predictor:  6.5822785<br />Outcome: 6.582278e+00","Predictor:  6.4556962<br />Outcome: 6.455696e+00","Predictor:  6.3291139<br />Outcome: 6.329114e+00","Predictor:  6.2025316<br />Outcome: 6.202532e+00","Predictor:  6.0759494<br />Outcome: 6.075949e+00","Predictor:  5.9493671<br />Outcome: 5.949367e+00","Predictor:  5.8227848<br />Outcome: 5.822785e+00","Predictor:  5.6962025<br />Outcome: 5.696203e+00","Predictor:  5.5696203<br />Outcome: 5.569620e+00","Predictor:  5.4430380<br />Outcome: 5.443038e+00","Predictor:  5.3164557<br />Outcome: 5.316456e+00","Predictor:  5.1898734<br />Outcome: 5.189873e+00","Predictor:  5.0632911<br />Outcome: 5.063291e+00","Predictor:  4.9367089<br />Outcome: 4.936709e+00","Predictor:  4.8101266<br />Outcome: 4.810127e+00","Predictor:  4.6835443<br />Outcome: 4.683544e+00","Predictor:  4.5569620<br />Outcome: 4.556962e+00","Predictor:  4.4303797<br />Outcome: 4.430380e+00","Predictor:  4.3037975<br />Outcome: 4.303797e+00","Predictor:  4.1772152<br />Outcome: 4.177215e+00","Predictor:  4.0506329<br />Outcome: 4.050633e+00","Predictor:  3.9240506<br />Outcome: 3.924051e+00","Predictor:  3.7974684<br />Outcome: 3.797468e+00","Predictor:  3.6708861<br />Outcome: 3.670886e+00","Predictor:  3.5443038<br />Outcome: 3.544304e+00","Predictor:  3.4177215<br />Outcome: 3.417722e+00","Predictor:  3.2911392<br />Outcome: 3.291139e+00","Predictor:  3.1645570<br />Outcome: 3.164557e+00","Predictor:  3.0379747<br />Outcome: 3.037975e+00","Predictor:  2.9113924<br />Outcome: 2.911392e+00","Predictor:  2.7848101<br />Outcome: 2.784810e+00","Predictor:  2.6582278<br />Outcome: 2.658228e+00","Predictor:  2.5316456<br />Outcome: 2.531646e+00","Predictor:  2.4050633<br />Outcome: 2.405063e+00","Predictor:  2.2784810<br />Outcome: 2.278481e+00","Predictor:  2.1518987<br />Outcome: 2.151899e+00","Predictor:  2.0253165<br />Outcome: 2.025316e+00","Predictor:  1.8987342<br />Outcome: 1.898734e+00","Predictor:  1.7721519<br />Outcome: 1.772152e+00","Predictor:  1.6455696<br />Outcome: 1.645570e+00","Predictor:  1.5189873<br />Outcome: 1.518987e+00","Predictor:  1.3924051<br />Outcome: 1.392405e+00","Predictor:  1.2658228<br />Outcome: 1.265823e+00","Predictor:  1.1392405<br />Outcome: 1.139241e+00","Predictor:  1.0126582<br />Outcome: 1.012658e+00","Predictor:  0.8860759<br />Outcome: 8.860759e-01","Predictor:  0.7594937<br />Outcome: 7.594937e-01","Predictor:  0.6329114<br />Outcome: 6.329114e-01","Predictor:  0.5063291<br />Outcome: 5.063291e-01","Predictor:  0.3797468<br />Outcome: 3.797468e-01","Predictor:  0.2531646<br />Outcome: 2.531646e-01","Predictor:  0.1265823<br />Outcome: 1.265823e-01","Predictor:  0.0000000<br />Outcome: 1.665335e-15","Predictor:  0.0000000<br />Outcome: 1.665335e-15"],"type":"scatter","mode":"lines","line":{"width":3.7795275590551185,"color":"transparent","dash":"solid"},"fill":"toself","fillcolor":"rgba(153,153,153,0.4)","hoveron":"points","hoverinfo":"x+y","showlegend":false,"xaxis":"x","yaxis":"y","frame":null},{"x":[-0.5,10.5],"y":[0,0],"text":"yintercept: 0","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)","dash":"dot"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[5],"y":[0.20000000000000001],"text":"Intercept b₀","hovertext":"x: 5<br />y: 0.2","textfont":{"size":14.66456692913386,"color":"rgba(0,0,0,1)"},"type":"scatter","mode":"text","hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[5,6],"y":[5,5],"text":"x: 5<br />xend: 6<br />y: 5<br />yend: 5","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(255,0,0,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[6,6],"y":[5,6],"text":"x: 6<br />xend: 6<br />y: 5<br />yend: 6","type":"scatter","mode":"lines","line":{"width":1.8897637795275593,"color":"rgba(255,0,0,1)","dash":"solid"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[7.5],"y":[5.5],"text":"Estimate b₁","hovertext":"x: 7.5<br />y: 5.5","textfont":{"size":14.66456692913386,"color":"rgba(0,0,0,1)"},"type":"scatter","mode":"text","hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":23.305936073059364,"r":7.3059360730593621,"b":37.260273972602747,"l":37.260273972602747},"plot_bgcolor":"rgba(255,255,255,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-0.5,10.5],"tickmode":"array","ticktext":["1","2","3","4","5","6","7","8","9","10"],"tickvals":[1,2,3,4,5,6,6.9999999999999991,8,9,10],"categoryorder":"array","categoryarray":["1","2","3","4","5","6","7","8","9","10"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Predictor","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-0.5,10.5],"tickmode":"array","ticktext":["1","2","3","4","5","6","7","8","9","10"],"tickvals":[1,2,3,4,5,6,6.9999999999999991,8,9,10],"categoryorder":"array","categoryarray":["1","2","3","4","5","6","7","8","9","10"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Outcome","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":"transparent","line":{"color":"rgba(51,51,51,1)","width":0.66417600664176002,"linetype":"solid"},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"1119b6c9e7e6d":{"x":{},"y":{},"type":"scatter"},"1119b197e5dd1":{"x":{},"y":{}},"1119b3741516a":{"yintercept":{}},"1119b2148227d":{"x":{},"y":{}},"1119b6d04d9d":{"x":{},"xend":{},"y":{},"yend":{}},"1119b559781e9":{"x":{},"xend":{},"y":{},"yend":{}},"1119b4dd213e5":{"x":{},"y":{}}},"cur_data":"1119b6c9e7e6d","visdat":{"1119b6c9e7e6d":["function (y) ","x"],"1119b197e5dd1":["function (y) ","x"],"1119b3741516a":["function (y) ","x"],"1119b2148227d":["function (y) ","x"],"1119b6d04d9d":["function (y) ","x"],"1119b559781e9":["function (y) ","x"],"1119b4dd213e5":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="relationship-between-variables" class="slide level2">
+<h2>Relationship between Variables</h2>
+<p>Relationship between a <span class="math inline">\(Predictor\)</span> and an <span class="math inline">\(Outcome\)</span> variable (stated in a main effect hypothesis or in an interaction effect hypothesis) is analysed in terms of:</p>
+<p><strong>“How many units of the Outcome variable increases/decreases/changes when the Predictor increases by 1 unit?”</strong></p>
+<p>For example:</p>
+<blockquote>
+<p>How much Job Satisfaction increases when the Salary increases by €1?</p>
+</blockquote>
+</section>
+<section id="relationship-between-variables-1" class="slide level2">
+<h2>Relationship between Variables</h2>
+<p>The value of how much of the Outcome variable changes:</p>
+<ul>
+<li>Is called the <strong>Estimate</strong> (also called Unstandardised Estimate)</li>
+<li>Uses the letter <span class="math inline">\(b\)</span> in equations (e.g., <span class="math inline">\(b_1\)</span>, <span class="math inline">\(b_2\)</span>, <span class="math inline">\(b_3\)</span>, …)</li>
+</ul>
+<p>For example:</p>
+<blockquote>
+<p>If Job Satisfaction increases by 0.1 on a scale from 0 to 5 when the Salary increases by €1, then <em>b</em> associated to Salary is 0.1</p>
+</blockquote>
+</section>
+<section id="significance-of-relationships" class="slide level2">
+<h2>Significance of Relationships</h2>
+<p>To evaluate if the strength of the relationship <span class="math inline">\(b\)</span> between a Predictor and an Outcome variable is significant, an equation is statistically tested using all the predictors related to the same Outcome.</p>
+<p>The basic equation of a statistical model is:</p>
+<p><span class="math display">\[Outcome = b_0 + b_n \,Predictors + Error\]</span></p>
+<p>where the <span class="math inline">\(Predictors\)</span> includes all the <span class="math inline">\(n\)</span> variables used as predictor in formulated hypotheses using this specific <span class="math inline">\(Outcome\)</span> variable and being associated to a specific <span class="math inline">\(b\)</span> estimate.</p>
+</section>
+<section id="significance-of-relationships-1" class="slide level2">
+<h2>Significance of Relationships</h2>
+<p><span class="math display">\[Outcome = b_0 + b_n \,Predictors + Error\]</span></p>
+<p>This expresses the idea that:</p>
+<ul>
+<li>The Outcome can be described by one or multiple predictors.</li>
+<li>The remaining part of the Outcome’s variability that is not explained by the predictors is call the Error.</li>
+</ul>
+</section>
+<section id="equations-variables-and-effect-types" class="slide level2">
+<h2>Equations, Variables and Effect Types</h2>
+<p>Except in special cases:</p>
+<ul>
+<li>An Outcome (or Dependent Variable) has to be Continuous</li>
+<li>A Predictor can be Continuous or Categorical</li>
+</ul>
+<p>Example:</p>
+<p><span class="math display">\[Job\,Satisfaction = b_{0} + b_{1}\,Salary + b_{2}\,Origin + e\]</span></p>
+<p>In this equation, <span class="math inline">\(Salary\)</span> is continuous with a main effect on <span class="math inline">\(Job\,Satisfaction\)</span> (<span class="math inline">\(b_{1}\)</span>) and <span class="math inline">\(Origin\)</span> is categorical with a main effect on <span class="math inline">\(Job\,Satisfaction\)</span> (<span class="math inline">\(b_{2}\)</span>)</p>
+</section>
+<section id="equations-variables-and-effect-types-1" class="slide level2">
+<h2>Equations, Variables and Effect Types</h2>
+<p>An interaction effect is represented by multiplying the 2 predictors involved:</p>
+<p><span class="math display">\[Job\,Satisfaction = b_{0} + b_{1}\,Salary + b_{2}\,Origin + b_{3}\,Salary*Origin + e\]</span></p>
+<p>In this equation, <span class="math inline">\(Salary\)</span> is continuous with a main effect on <span class="math inline">\(Job\,Satisfaction\)</span> (<span class="math inline">\(b_{1}\)</span>), <span class="math inline">\(Origin\)</span> is categorical with a main effect on <span class="math inline">\(Job\,Satisfaction\)</span> (<span class="math inline">\(b_{2}\)</span>), and <span class="math inline">\(Salary\)</span> with <span class="math inline">\(Origin\)</span> have an interaction effect on <span class="math inline">\(Job\,Satisfaction\)</span> (<span class="math inline">\(b_{3}\)</span>)</p>
+</section>
+<section id="relevance-of-the-intercept" class="slide level2">
+<h2>Relevance of the Intercept</h2>
+<p>To test hypotheses, only the <span class="math inline">\(b\)</span> values associated to Predictors / Independent Variables are important.</p>
+<p>The intercept is always included in an equation but its result is useless for hypothesis testing.</p>
+<p>Let’s see why the intercept is always included but discarded most of the time.</p>
+</section>
+<section id="relevance-of-the-intercept-1" class="slide level2">
+<h2>Relevance of the Intercept</h2>
+<p>Imagine we want to test the relationship between GDP per Capita and Life Expectancy of countries in the world. Let’s compare a model without and a model with intercept:</p>
+<ul>
+<li><p>Without intercept: <span class="math inline">\(Life\,Expectancy = b_{1}\,GDP\,per\,Capita + e\)</span></p></li>
+<li><p>With intercept: <span class="math inline">\(Life\,Expectancy = b_{0} + b_{1}\,GDP\,per\,Capita + e\)</span></p></li>
+</ul>
+</section>
+<section id="relevance-of-the-intercept-2" class="slide level2">
+<h2>Relevance of the Intercept</h2>
+
+<img data-src="lecture_2_files/figure-revealjs/unnamed-chunk-23-1.png" width="960" class="r-stretch"><p>If the intercept is not included, the intercept is zero and can lead to estimation errors</p>
+</section>
+<section id="notes-on-the-equations" class="slide level2">
+<h2>Notes on the Equations</h2>
+<h4 id="greek-or-latin-alphabet">1. Greek or Latin alphabet?</h4>
+<p><span class="math display">\[Y = \beta_{0} + \beta_{1}\,X_{1} + \epsilon \; vs. \; Y = b_{0} + b_{1}\,X_{1} + e\]</span></p>
+<h4 id="subscript-i-or-not">2. Subscript <span class="math inline">\(i\)</span> or not?</h4>
+<p><span class="math display">\[Y = b_{0} + b_{1}\,X_{1} + e \; vs. \; Y_{i} = b_{0} + b_{1}\,X_{1_{i}} + e_{i}\]</span></p>
+<h4 id="which-sign-between-estimates-and-predictors">3. Which sign between estimates and predictors?</h4>
+<p><span class="math display">\[Y = b_{0} + b_{1}.X_{1} + b_{2}*X_{2} + b_{3}\,X_{3} + e\]</span></p>
+<h4 id="hat-on-y-or-not-capital-letter-or-not">4. Hat on <span class="math inline">\(Y\)</span> or not? Capital letter or not?</h4>
+<p><span class="math display">\[\hat{Y}\; or\; \hat{y}\; vs.\; Y\; or\; y\]</span></p>
+</section>
+<section id="representing-an-equation" class="slide level2">
+<h2>Representing an Equation</h2>
+<div class="quarto-layout-panel" data-layout="[0.4,0.6]">
+<div class="quarto-layout-row">
+<div id="first-column" class="quarto-layout-cell" style="flex-basis: 40.0%;justify-content: flex-start;">
+<p>Exactly like with models, there are different ways to communicate an equation in Academic research outputs.</p>
+<p><br></p>
+<p>The least sophisticated approach would be to type the equation in Microsoft Words and to apply some italics and subscript style a posteriori.</p>
+</div>
+<div id="second-column" class="quarto-layout-cell" style="flex-basis: 60.0%;justify-content: flex-start;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="https://i.ytimg.com/vi/SRGaW3maK38/maxresdefault.jpg"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="smaller">
+<p>While there is nothing wrong with this approach, note that Microsoft Words has a tool to insert equations (Insert -&gt; Equations), then a GUI will help you to design special characters in equations.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="representing-an-equation-1" class="slide level2">
+<h2>Representing an Equation</h2>
+<p>Now there is a better way, which is also more complicated.</p>
+<p><span class="math inline">\(\LaTeX\)</span> is used for entire manuscripts with all the specific design requirements imposed by ths style of academic journals. LaTex is the hell and we will see a specific approach to avoid it but the LaTex style for equations is the best.</p>
+</section>
+<section id="representing-an-equation-2" class="slide level2">
+<h2>Representing an Equation</h2>
+<p>Here are the most basic rules:</p>
+<ul>
+<li>Starts with <code>\begin{equation}</code> and ends with <code>\end{equation}</code></li>
+<li>Space between words can be added with <code>\,</code></li>
+<li>To subscript a number use the underscore sign <code>_</code></li>
+</ul>
+<p>For example:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource latex number-lines code-with-copy"><code class="sourceCode latex"><span id="cb4-1"><a href=""></a><span class="kw">\begin</span>{<span class="ex">equation</span>}</span>
+<span id="cb4-2"><a href=""></a><span class="ss">  Outcome = b_0 + b_1</span><span class="sc">\,</span><span class="ss">Predictor 1 + b_2</span><span class="sc">\,</span><span class="ss">Predictor 2 + e</span></span>
+<span id="cb4-3"><a href=""></a><span class="kw">\end</span>{<span class="ex">equation</span>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Is translated as:</p>
+<p><span class="math display">\[Outcome = b_0 + b_1\,Predictor 1 + b_2\,Predictor 2 +e\]</span></p>
+</section>
+<section id="auto-latex-equations-for-google-docs" class="slide level2 smaller">
+<h2>Auto-LaTeX Equations for Google Docs</h2>
+<p>Another fantastic extension is available for Google Docs called Auto-LaTeX Equations</p>
+<p>Instead of using <code>\begin{equation}</code> and <code>\end{equation}</code>, use <code>$$</code> to open and close the equation</p>
+<p>Then, click on “Render Equation”, for the equation to be transformed in LaTex style</p>
+<p>Note that some website can help to create the latex code, see for example <a href="https://latex.codecogs.com/eqneditor/editor.php" class="uri">https://latex.codecogs.com/eqneditor/editor.php</a></p>
+
+<img data-src="https://mathpix.com/images/google-docs-power-point2.webp" class="r-stretch"></section>
+<section id="your-turn-1" class="slide level2" data-background="#43464B">
+<h2><i class="fa-solid fa-screwdriver-wrench" aria-label="screwdriver-wrench"></i>️ Your Turn!</h2>
+<p>I will show you some results. Using these results:</p>
+<ol type="1">
+<li>Identify the role of variables,</li>
+<li>Formulate the tested hypotheses</li>
+<li>Draw the corresponding model, and</li>
+<li>Translate it in an equation</li>
+</ol>
+</section>
+<section id="example-1" class="slide level2" data-background="#43464B">
+<h2>Example 1</h2>
+<p><strong>Using the results obtained, identify the role of variables, formulate the tested hypotheses, draw the corresponding model, and translate it in an equation</strong></p>
+<div class="quarto-layout-panel" data-layout="[1,1]">
+<div class="quarto-layout-row">
+<div id="first-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p>Data</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="rtgvkjqhes" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#rtgvkjqhes table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#rtgvkjqhes thead, #rtgvkjqhes tbody, #rtgvkjqhes tfoot, #rtgvkjqhes tr, #rtgvkjqhes td, #rtgvkjqhes th {
+  border-style: none;
+}
+
+#rtgvkjqhes p {
+  margin: 0;
+  padding: 0;
+}
+
+#rtgvkjqhes .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#rtgvkjqhes .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#rtgvkjqhes .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#rtgvkjqhes .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#rtgvkjqhes .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#rtgvkjqhes .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rtgvkjqhes .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#rtgvkjqhes .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#rtgvkjqhes .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#rtgvkjqhes .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#rtgvkjqhes .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#rtgvkjqhes .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#rtgvkjqhes .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#rtgvkjqhes .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#rtgvkjqhes .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#rtgvkjqhes .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#rtgvkjqhes .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#rtgvkjqhes .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#rtgvkjqhes .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rtgvkjqhes .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#rtgvkjqhes .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#rtgvkjqhes .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#rtgvkjqhes .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rtgvkjqhes .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#rtgvkjqhes .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#rtgvkjqhes .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rtgvkjqhes .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rtgvkjqhes .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#rtgvkjqhes .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rtgvkjqhes .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#rtgvkjqhes .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rtgvkjqhes .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#rtgvkjqhes .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rtgvkjqhes .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#rtgvkjqhes .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rtgvkjqhes .gt_left {
+  text-align: left;
+}
+
+#rtgvkjqhes .gt_center {
+  text-align: center;
+}
+
+#rtgvkjqhes .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#rtgvkjqhes .gt_font_normal {
+  font-weight: normal;
+}
+
+#rtgvkjqhes .gt_font_bold {
+  font-weight: bold;
+}
+
+#rtgvkjqhes .gt_font_italic {
+  font-style: italic;
+}
+
+#rtgvkjqhes .gt_super {
+  font-size: 65%;
+}
+
+#rtgvkjqhes .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#rtgvkjqhes .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#rtgvkjqhes .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#rtgvkjqhes .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#rtgvkjqhes .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#rtgvkjqhes .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#rtgvkjqhes .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#rtgvkjqhes .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#rtgvkjqhes div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="Participant" class="gt_col_heading gt_columns_bottom_border gt_left" style="text-align: left;" data-quarto-table-cell-role="th" scope="col">Participant</th>
+<th id="Sleep-Time" class="gt_col_heading gt_columns_bottom_border gt_right" style="text-align: left;" data-quarto-table-cell-role="th" scope="col">Sleep Time</th>
+<th id="Exam-Results" class="gt_col_heading gt_columns_bottom_border gt_right" style="text-align: left;" data-quarto-table-cell-role="th" scope="col">Exam Results</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" style="text-align: left;" headers="Participant">ppt1</td>
+<td class="gt_row gt_right" style="text-align: left;" headers="Sleep Time">9.0</td>
+<td class="gt_row gt_right" style="text-align: left;" headers="Exam Results">89</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" style="text-align: left;" headers="Participant">ppt2</td>
+<td class="gt_row gt_right" style="text-align: left;" headers="Sleep Time">5.0</td>
+<td class="gt_row gt_right" style="text-align: left;" headers="Exam Results">64</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" style="text-align: left;" headers="Participant">ppt3</td>
+<td class="gt_row gt_right" style="text-align: left;" headers="Sleep Time">8.5</td>
+<td class="gt_row gt_right" style="text-align: left;" headers="Exam Results">71</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" style="text-align: left;" headers="Participant">ppt4</td>
+<td class="gt_row gt_right" style="text-align: left;" headers="Sleep Time">7.0</td>
+<td class="gt_row gt_right" style="text-align: left;" headers="Exam Results">77</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" style="text-align: left;" headers="Participant">ppt5</td>
+<td class="gt_row gt_right" style="text-align: left;" headers="Sleep Time">6.5</td>
+<td class="gt_row gt_right" style="text-align: left;" headers="Exam Results">78</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" style="text-align: left;" headers="Participant">ppt6</td>
+<td class="gt_row gt_right" style="text-align: left;" headers="Sleep Time">5.5</td>
+<td class="gt_row gt_right" style="text-align: left;" headers="Exam Results">69</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<div id="second-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<p>Visualisation</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="lecture_2_files/figure-revealjs/unnamed-chunk-27-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div class="countdown" id="timer_2bb8294a" data-warn-when="60" data-update-every="1" tabindex="0" style="right:1;bottom:0;">
+<div class="countdown-controls"><button class="countdown-bump-down">−</button><button class="countdown-bump-up">+</button></div>
+<code class="countdown-time"><span class="countdown-digits minutes">05</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div>
+</div>
+</div>
+</section>
+<section id="example-1-1" class="slide level2" data-background="#43464B">
+<h2>Example 1</h2>
+<p>Variables:</p>
+<ul>
+<li>Outcome = Exam Results (from 0 to 100)</li>
+<li>Predictor = Sleep Time (from 0 to Inf.)</li>
+</ul>
+<p>Alternative Hypothesis:</p>
+<ul>
+<li><span class="math inline">\(H_a\)</span>: <strong>Exam Results</strong> <em>increases</em> when <strong>Sleep Time</strong> increases</li>
+<li>(<span class="math inline">\(H_0\)</span>: <strong>Exam Results</strong> <em>stay the same</em> when <strong>Sleep Time</strong> increases)</li>
+</ul>
+</section>
+<section id="example-1-2" class="slide level2" data-background="#43464B">
+<h2>Example 1</h2>
+<p>Model:</p>
+<div class="cell" data-fig-height="2" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<svg width="960" height="192" viewbox="0.00 0.00 231.53 44.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 40)">
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-40 227.53,-40 227.53,4 -4,4"></polygon>
+<!-- Sleep Time -->
+<g id="node1" class="node">
+<title>Sleep Time</title>
+<polygon fill="none" stroke="black" points="80.22,-36 -0.07,-36 -0.07,0 80.22,0 80.22,-36"></polygon>
+<text text-anchor="middle" x="40.07" y="-13.8" font-family="Times,serif" font-size="14.00">Sleep Time</text>
+</g>
+<!-- Exam Results -->
+<g id="node2" class="node">
+<title>Exam Results</title>
+<polygon fill="none" stroke="black" points="223.72,-36 129.96,-36 129.96,0 223.72,0 223.72,-36"></polygon>
+<text text-anchor="middle" x="176.84" y="-13.8" font-family="Times,serif" font-size="14.00">Exam Results</text>
+</g>
+<!-- Sleep Time&#45;&gt;Exam Results -->
+<g id="edge1" class="edge">
+<title>Sleep Time-&gt;Exam Results</title>
+<path fill="none" stroke="black" d="M80.42,-18C92.8,-18 106.72,-18 120.02,-18"></path>
+<polygon fill="black" stroke="black" points="120.03,-21.5 130.03,-18 120.03,-14.5 120.03,-21.5"></polygon>
+<text text-anchor="middle" x="105.15" y="-22.2" font-family="Times,serif" font-size="14.00">b1</text>
+</g>
+</g>
+</svg>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>Equation:</p>
+<p><span class="math display">\[Exam\,Results = b_{0} + b_{1}\,Sleep\,Time + e\]</span></p>
+</section>
+<section id="example-2" class="slide level2" data-background="#43464B">
+<h2>Example 2</h2>
+<p><strong>Using the results obtained, identify the role of variables, formulate the tested hypotheses, draw the corresponding model, and translate it in an equation</strong></p>
+<div class="quarto-layout-panel" data-layout="[1,1]">
+<div class="quarto-layout-row">
+<div id="first-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p>Data</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="hmcacrtwbx" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#hmcacrtwbx table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#hmcacrtwbx thead, #hmcacrtwbx tbody, #hmcacrtwbx tfoot, #hmcacrtwbx tr, #hmcacrtwbx td, #hmcacrtwbx th {
+  border-style: none;
+}
+
+#hmcacrtwbx p {
+  margin: 0;
+  padding: 0;
+}
+
+#hmcacrtwbx .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#hmcacrtwbx .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#hmcacrtwbx .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#hmcacrtwbx .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#hmcacrtwbx .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#hmcacrtwbx .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#hmcacrtwbx .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#hmcacrtwbx .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#hmcacrtwbx .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#hmcacrtwbx .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#hmcacrtwbx .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#hmcacrtwbx .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#hmcacrtwbx .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#hmcacrtwbx .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#hmcacrtwbx .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#hmcacrtwbx .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#hmcacrtwbx .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#hmcacrtwbx .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#hmcacrtwbx .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#hmcacrtwbx .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#hmcacrtwbx .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#hmcacrtwbx .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#hmcacrtwbx .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#hmcacrtwbx .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#hmcacrtwbx .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#hmcacrtwbx .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#hmcacrtwbx .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#hmcacrtwbx .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#hmcacrtwbx .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#hmcacrtwbx .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#hmcacrtwbx .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#hmcacrtwbx .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#hmcacrtwbx .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#hmcacrtwbx .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#hmcacrtwbx .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#hmcacrtwbx .gt_left {
+  text-align: left;
+}
+
+#hmcacrtwbx .gt_center {
+  text-align: center;
+}
+
+#hmcacrtwbx .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#hmcacrtwbx .gt_font_normal {
+  font-weight: normal;
+}
+
+#hmcacrtwbx .gt_font_bold {
+  font-weight: bold;
+}
+
+#hmcacrtwbx .gt_font_italic {
+  font-style: italic;
+}
+
+#hmcacrtwbx .gt_super {
+  font-size: 65%;
+}
+
+#hmcacrtwbx .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#hmcacrtwbx .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#hmcacrtwbx .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#hmcacrtwbx .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#hmcacrtwbx .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#hmcacrtwbx .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#hmcacrtwbx .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#hmcacrtwbx .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#hmcacrtwbx div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="Participant" class="gt_col_heading gt_columns_bottom_border gt_left" style="text-align: left;" data-quarto-table-cell-role="th" scope="col">Participant</th>
+<th id="Sleep-Time" class="gt_col_heading gt_columns_bottom_border gt_right" style="text-align: left;" data-quarto-table-cell-role="th" scope="col">Sleep Time</th>
+<th id="Exam-Results" class="gt_col_heading gt_columns_bottom_border gt_right" style="text-align: left;" data-quarto-table-cell-role="th" scope="col">Exam Results</th>
+<th id="Age_c" class="gt_col_heading gt_columns_bottom_border gt_left" style="text-align: left;" data-quarto-table-cell-role="th" scope="col">Age_c</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" style="text-align: left;" headers="Participant">ppt1</td>
+<td class="gt_row gt_right" style="text-align: left;" headers="Sleep Time">9.0</td>
+<td class="gt_row gt_right" style="text-align: left;" headers="Exam Results">89</td>
+<td class="gt_row gt_left" style="text-align: left;" headers="Age_c">experienced</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" style="text-align: left;" headers="Participant">ppt2</td>
+<td class="gt_row gt_right" style="text-align: left;" headers="Sleep Time">5.0</td>
+<td class="gt_row gt_right" style="text-align: left;" headers="Exam Results">64</td>
+<td class="gt_row gt_left" style="text-align: left;" headers="Age_c">experienced</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" style="text-align: left;" headers="Participant">ppt3</td>
+<td class="gt_row gt_right" style="text-align: left;" headers="Sleep Time">8.5</td>
+<td class="gt_row gt_right" style="text-align: left;" headers="Exam Results">71</td>
+<td class="gt_row gt_left" style="text-align: left;" headers="Age_c">experienced</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" style="text-align: left;" headers="Participant">ppt4</td>
+<td class="gt_row gt_right" style="text-align: left;" headers="Sleep Time">7.0</td>
+<td class="gt_row gt_right" style="text-align: left;" headers="Exam Results">77</td>
+<td class="gt_row gt_left" style="text-align: left;" headers="Age_c">beginner</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" style="text-align: left;" headers="Participant">ppt5</td>
+<td class="gt_row gt_right" style="text-align: left;" headers="Sleep Time">6.5</td>
+<td class="gt_row gt_right" style="text-align: left;" headers="Exam Results">52</td>
+<td class="gt_row gt_left" style="text-align: left;" headers="Age_c">beginner</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" style="text-align: left;" headers="Participant">ppt6</td>
+<td class="gt_row gt_right" style="text-align: left;" headers="Sleep Time">5.5</td>
+<td class="gt_row gt_right" style="text-align: left;" headers="Exam Results">69</td>
+<td class="gt_row gt_left" style="text-align: left;" headers="Age_c">beginner</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<div id="second-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<p>Visualisation</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="lecture_2_files/figure-revealjs/unnamed-chunk-31-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div class="countdown" id="timer_c92ab895" data-warn-when="60" data-update-every="1" tabindex="0" style="right:1;bottom:0;">
+<div class="countdown-controls"><button class="countdown-bump-down">−</button><button class="countdown-bump-up">+</button></div>
+<code class="countdown-time"><span class="countdown-digits minutes">05</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div>
+</div>
+</div>
+</section>
+<section id="example-2-1" class="slide level2" data-background="#43464B">
+<h2>Example 2</h2>
+<p>Variables:</p>
+<ul>
+<li>Outcome = Exam Results (from 0 to 100)</li>
+<li>Predictor 1 = Sleep Time (from 0 to Inf.)</li>
+<li>Predictor 2 = Age (experienced vs beginner)</li>
+</ul>
+<p>Alternative Hypotheses:</p>
+<ul>
+<li><span class="math inline">\(H_{a_{1}}\)</span>: <strong>Exam Results</strong> <em>increases</em> when <strong>Sleep Time</strong> increases</li>
+<li><span class="math inline">\(H_{a_{2}}\)</span>: <strong>Exam Results</strong> of <strong>experienced students</strong> are <em>higher</em> than for <strong>beginner students</strong></li>
+<li><span class="math inline">\(H_{a_{3}}\)</span>: The effect of <strong>Sleep Time</strong> on <strong>Exam Results</strong> is <em>higher</em> for <strong>experienced</strong> than for <strong>beginner students</strong></li>
+</ul>
+</section>
+<section id="example-2-2" class="slide level2" data-background="#43464B">
+<h2>Example 2</h2>
+<p>Model:</p>
+<div class="quarto-layout-panel" data-layout="[1,1]">
+<div class="quarto-layout-row">
+<div id="first-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<p>Classic Representation</p>
+<div class="cell" data-fig-height="2" data-fig-width="5" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<svg width="480" height="192" viewbox="0.00 0.00 307.53 80.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 76)">
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-76 303.53,-76 303.53,4 -4,4"></polygon>
+<!-- Sleep Time -->
+<g id="node1" class="node">
+<title>Sleep Time</title>
+<polygon fill="none" stroke="black" points="80.22,-36 -0.07,-36 -0.07,0 80.22,0 80.22,-36"></polygon>
+<text text-anchor="middle" x="40.07" y="-13.8" font-family="Times,serif" font-size="14.00">Sleep Time</text>
+</g>
+<g id="node4" class="node">
+<title></title>
+<ellipse fill="black" stroke="black" cx="143.15" cy="-18" rx="0" ry="0"></ellipse>
+</g>
+<!-- Sleep Time&#45;&gt; -->
+<g id="edge2" class="edge">
+<title>Sleep Time-&gt;</title>
+<path fill="none" stroke="black" d="M80.15,-18C107.71,-18 140.06,-18 142.05,-18"></path>
+</g>
+<!-- Exam Results -->
+<g id="node2" class="node">
+<title>Exam Results</title>
+<polygon fill="none" stroke="black" points="299.72,-36 205.96,-36 205.96,0 299.72,0 299.72,-36"></polygon>
+<text text-anchor="middle" x="252.84" y="-13.8" font-family="Times,serif" font-size="14.00">Exam Results</text>
+</g>
+<!-- Age -->
+<g id="node3" class="node">
+<title>Age</title>
+<polygon fill="none" stroke="black" points="170.15,-72 116.15,-72 116.15,-36 170.15,-36 170.15,-72"></polygon>
+<text text-anchor="middle" x="143.15" y="-49.8" font-family="Times,serif" font-size="14.00">Age</text>
+</g>
+<!-- Age&#45;&gt; -->
+<g id="edge1" class="edge">
+<title>Age-&gt;</title>
+<path fill="none" stroke="black" d="M143.15,-35.86C143.15,-33.39 143.15,-30.92 143.15,-28.44"></path>
+<polygon fill="black" stroke="black" points="146.65,-28.28 143.15,-18.28 139.65,-28.28 146.65,-28.28"></polygon>
+</g>
+<!-- &#45;&gt;Exam Results -->
+<g id="edge3" class="edge">
+<title>-&gt;Exam Results</title>
+<path fill="none" stroke="black" d="M144.23,-18C145.79,-18 170.58,-18 195.97,-18"></path>
+<polygon fill="black" stroke="black" points="196.06,-21.5 206.06,-18 196.06,-14.5 196.06,-21.5"></polygon>
+</g>
+</g>
+</svg>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</div>
+<div id="second-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<p>Effects Correspondence</p>
+<div class="cell" data-fig-height="2" data-fig-width="5" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<svg width="480" height="192" viewbox="0.00 0.00 268.86 152.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 148)">
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-148 264.86,-148 264.86,4 -4,4"></polygon>
+<!-- Sleep Time -->
+<g id="node1" class="node">
+<title>Sleep Time</title>
+<polygon fill="none" stroke="black" points="98.88,-144 18.59,-144 18.59,-108 98.88,-108 98.88,-144"></polygon>
+<text text-anchor="middle" x="58.74" y="-121.8" font-family="Times,serif" font-size="14.00">Sleep Time</text>
+</g>
+<!-- Exam Results -->
+<g id="node2" class="node">
+<title>Exam Results</title>
+<polygon fill="none" stroke="black" points="261.05,-90 167.28,-90 167.28,-54 261.05,-54 261.05,-90"></polygon>
+<text text-anchor="middle" x="214.16" y="-67.8" font-family="Times,serif" font-size="14.00">Exam Results</text>
+</g>
+<!-- Sleep Time&#45;&gt;Exam Results -->
+<g id="edge2" class="edge">
+<title>Sleep Time-&gt;Exam Results</title>
+<path fill="none" stroke="black" d="M98.85,-112.23C116.7,-105.95 138.15,-98.4 157.63,-91.54"></path>
+<polygon fill="black" stroke="black" points="159.04,-94.76 167.31,-88.14 156.72,-88.16 159.04,-94.76"></polygon>
+<text text-anchor="middle" x="142.47" y="-103.2" font-family="Times,serif" font-size="14.00">b1</text>
+</g>
+<!-- Age -->
+<g id="node3" class="node">
+<title>Age</title>
+<polygon fill="none" stroke="black" points="85.74,-90 31.74,-90 31.74,-54 85.74,-54 85.74,-90"></polygon>
+<text text-anchor="middle" x="58.74" y="-67.8" font-family="Times,serif" font-size="14.00">Age</text>
+</g>
+<!-- Age&#45;&gt;Exam Results -->
+<g id="edge1" class="edge">
+<title>Age-&gt;Exam Results</title>
+<path fill="none" stroke="black" d="M85.76,-72C105.29,-72 132.74,-72 157.17,-72"></path>
+<polygon fill="black" stroke="black" points="157.42,-75.5 167.42,-72 157.42,-68.5 157.42,-75.5"></polygon>
+<text text-anchor="middle" x="142.47" y="-76.2" font-family="Times,serif" font-size="14.00">b2</text>
+</g>
+<!-- Sleep Time * Age -->
+<g id="node4" class="node">
+<title>Sleep Time * Age</title>
+<polygon fill="none" stroke="black" points="117.71,-36 -0.24,-36 -0.24,0 117.71,0 117.71,-36"></polygon>
+<text text-anchor="middle" x="58.74" y="-13.8" font-family="Times,serif" font-size="14.00">Sleep Time * Age</text>
+</g>
+<!-- Sleep Time * Age&#45;&gt;Exam Results -->
+<g id="edge3" class="edge">
+<title>Sleep Time * Age-&gt;Exam Results</title>
+<path fill="none" stroke="black" d="M111.25,-36.13C126.18,-41.38 142.53,-47.14 157.69,-52.48"></path>
+<polygon fill="black" stroke="black" points="156.85,-55.89 167.45,-55.91 159.18,-49.29 156.85,-55.89"></polygon>
+<text text-anchor="middle" x="142.47" y="-53.2" font-family="Times,serif" font-size="14.00">b3</text>
+</g>
+</g>
+</svg>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>Equation:</p>
+<p><span class="math display">\[Exam\,Results = b_{0} + b_{1}\,Sleep\,Time + b_{2}\,Age + b_{3}\,Sleep\,Time*Age + e\]</span></p>
+</section>
+<section id="your-turn-2" class="slide level2" data-background="#43464B">
+<h2><i class="fa-solid fa-screwdriver-wrench" aria-label="screwdriver-wrench"></i>️ Your Turn!</h2>
+<p>In the research paper you have selected, <strong>write the equation(s) corresponding to the model(s)</strong></p>
+<p>Send me your equation(s) by email at damien.dupre@dcu.ie <strong>before the next lecture</strong></p>
+</section></section>
+<section>
+<section id="conclusion" class="title-slide slide level1 center">
+<h1>Conclusion</h1>
+
+</section>
+<section id="follow-the-steps" class="slide level2 smaller">
+<h2>Follow the Steps</h2>
+<h4 id="variables-1">Variables</h4>
+<ul>
+<li>Identify the role and type of each of your variables</li>
+</ul>
+<h4 id="hypotheses">Hypotheses</h4>
+<ul>
+<li>Formulate your alternative hypotheses by using the proposed templates</li>
+<li>Any other formulation, even if it make sense, is not good practice (e.g.&nbsp;using the terms “has an impact”, “is related to”, “influences”, …)</li>
+<li>An interaction hypothesis requires the formulation of the main effect hypothesis of each predictor involved</li>
+</ul>
+<h4 id="model">Model</h4>
+<ul>
+<li>A model should represent all your hypotheses and only your hypotheses</li>
+<li>Draw only model per Outcome variable (except is doing SEM analyses)</li>
+<li>Use the same names or acronyms as your hypotheses</li>
+</ul>
+<h4 id="equation">Equation</h4>
+<ul>
+<li>Formulate your equation(s) in every paper that you want to submit (if reviewers want to remove it, they will tell you)</li>
+</ul>
+</section>
+<section id="section" class="slide level2" data-background="#43464B">
+<h2></h2>
+<p><br></p>
+<div class="center">
+<p><strong>Thanks for your attention</strong></p>
+<p><strong>and don”t hesitate to ask if you have any questions!</strong></p>
+<p><img data-src="https://damien-dupre.github.io/assets/404.gif" style="border-radius:10%;;width:50.0%"></p>
+</div>
+<div class="quarto-layout-panel" data-layout="[0.47, 0.53]">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 47.0%;justify-content: flex-start;">
+<p><a href="https://github.com/damien-dupre"><i class="fa-brands fa-github" aria-label="github"></i> <span class="citation" data-cites="damien-dupre">@damien-dupre</span></a><br>
+<a href="https://www.linkedin.com/in/damien-dupre/"><i class="fa-brands fa-linkedin" aria-label="linkedin"></i> <span class="citation" data-cites="damien-dupre">@damien-dupre</span></a></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 53.0%;justify-content: flex-start;">
+<p><a href="https://damien-dupre.github.io"><i class="fa-solid fa-globe" aria-label="globe"></i> https://damien-dupre.github.io</a><br>
+<a href="mailto:damien.dupre@dcu.ie"><i class="fa-solid fa-paper-plane" aria-label="paper-plane"></i> damien.dupre@dcu.ie</a></p>
+</div>
+</div>
+</div>
+
+</section></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="lecture_2_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="lecture_2_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="lecture_2_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="lecture_2_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="lecture_2_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="lecture_2_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="lecture_2_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="lecture_2_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="lecture_2_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="lecture_2_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>
