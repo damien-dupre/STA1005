@@ -133,7 +133,7 @@ Distinguish square and circles
 
 Example:
 
-- $Salary$ is directly measured (in $, €, or £) so it"s a square.
+- $Salary$ is directly measured (in $, €, or £) so it's a square.
 - $Job\,Satisfaction$ is a latent variable with several questions so it's a circle.
 
 Items used for latent variables can be omitted in a model, variables are the most important.
@@ -225,8 +225,7 @@ digraph {
   "Predictor 1 X Predictor 2" -> "Outcome"
 }
 ```
-:::
-::::
+
 
 This model tests three hypotheses: 2 main effects and 1 interaction effect
 
@@ -601,7 +600,7 @@ See <https://dotuml.com> for more details.
 ::: {#second-column}
 
 ```{r}
-include_graphics("https://lh3.googleusercontent.com/-Z9ItvyBfmkU/Xrd4cCsLmlI/AAAAAAAABfI/8voEH5bxHYktwF6pM3onNwG2X9JZd9jWwCNcBGAsYHQ/s640-w640-h400/Capture%2Bd%25E2%2580%2599%25C3%25A9cran%2B-%2B2020-05-09%2B%25C3%25A0%2B21.38.49.png")
+include_graphics("https://dotuml.com/img/googledocs.200.png")
 ```
 
 After installed the extension, use GraphViz and remove the code corresponding to the default example.
