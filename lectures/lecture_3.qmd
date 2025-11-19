@@ -16,7 +16,6 @@ knitr:
 ---
 
 ```{r}
-library(anicon)
 library(countdown)
 library(fontawesome)
 library(kableExtra)

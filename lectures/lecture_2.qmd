@@ -225,7 +225,8 @@ digraph {
   "Predictor 1 X Predictor 2" -> "Outcome"
 }
 ```
-
+:::
+::::
 
 This model tests three hypotheses: 2 main effects and 1 interaction effect
 
@@ -692,24 +693,21 @@ It is very important to know that under **EVERY** statistical test, a similar eq
 
 ::: {#second-column}
 ```{r}
-#| fig.width: 5.5
-#| fig.height: 5.5
-#| fig.align: "center"
+#| fig.height: 10
 
-plot0 <- data.frame(Predictor = 0:10, Outcome = 0:10) |>
+data.frame(Predictor = 0:10, Outcome = 0:10) |>
   ggplot(aes(Predictor, Outcome)) +
   geom_point(color = "black", size = 5) +
   geom_smooth(method = "lm") +
   geom_hline(yintercept = 0, color = "black", size = 0.5, linetype = "dotted") +
-  annotate("text", x = 5, y = 0.2, label = "Intercept b\u2080") +
+  annotate("text", x = 5, y = 0.2, label = "Intercept b0", size = 12) +
   annotate("segment", x = 5, xend = 6, y = 5, yend = 5, color = "red") +
   annotate("segment", x = 6, xend = 6, y = 5, yend = 6, color = "red") +
-  annotate("text", x = 7.5, y = 5.5, label = "Estimate b\u2081") +
+  annotate("text", x = 7.5, y = 5.5, label = "Estimate b1", size = 12) +
   scale_x_continuous(breaks = seq(0:10)) +
   scale_y_continuous(breaks = seq(0:10)) +
-  theme_bw()
-
-plotly::ggplotly(plot0)
+  theme_bw() +
+  theme(text = element_text(size = 20))
 ```
 :::
 ::::
