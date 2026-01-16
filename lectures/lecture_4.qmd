@@ -189,6 +189,10 @@ The line which obtains the lowest error, has the smallest residuals. This line i
 
 One common way to do this in statistics to use the "Mean-Square Error" (aka $MSE$) or the "Root-Mean-Square Error" (aka $RMSE$). We compute the difference between actual and predicted values, square them, sum them and divide them by $n$ observations (and the take the square root of them for the $RMSE$). 
 
+$$MSE = \frac{\sum_{i=1}^{N}(y\,predicted_{i} - y\,actual_{i})^{2}}{N}$$ 
+
+$$RMSE = \sqrt{\frac{\sum_{i=1}^{N}(y\,predicted_{i} - y\,actual_{i})^{2}}{N}}$$
+
 ## The (Root-)Mean-Square Error
 
 ```{r}
@@ -216,8 +220,6 @@ distance_residual <- organisation_beta |>
 
 plot_residual / distance_residual
 ```
-
-$$MSE = \frac{\sum_{i=1}^{N}(y\,predicted_{i} - y\,actual_{i})^{2}}{N}\;RMSE = \sqrt{\frac{\sum_{i=1}^{N}(y\,predicted_{i} - y\,actual_{i})^{2}}{N}}$$
 
 These calculations have lots of appealing mathematical properties, which we are not going to talk about here. You will just have to take my word for it!
 
@@ -598,6 +600,8 @@ include_img("jamovi_lm_int.png")
 
 5. In **Model Builder** option: 
   - Select both $salary$ and $perf$ to bring them in the covariates at once and to obtain a third term called $salary*perf$
+  
+# Live Demo {background="#43464B"}
 
 ## Communicate Results {.smaller background="#43464B"}
 
@@ -666,9 +670,10 @@ Open the file `organisation_beta.csv` in JAMOVI and  ...
   - $js\_score = b_{0} + b_{1}\,salary + e$
   - $js\_score = b_{0} + b_{1}\,salary + b_{2}\,perf + b_{3}\,salary*perf + e$
   
-2. Test the following model:
+2. Test the following models:
 
-$$js\_score = b_{0} + b_{1}\,gender + b_{2}\,perf + b_{3}\,gender*perf + e$$
+  - $js\_score = b_{0} + b_{1}\,gender + b_{2}\,perf + b_{3}\,gender*perf + e$
+  - $js\_score = b_{0} + b_{1}\,location + b_{2}\,perf + b_{3}\,location*perf + e$
 
 ```{r}
 countdown(minutes = 10, warn_when = 60)

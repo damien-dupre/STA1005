@@ -911,6 +911,16 @@ Note that some website can help to create the latex code, see for example <https
 include_graphics("https://mathpix.com/images/google-docs-power-point2.webp")
 ```
 
+## quiver
+
+quiver is a modern, graphical editor for commutative and pasting diagrams, capable of rendering high-quality diagrams for screen viewing, and exporting to LaTeX via tikz-cd or Typst via fletcher.
+
+<https://q.uiver.app/>
+
+```{r}
+include_graphics("raw.githubusercontent.com/varkor/quiver/refs/heads/master/screenshots/title.png")
+```
+
 ## {{< fa screwdriver-wrench >}}️ Your Turn! {background="#43464B"}
 
 I will show you some results. Using these results:
