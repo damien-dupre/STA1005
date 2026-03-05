@@ -1,0 +1,162 @@
+---
+title: STA1005 - Quantitative Research Methods
+subtitle: "Lecture 9: Hypothesis Testing in Practice"
+author: "Damien Dupré | DCU Business School"
+format:
+  revealjs:
+    theme: theme/metropolis.scss
+    highlight-style: zenburn
+    slide-number: true
+title-slide-attributes:
+    data-background-iframe: theme/flow-field/index.html
+    
+knitr: 
+  opts_chunk:
+    fig.align: center
+---
+
+```{r}
+## libraries --
+library(anicon)
+library(countdown)
+library(fontawesome)
+library(here)
+library(knitr)
+library(tidyverse)
+
+## options --
+options(scipen = 999, htmltools.preserve.raw = FALSE)
+opts_chunk$set(echo = FALSE, fig.align = "center", fig.retina = 3)
+```
+
+# Previously in STA1005
+
+## Planning of the Session
+
+You have received by email some data generated from the paper you have selected (or random data if you haven't selected any paper).
+
+In addition to these data, you have received a list of variables as well as their role and the type of effect expected.
+
+## Planning of the Session
+
+Your tasks will be to:
+
+1. Formulate the corresponding hypotheses
+2. Represent the model that includes these hypotheses
+3. Convert this model into an equation
+4. Test this equation with Jamovi
+5. Report the analysis of the assumptions for a GLM with Jamovi
+6. Conclude on each hypothesis
+7. Test this equation and report the analysis of the assumptions for a GLM with R
+8. Include the results of the analysis in a Quarto template
+
+## {{< fa screwdriver-wrench >}}️ 1. Formulate the corresponding hypotheses {background="#43464B"}
+
+```{r}
+countdown(minutes = 5, warn_when = 60)
+```
+
+## {{< fa screwdriver-wrench >}}️ 2. Represent the model that includes these hypotheses {background="#43464B"}
+
+```{r}
+countdown(minutes = 5, warn_when = 60)
+```
+
+## {{< fa screwdriver-wrench >}}️ 3. Convert this model into an equation {background="#43464B"}
+
+```{r}
+countdown(minutes = 5, warn_when = 60)
+```
+
+## {{< fa screwdriver-wrench >}}️ 4. Test this equation with Jamovi {background="#43464B"}
+
+```{r}
+countdown(minutes = 5, warn_when = 60)
+```
+
+## {{< fa screwdriver-wrench >}}️ 5. Report the analysis of the assumptions for a GLM with Jamovi {background="#43464B"}
+
+```{r}
+countdown(minutes = 5, warn_when = 60)
+```
+
+## {{< fa screwdriver-wrench >}}️ 6. Conclude on each hypothesis {background="#43464B"}
+
+```{r}
+countdown(minutes = 5, warn_when = 60)
+```
+
+## {{< fa screwdriver-wrench >}}️ 7. Test this equation and report the assumptions with R {background="#43464B"}
+
+```{r}
+countdown(minutes = 5, warn_when = 60)
+```
+
+## {{< fa screwdriver-wrench >}}️ 8. Include the results in a Quarto template {background="#43464B"}
+
+```{r}
+countdown(minutes = 5, warn_when = 60)
+```
+
+# Assignment
+
+## Assignment
+
+In the coming days, you will receive an email containing data and instructions for the assignment of STA1005.
+
+I will ask you to __submit on Loop a research 
+paper using these data by Wednesday, June 21st__ at 1 pm.
+
+The submitted research paper has to apply the following requirements:
+
+- It will have the __formatting style of a published PDF paper__ (see 
+examples here: https://pkgs.rstudio.com/rticles/articles/examples.html),
+- It will be __no longer than 6 pages__ all included (references included, 
+appendices included). Any page after the 6th page will be discarded,
+- The analysis has to include __at least 3 main effects hypotheses__ and __at 
+least 1 interaction effect hypothesis__ that are tested __with only 1 
+model__.
+
+## Assignment
+
+This research paper should include:
+
+  - a __short introduction__ presenting your variables and research question, 
+  - a __short literature review__ with no more than 5 references to support your hypotheses clearly formulated at the end of this section (this literature review can be a short reformulation of the one published in the paper where the data have been taken from), 
+  - a __method section__  with a representation of your model and its 
+corresponding equation, 
+  - a __result section__ checking the conditions of application for your linear model as well as presenting descriptive and inferential statistics, 
+  - and a __discussion/conclusion__ interpreting the results obtained in regards to the formulated hypotheses.
+
+There is no requirement to use specific statistical software to perform your analyses.
+
+## Assignment
+
+Obtaining statistically significant results (i.e., _p_ < 0.05), rather than not significant results, will not lead to a higher mark. 
+
+The only assessment criteria are the following:
+
+- Accuracy of variables, hypotheses, model, and equation description,
+- Conformity of statistical analyses and results' interpretations,
+- Relevance of Tables and/or Figures,
+- Overall presentation style.
+
+## {background="#43464B"}
+
+<br>
+
+:::{.center}
+**Thanks for your attention**
+
+**and don't hesitate to ask if you have any questions!**
+
+![](https://damien-dupre.github.io/assets/404.gif){style="border-radius:10%;" width=50%}
+:::
+
+::: {layout="[0.47, 0.53]"}
+[{{< fa brands github >}} @damien-dupre](https://github.com/damien-dupre)  
+[{{< fa brands linkedin >}} @damien-dupre](https://www.linkedin.com/in/damien-dupre/) 
+
+[{{< fa globe >}} https://damien-dupre.github.io](https://damien-dupre.github.io)  
+[{{< fa paper-plane >}} damien.dupre@dcu.ie](mailto:damien.dupre@dcu.ie)
+:::

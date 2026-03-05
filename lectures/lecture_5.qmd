@@ -54,7 +54,7 @@ lm_c3 <- lm(js_score ~ location, data = organisation_beta) |> aov() |> apa_print
 
 ```
 
-# Previous in STA1005
+# Previously in STA1005
 
 ## Vocabulary
 
