@@ -7,12 +7,17 @@ format:
     theme: theme/metropolis.scss
     highlight-style: zenburn
     slide-number: true
+    code-line-numbers: false 
+    copycode:
+      button: "hover"
 title-slide-attributes:
     data-background-iframe: theme/flow-field/index.html
     
 knitr: 
   opts_chunk:
     fig.align: center
+revealjs-plugins:
+  - copycode
 ---
 
 ```{r}
@@ -37,17 +42,21 @@ organisation_beta <- read_csv(here("data/organisation_beta.csv"))
 
 ## Brief Introduction
 
-Modern data science uses free and open-source computer languages:
+Modern data science uses free and open-source languages:
 
-* Proprietary languages (e.g., Matlab) and software (e.g., SPSS, Stata, SAS) are outdated
+::: {style="font-size: 80%;"}
+* Proprietary languages (e.g., Matlab, Stata, SAS) and software (e.g., SPSS) are outdated
 * Main open-source computer languages for data science are Python and R
+:::
 
 While Python is the most used language by computer engineers for web and app development, R has some advantages:
 
+::: {style="font-size: 80%;"}
 1. **Easy to write**, to read and to use
 2. Focused on **reports and journal papers** with reproducibility
 3. Advanced **statistical packages**
 4. **Friendly and open** community
+:::
 
 #### So let's useR!
 
@@ -90,7 +99,7 @@ include_img("the_matrix.gif")
 
 ## Posit Cloud
 
-In your web browser (Chrome, Firefox, ...), go to: https://posit.cloud/
+In your web browser (Chrome, Firefox, ...), go to: <https://posit.cloud/>
 
   - Sign up
   - In your workspace, Click "new project"
@@ -103,10 +112,9 @@ include_graphics("https://miro.medium.com/max/1400/1*JBHNRwGr3ZiyBzYWpvH6zg.png"
 
 Most of the R code displayed in this lecture is included in these slides. Rather than typing it manually, open these slides in another tab to copy-paste the code.
 
-Two ways to access these slides:
+Access these slides from the URL:
 
-  - From Loop: Lectures Slides > Lecture 7
-  - Or from the URL: https://damien-dupre.github.io/mt611/lectures/lecture_7
+<https://damien-dupre.github.io/STA1005/lectures/lecture_7>
 
 ```{r out.width='50%'}
 include_graphics("https://c.tenor.com/0heitU7-tg4AAAAC/copy-paste-paste.gif")
@@ -130,11 +138,15 @@ The last window **Code Editor** opens when creating a new R Script
 
 ## Console: R's Heart
 
-The console displays 1. **What has been run**, 2. The **results** (or some parts) of what has been run, and 3. The **status of the R process**.
+The console displays 
+
+1. **What has been run**, 
+2. The **results** (or some parts) of what has been run, and 
+3. The **status of the R process**.
 
 ## Console: R's Heart
 
-:::: {layout="[1,1]"}
+:::: {layout="[1,0.6]"}
 ::: {#first-column}
 The Status of R is indicated by the symbol in the console prompt:
 
@@ -150,9 +162,12 @@ include_img("r_console.png")
 :::
 ::::
 
+::: {.callout-warning}
+## The Console Doesn't Save!
 You can execute code by typing it directly into the Console. However, it will not be saved. And if you make a mistake you will have to re-type everything all over again. 
 
-Instead, it is better to **write all your code in a document (R script or Quarto file) in the Code Editor**.
+Instead, **write all your code in a document (R script or Quarto file) in the Code Editor**.
+:::
 
 ## Environment: R's Brain
 
@@ -166,9 +181,9 @@ include_graphics("https://www.statology.org/wp-content/uploads/2021/10/envir1.pn
 
 ## Files / Plots / Packages / Help
 
-* The **Files** panel gives you access to the file directory on your hard drive.
+* The **Files** panel gives access to the file directory.
 
-* The **Plots** panel shows all your plots. There are buttons for opening the plot in a separate window and exporting the plot as a pdf or jpeg.
+* The **Plots** panel shows all your plots. There are buttons for opening the plot in a pop up and exporting as a pdf or jpeg.
 
 * The **Packages** shows a list of all the R packages installed on the local or remote machine and indicates whether or not they are currently loaded.
 
@@ -177,8 +192,6 @@ include_graphics("https://www.statology.org/wp-content/uploads/2021/10/envir1.pn
 ```{r echo=TRUE, eval=FALSE}
 help(seq)
 ?seq
-help(lm)
-?lm
 ```
 
 ## Code Editor: R's Nervous System
@@ -201,10 +214,10 @@ include_graphics("https://miro.medium.com/max/1600/1*eLjON45R_kHIfg_IgL8FIg.jpeg
 
 ## What are .R and .qmd files?
 
-**.R** is the extension for an R script (document including only R code): 
+**.R** is the extension for an R script (document including R code): 
 
 - Click **File > New File > R Script** in RStudio
-- Includes only code which can be active or inactive (line starts with `#`)
+- Includes code which can be active or inactive (after `#`)
 - Used for code testing
 
 Example of non-active code
@@ -227,13 +240,22 @@ paste("active", "code")
 - Click **File > New File > Quarto document...** in RStudio
 - Refers to a document that includes code and text
 - Generates a specific type of output
-  - .html (web page, slides, books, and dashboards)
-  - .pdf (Academic LaTex papers and reports)
-  - .doc (MS Word documents)
-  
-```{r out.width='80%'}
+
+:::: {layout="[1,1]"}
+::: {#first-column}
+`.html` (web page, slides, books, and dashboards)
+
+`.pdf` (Academic LaTex papers and reports)
+
+`.doc` (MS Word documents)
+:::
+
+::: {#second-column}  
+```{r}
 include_graphics("https://r4ds.hadley.nz/quarto/diamond-sizes-report.png")
 ```
+:::
+::::
 
 ## How to Run R Code?
 
@@ -245,10 +267,6 @@ In an R Script, place your cursor anywhere on the line you want to run and eithe
 - Press <kbd>command</kbd> & <kbd>Enter</kbd> (Mac)
 - Click the `Run` button on RStudio's interface
 
-In a Quarto file:
-
-- Use the **green** arrow to run the current chunk of code
-- Use the `Knit` button on RStudio's interface to create the output file
 :::
 
 ::: {#second-column}
@@ -269,7 +287,8 @@ A good analogy for **R packages are like apps you can download onto a mobile pho
 :::: {layout="[1,1]"}
 ::: {#first-column}
 R: A new phone
-
+<br>
+<br>
 ```{r out.width='100%'}
 include_img("phone_design.jpeg")
 ```
@@ -286,7 +305,7 @@ include_img("phone_apps.jpeg")
 
 ## What are R packages?
 
-Say you have purchased a new phone, to use Instagram you need to **install the app once** and to **open the app** every time you want to use it.
+Say you have purchased a new phone, to use Instagram you need to **install the app once** and to **open the app** every time to use it.
 
 The process is very similar for using an R package. You need to:
 
@@ -308,7 +327,7 @@ Once the package is loaded you can use all the functions from this package such 
 praise()
 ```
 
-## Live Demo
+# Live Demo
 
 ## {{< fa screwdriver-wrench >}}️ Your Turn! {background="#43464B"}
 
@@ -396,8 +415,8 @@ tribble(
 
 These types of values are then stored in different objects:
 
-```{r out.width='50%'}
-include_graphics("http://r.qcbs.ca/workshop01/workshop01-en/images/matrix.png")
+```{r}
+include_graphics("https://bookdown.org/introrbook/intro2r/images/chapter5/fig1.PNG")
 ```
 
 ## Different R Objects
@@ -427,7 +446,7 @@ dataframe_example <- data.frame(
   )
 ```
 
-## Live Demo
+# Live Demo
 
 ## {{< fa screwdriver-wrench >}}️ Your Turn! {background="#43464B"}
 
@@ -485,7 +504,7 @@ For early beginners on the Desktop version, directly open data with RStudio's `I
 include_graphics("https://support.rstudio.com/hc/article_attachments/360017333414/data-import-rstudio-overview.gif")
 ```
 
-If you see your data in the preview, you can click `Import` to create an object containing your data. A code will be executed on the console, **Copy and Paste the first line of this code in your R script**. You will not have to do it manually once the code is in your script.
+If you see your data in the preview, you can click `Import` to create an object containing your data. A code will be executed, **Copy and Paste the first line of this code in your R script**. You will not have to do it manually once the code is in your script.
 
 ## Open your Data as R Object (3)
 
@@ -516,15 +535,17 @@ my_file_object <- read.csv("C:/path/to/my/file")
 my_file_object <- read.csv("C:\path\to\my\file.csv")
 ```
 
-## Live Demo
+# Live Demo
 
 ## {{< fa screwdriver-wrench >}}️ Your Turn! {background="#43464B"}
 
-1. Click on `Upload` to upload your "organisation_beta.csv" file on your Posit Cloud
+1. Click on `Upload` to upload the "organisation_beta.csv" file on your Posit Cloud
 
 2. Click on `Import` to import these data in R
 
 3. Check that the data appears in the Environment pane. How many observations and variables does it have?
+
+4. Copy the code that ran and paste it in your R script
 
 ```{r}
 countdown(minutes = 5, warn_when = 60)
@@ -567,9 +588,9 @@ countdown(minutes = 3, warn_when = 60)
 
 ## Become Expert in R
 
-Because R is free, plenty of free learning materials are available online:
+Plenty of free learning materials are available online:
 
-* Video tutorials on YouTube, TikTok (@chelseaparlettpelleriti, @tommyteaches, ...)
+* Video tutorials on YouTube, TikTok
   
 * Interactive tutorials, see for example:
   - [Posit Primers](https://posit.cloud/learn/primers)
@@ -578,13 +599,13 @@ Because R is free, plenty of free learning materials are available online:
 * Book tutorials, see for example:
   - [R for Data Science](https://r4ds.hadley.nz/) by Wickham & Grolemund (2023)
   - [A ModernDive into R and the tidyverse](https://moderndive.com/v2/) by Ismay & Kim (2025)
-  - [Introduction to Open Data Science](https://ohi-science.org/data-science-training/) by the Ocean Health Index Team (2019)
+  - [Open Data Science](https://ohi-science.org/data-science-training/) by the Ocean Health Index Team (2019)
   
 Find all the free books in the [Big Book of R](https://www.bigbookofr.com/)!
 
 ## How to solve your pRoblems
 
-:::: {layout="[1,1]"}
+:::: {layout="[1, 0.7]"}
 ::: {#first-column}
 #### 1. Look at your error
   * If it's obvious, solve it by yourself
@@ -596,9 +617,7 @@ Find all the free books in the [Big Book of R](https://www.bigbookofr.com/)!
 #### 3. Look at the function
   * Documentation (`F1` or `?`)
 
-#### 4. Look at the web
-  * Google "R how to ..."
-  * Stack Overflow
+#### 4. GenAI
 :::
 
 ::: {#second-column}
@@ -614,9 +633,11 @@ include_img("meme_error.webp")
 
 A model contains:
 
-- Only one Outcome/Dependent Variable
-- One or more Predictor/Independent Variables of any type (categorical or continuous)
+- Only one Outcome Variable
+- One or more Predictor Variables of any type (categorical or continuous)
 - Main and/or Interaction Effects
+
+## Model and Equations
 
 To evaluate their relationship with the outcome, each effect hypothesis is related with a coefficient called **Estimate** and represented with $b$ as follows:
 
@@ -695,7 +716,7 @@ $$js\_score = b_0 + b_1 salary + b_2 perf + b_3 salary * perf + e$$
 lm(formula = js_score ~ salary + perf + salary:perf, data = organisation_beta)
 ```
 
-## Live Demo
+# Live Demo
 
 ## {{< fa screwdriver-wrench >}}️ Your Turn! {background="#43464B"}
 
@@ -709,7 +730,7 @@ $$js\_score = b_0 + b_1 salary + b_2 gender + b_3 salary * gender + e$$
 countdown(minutes = 5, warn_when = 60)
 ```
 
-## Linear Regression Results
+# Linear Regression Results
 
 ## Categorical Predictor
 
@@ -812,11 +833,9 @@ When we look back up at the t-tests for each of the individual coefficients, we 
 
 To communicate about your statistical analyses in an academic report, the simplest method is to find the values in the `summary()` output and to copy-paste them in the text according to the format expected that we have seen in the previous lectures.
 
-However, this task can be long, difficult and lead to human errors. Thankfully, R has additional packages that provide alternative functions to read linear regression models and communicate results. Because there are too many packages, I will focus only on two additional packages: {performance} and {report}.
+However, this task can be long, difficult and lead to human errors. Thankfully, R has additional packages that provide alternative functions to read linear regression models and communicate results. 
 
-```{r echo=FALSE}
-include_graphics("https://pbs.twimg.com/media/En_y198W8AAT97N?format=jpg&name=small")
-```
+Because there are too many packages, I will focus only on two additional packages: `{performance}` and `{report}`.
 
 ## Assumption Check with {performance}
 
@@ -826,13 +845,13 @@ To install {performance} use the usual `install.packages()` function:
 install.packages("performance")
 ```
 
-The package {performance} will print visualisations allowing to check the model's assumptions (see https://easystats.github.io/performance/).
+The package `{performance} `will print visualisations allowing to check the model's assumptions (see <https://easystats.github.io/performance/>).
 
 To print the performance diagnosis:
 
-1. Load the package {performance}
+1. Load the package `{performance}`
 2. Create an object containing the output of the function `lm()`
-3. Use this object as input of the function `check_model()` from the {performance} package
+3. Use this object as input of the function `check_model()` from the `{performance}` package
 
 ## Assumption Check with {performance}
 
@@ -846,23 +865,25 @@ check_model(lm_js)
 
 ## Automatic Results with {report}
 
-To install {report} use the usual `install.packages()` function:
+To install `{report}` use the usual `install.packages()` function:
 
 ```{r echo=TRUE, eval=FALSE}
 install.packages("report")
 ```
 
-The package {report} will print a text containing all the statistics already in sentences ready to be interpreted (see https://easystats.github.io/report/).
+The package `{report}` will print a text containing all the statistics already in sentences ready to be interpreted (see <https://easystats.github.io/report/>).
+
+## Automatic Results with {report}
 
 To print the statistical analyses:
 
-1. Load the package {report}
+1. Load the package `{report}`
 2. Create an object containing the output of the function `lm()`
 3. Use this object as input of the function `report()` from the {report} package
 
 **Note: If used in a quarto document, the chunk containing `report()` has to include the chunk option `results='asis'`**
 
-## Automatic Results with {report}
+## Automatic Results with {report} {.smaller}
 
 ```{r echo=TRUE, warning = FALSE, results='asis'}
 library(report)
@@ -872,7 +893,7 @@ lm_js <- lm(formula = js_score ~ salary + perf, data = organisation_beta)
 report(lm_js)
 ```
 
-## Live Demo
+# Live Demo
 
 ## {{< fa screwdriver-wrench >}}️ Your Turn! {background="#43464B"}
 
