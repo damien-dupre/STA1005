@@ -1,0 +1,565 @@
+# Collect, Clean, and Transform Data {#sec-lecture-03}
+
+```{r}
+#| label: setup
+#| include: false
+source("R/setup.R")
+```
+
+To perform any kind of analysis efficiently, the data file has to be formatted in the most suitable way. Three steps are required:
+
+1. Understanding how the data have been collected
+2. Cleaning the data from any noise
+3. Transforming the data in order to obtain the relevant variables
+
+This chapter goes through these three steps in turn. Most of the examples use Microsoft Excel.
+
+## Collecting data {#sec-l03-collecting}
+
+### Data everywhere
+
+What are big data? In general, the term describes spreadsheets that are too large or too complex to be handled by conventional tools. For me, big data are spreadsheets that are larger than the limits of Microsoft Excel (2016):
+
+- total number of rows: 1,048,576
+- total number of columns: 16,384
+
+### Measuring anything
+
+A tool is required to collect data, but there are tools to measure anything, for example:
+
+- naturalistic objects
+- economic status
+- social events
+- psychological states
+- and so on
+
+### Psychometric scales {#sec-l03-scales}
+
+A **psychometric scale** is a series of questions (items) used to measure a **latent variable**. A score has to be calculated from all the items to produce the variable to analyse. There are two main ways to do it:
+
+- the average of all items (each item contributes equally to the latent variable score)
+- a factor analysis (items contribute unequally to the latent variable score)
+
+A scale should have been validated by its authors, so:
+
+- do not change the items, except when possible <!-- check: the slide reads "Don't change the items except when possible" -->
+- do not change the range of possibilities of the items
+
+To be analysed, a scale has some requirements:
+
+- all the items must have the same range of possibilities (modalities)
+- all the items must be analysed in the same direction
+- all the items must correlate together (scale reliability)
+- a unique theoretical construct score has to be calculated from all the items
+
+#### Online survey software
+
+Online survey software is replacing the paper-and-pencil method. Here are some options:
+
+- Google Form (from your Google Drive, hosted by DCU)
+- Qualtrics (<https://dcusurveys.qualtrics.com/>, with your DCU account)
+- Survey Monkey (<https://www.surveymonkey.com/>, not free)
+- LimeSurvey (<https://www.limesurvey.org/>, not free)
+- Zoho (<https://www.zoho.com>, not free)
+- Gorilla Experiment (<https://gorilla.sc>, not free)
+
+::: {.callout-important title="Warning"}
+- Always ask for age and gender in a survey.
+- Recruiting participants from a list of contacts or emails gives a response rate of between 10% and 15%.
+:::
+
+Platforms to find and reward participants include:
+
+- Amazon MTurk (<https://www.mturk.com/>, mainly US and India)
+- Prolific Academic (<https://www.prolific.co/>, worldwide)
+- Qualtrics (<https://www.qualtrics.com/uk/research-services/online-sample/>)
+- Survey Monkey (<https://www.surveymonkey.com/mp/find-survey-participants/>)
+
+### Latent variables {#sec-l03-latent}
+
+As an example, the **"Perceived Ease-of-use" of MS EXCEL** is measured with four items, each answered from 1 ("totally disagree") to 7 ("totally agree"):
+
+- **q1.** I think learning MS EXCEL is easy
+- **q2.** Understanding MS EXCEL is easy
+- **q3.** I am good at using MS EXCEL
+- **q4.** I think using MS EXCEL is easy
+
+The latent variable is not observed directly: it is inferred from the four items, as shown in @fig-l03-peou.
+
+```{dot}
+//| label: fig-l03-peou
+//| fig-cap: "A latent variable (oval) and the four items (boxes) used to measure it."
+//| fig-alt: "Diagram with an oval labelled Perceived Ease-of-use of MS EXCEL on the left and four boxes, q1 to q4, on the right. Arrows point from the oval to each of the four boxes."
+//| fig-height: 3
+//| fig-width: 4
+
+digraph rmarkdown {
+  graph [rankdir = RL]
+
+  node [shape = oval]
+  "Perceived Ease-of-use\nof MS EXCEL"
+
+  node [shape = box]
+  q1; q2; q3; q4
+
+  "Perceived Ease-of-use\nof MS EXCEL" -> {q1 q2 q3 q4}
+}
+```
+
+@tbl-l03-scores gives the results for three respondents. The score of the "Perceived Ease-of-use of MS EXCEL" latent variable is calculated as the average of all items.
+
+```{r}
+#| label: tbl-l03-scores
+#| echo: true
+#| tbl-cap: "Responses to the four items and latent variable score (peo_score) for three respondents."
+tribble(
+  ~employee, ~q1, ~q2, ~q3, ~q4,
+  "Sinead",   7,  5,   7,   7,
+  "Patrick",   5,  4,   6,   6,
+  "Damien",   3,  1,   2,   3
+) |>
+  rowwise() |>
+  mutate(peo_score = mean(c(q1, q2, q3, q4))) |>
+  kable()
+```
+
+### Validity and reliability {#sec-l03-validity}
+
+**Validity** is about whether my variable is measuring the construct that I think I am measuring. To judge it, ask:
+
+- Does the measurement make sense?
+- Would the results be reproduced with another scale measuring the same latent variable?
+- Are the results correlated with latent variables that are related?
+
+A validity test is only performed when a scale is created, so there is no need to run one for existing scales.
+
+**Reliability** is the consistency of the items inside a measurement. It can be assessed with:
+
+- test-retest reliability
+- inter-rater reliability
+- the correlation between items (Cronbach's alpha)
+
+A reliability test is performed every time a scale is used, but only using Cronbach's alpha.
+
+### Survey example {#sec-l03-survey}
+
+A survey usually measures several latent variables at once, each with its own items:
+
+**Perceived Usefulness**
+
+- *(PU1)* Using MS EXCEL would improve my performance in statistical analysis
+- *(PU2)* Using MS EXCEL would increase my productivity in statistical analysis
+- *(PU3)* Using MS EXCEL would enhance my effectiveness in statistical analysis
+- *(PU4)* Using MS EXCEL would make it easier for me to engage in statistical analysis
+- *(PU5)* I think using MS EXCEL is very useful for me to engage in statistical analysis
+
+**Perceived Ease-Of-Use**
+
+- *(PEOU1)* I think learning to use MS EXCEL is easy
+- *(PEOU2)* I think doing what I want via MS EXCEL is easy
+- *(PEOU3)* I think becoming skilful at using MS EXCEL is easy
+- *(PEOU4)* I think using MS EXCEL is easy
+
+**Behavioural Intention**
+
+- *(BI1)* Assuming I had access to MS EXCEL, I intend to use it
+- *(BI2)* Given that I had access to MS EXCEL, I predict that I would use it
+
+@fig-l03-survey shows how these items relate to their latent variables. Actual Use is measured by a single indicator (AU). The arrows between the latent variables go from Perceived Ease-of-use to Perceived Usefulness and to Intention to Use, from Perceived Usefulness to Intention to Use, and from Intention to Use to Actual Use.
+
+```{dot}
+//| label: fig-l03-survey
+//| fig-cap: "Latent variables (ovals) and the items used to measure them (boxes) in the survey example."
+//| fig-width: 5.7
+//| fig-alt: "Path diagram with four ovals: Perceived Ease-of-use, Perceived Usefulness, Intention to Use and Actual Use. Each oval is linked by a plain line to its own boxes: PEOU1 to PEOU4, PU1 to PU5, BI1 and BI2, and AU. Arrows run from Perceived Ease-of-use to Perceived Usefulness and to Intention to Use, from Perceived Usefulness to Intention to Use, and from Intention to Use to Actual Use."
+
+digraph rmarkdown {
+  graph [rankdir = LR]
+
+  node [shape = oval]
+  "Perceived Ease-of-use"; "Perceived Usefulness"; "Intention to Use"; "Actual Use"
+
+  node [shape = box]
+  PU1; PU2; PU3; PU4; PU5; PEOU1; PEOU2; PEOU3; PEOU4; BI1; BI2; AU
+
+  {PU1 PU2 PU3 PU4 PU5} -> "Perceived Usefulness" [arrowhead = none]
+  {PEOU1 PEOU2 PEOU3 PEOU4} -> "Perceived Ease-of-use" [arrowhead = none]
+  {BI1 BI2} -> "Intention to Use" [arrowhead = none]
+  {AU} -> "Actual Use" [arrowhead = none]
+
+  "Perceived Usefulness" -> "Intention to Use"
+  "Perceived Ease-of-use" -> {"Perceived Usefulness" "Intention to Use"}
+  "Intention to Use" -> "Actual Use"
+
+  subgraph {
+      rank = same; "Perceived Usefulness"; "Perceived Ease-of-use";
+  }
+
+  subgraph {
+      rank = same; PU1; PU2; PU3; PU4; PU5; PEOU1; PEOU2; PEOU3; PEOU4; BI1; BI2;
+  }
+
+}
+```
+
+### Accessing your data {#sec-l03-access}
+
+To download the responses from a Google Form:
+
+1. Log in to your Google account (be sure to use the DCU account)
+2. Go to Drive
+3. Click on your survey form
+4. Click on Responses
+5. Download the response spreadsheet as .csv
+
+To download the responses from a Qualtrics survey:
+
+1. Log in to Qualtrics with your DCU login and password (<https://dcusurveys.qualtrics.com/>)
+2. Click on Data & Analysis
+3. Click on Export & Import > Export Data... > CSV (use numeric values)
+
+::: {.callout-important title="Warning"}
+- Always save the unmodified raw version of your data on the cloud (for example Google Drive, Dropbox or OneDrive).
+- Make sure you can download them as a .csv file.
+:::
+
+## Cleaning data {#sec-l03-cleaning}
+
+### An essential step
+
+**Cleaning data means removing any non-essential feature included in the spreadsheet.**
+
+- If you do not have big data, then use Microsoft Excel.
+- If you do have big data, then use R or Python.
+
+### What is going wrong with this spreadsheet?
+
+The data scientist Kareem Carr asked on social media: "dear data scientists, what is preventing your data analysis from looking like this?". His post included the screenshot in @fig-l03-tweet.
+
+```{r}
+#| label: fig-l03-tweet
+#| fig-cap: "A question from Kareem Carr to data scientists, with a screenshot of an Excel sheet."
+#| fig-alt: "Screenshot of a social media post by Kareem Carr showing an Excel sheet. A small table of sales by city and quarter sits below empty rows, with some cells missing, and a bar chart is placed directly under it."
+#| out-width: "80%"
+include_img("clean_tweet.png")
+```
+
+::: {.callout-tip title="Your turn: find what is going wrong with this table"}
+Look closely at the spreadsheet in @fig-l03-zoom. What makes it hard to analyse?
+
+```{r}
+#| label: fig-l03-zoom
+#| fig-cap: "A closer look at the spreadsheet."
+#| fig-alt: "Zoomed screenshot of the Excel sheet: the table starts in column B on row 3, its columns are named Column1 and 17Q1 to 18Q4, some values of the last quarter are missing, and a bar chart titled Sales Data sits under the table."
+include_img("clean_zoom.jpg")
+```
+:::
+
+::: {.callout-note title="Answer from Michael" collapse="true"}
+Michael replied: "Ditch the chart, save as CSV and, at the very least, column headings should be in row 1, columns should start at column A. Any other spreadsheet is chaotic evil."
+
+```{r}
+#| label: fig-l03-answer
+#| fig-cap: "Michael's reply to Kareem Carr."
+#| fig-alt: "Screenshot of Michael's reply to Kareem Carr, with a meme of a character surrounded by flames."
+#| out-width: "70%"
+include_img("clean_answer.png")
+```
+:::
+
+### Use a naming convention {#sec-l03-naming}
+
+An addition to Michael's list would be to transform the headers with a proper naming convention. My suggestion is **snake_case**: all small letters, with words separated by "_". @fig-l03-case compares the common conventions.
+
+```{r}
+#| label: fig-l03-case
+#| fig-cap: "Naming conventions: snake_case, camelCase, kebab-case and SCREAMING_SNAKE_CASE."
+#| fig-alt: "Illustration of four naming conventions: a snake for snake_case, a camel for camelCase, a kebab skewer for kebab-case and a screaming snake for SCREAMING_SNAKE_CASE."
+#| out-width: "70%"
+include_img("name_convention.jpg")
+```
+
+### Five rules to clean data {#sec-l03-rules}
+
+1. **Ditch the chart and all non-values.** Charts can mess up other software.
+2. **Put column headings in row 1.** Use no more than one heading row and remove blanks.
+3. **Start columns at column A.** Remove blanks before the data.
+4. **Use a naming convention.** snake_case is preferable but any would do.
+5. **Save as a .csv file.** It is a better format and keeps only the current sheet.
+
+::: {.callout-tip title="Your turn: clean the UNICEF file"}
+On the module Loop page, go to "Lecture Data" and download the document called "unicef.xlsx".
+
+**Open and clean the first sheet of this file, but only until column P. Remove all other columns.**
+
+Suggested time: 15 minutes.
+:::
+
+## Transforming data {#sec-l03-transform}
+
+### The five key transformations
+
+Five key transformations are worth mastering:
+
+1. Extension
+2. Reduction
+3. Direction
+4. Aggregation
+5. Combination
+
+@fig-l03-movements illustrates them in this order: creating a new column, keeping only some rows, re-ordering rows, summarising a column and joining two tables.
+
+```{r}
+#| label: fig-l03-movements
+#| fig-cap: "The five key transformations of a table."
+#| fig-alt: "Five small diagrams of tables. First, a table gains a new column. Second, a table keeps a single row. Third, the rows of a table are re-ordered. Fourth, a table is summarised into two values. Fifth, two tables with columns A, B, C and A, B, D are placed side by side."
+#| out-width: "40%"
+include_img("key_movements.png")
+```
+
+### Extension
+
+**Extension = create a new column.**
+
+```{r}
+#| label: fig-l03-extension
+#| fig-cap: "Extension: a new column is added to a table."
+#| fig-alt: "A table with three columns becomes a table with four columns, the fourth one highlighted."
+#| out-width: "35%"
+include_img("extension_img.png")
+```
+
+In MS Excel:
+
+- the first row is the column name (use a naming convention)
+- the second row is the function (it starts with the = sign)
+- the following rows apply the function (double-click the bottom right corner of the cell)
+
+Some useful Excel functions:
+
+- **For numeric values:**
+    - numeric operators (`+`, `-`, `/`, `*`)
+    - `$` (freezes a row and/or a column)
+    - `COUNT()`, `MIN()`, `MAX()`, `SUM()`, `AVERAGE()`, `STDEV()`
+- **For character strings:**
+    - `LEFT()`
+    - `CONCAT()`
+- **Extra functions:**
+    - `IF(condition, value if true, value if false)`
+    - `IFS(condition 1, value if 1 true, condition 2, value if 2 true, ...)`
+
+### Reduction
+
+**Reduction = keep only certain values.**
+
+```{r}
+#| label: fig-l03-reduction
+#| fig-cap: "Reduction: only some rows of a table are kept."
+#| fig-alt: "A table with five rows is reduced to its header and a single highlighted row."
+#| out-width: "35%"
+include_img("reduction_img.png")
+```
+
+In MS Excel:
+
+- select the header row
+- in the Data tab, use Filter
+- click the drop-down arrow of the column you want to filter
+- choose the values to keep
+
+For example, filtering the column Country to keep only the value USA leaves only the rows corresponding to USA visible.
+
+::: {.callout-important title="Warning"}
+- Rows that are already filtered have a row index coloured in blue.
+- Copy and paste the filtered table into a new document if you want to work only on these values.
+:::
+
+### Direction
+
+**Direction = arrange the row order.**
+
+```{r}
+#| label: fig-l03-direction
+#| fig-cap: "Direction: the rows of a table are re-ordered."
+#| fig-alt: "A table with five rows of different shades becomes the same table with its rows sorted by shade."
+#| out-width: "35%"
+include_img("direction_img.png")
+```
+
+In MS Excel:
+
+- select the table
+- in the Data tab, use Sort
+- choose the column to sort and how to sort it
+
+::: {.callout-important title="Warning"}
+- Be careful to take into account the whole table (all rows and all columns).
+- Double-check that all columns changed.
+:::
+
+### Aggregation
+
+**Aggregation = summary of a column.**
+
+```{r}
+#| label: fig-l03-aggregation
+#| fig-cap: "Aggregation: a table is summarised into a few values."
+#| fig-alt: "A table with three columns and several rows is summarised into two coloured cells."
+#| out-width: "35%"
+include_img("aggregation_img.png")
+```
+
+In MS Excel:
+
+- Simple: use a function at the end of the table
+- Complex: use a pivot table
+
+To create a pivot table:
+
+1. Select the data
+2. In the Insert tab, use Pivot Table
+3. Drag the columns to sort by row or by column
+4. Choose the value column to be aggregated
+5. Choose the type of aggregation
+
+If you want to use the pivot table for further analysis, copy and paste it into another document and paste it as values, which removes the dynamic link.
+
+### Combination
+
+**Combination = join two tables.**
+
+```{r}
+#| label: fig-l03-combination
+#| fig-cap: "Combination: two tables are joined into one."
+#| fig-alt: "A table with columns A, B and C plus a table with columns A, B and D give a table with the columns A, B, C, A, B and D side by side."
+#| out-width: "70%"
+include_img("combination_img.png")
+```
+
+In MS Excel:
+
+- one column: use the `VLOOKUP` function
+- multiple columns: use Power Query (Windows only)
+
+The syntax of the function is `=VLOOKUP(value, table, col_index, [range_lookup])`, where:
+
+- **value** is the value to look for in the first column of a table
+- **table** is the table from which to retrieve a value
+- **col_index** is the column in the table from which to retrieve a value
+- **range_lookup** is TRUE for an approximate match and FALSE for an exact match
+
+::: {.callout-note title="Live demonstration"}
+In the lecture, these transformations are demonstrated live before the exercise below.
+:::
+
+::: {.callout-tip title="Your turn: transform the organisation data"}
+On the module Loop page, go to "Lecture Data" and download the document called "organisation_alpha.xls". <!-- check: the data folder holds organisation_alpha.xlsx -->
+
+1. **Extension:** create a new variable (column) which is the average response to all the questions of the survey for each employee (q1 to q9).
+2. **Reduction:** filter the employees' 2019 salary to keep only the employees with a salary higher than 30k.
+3. **Aggregation:** calculate the average salary by gender and by location.
+4. **Combination:** using the `VLOOKUP` function, add to the table a column corresponding to the 2017 salary, located in the second sheet.
+
+Suggested time: 15 minutes.
+:::
+
+## Extra analytic tips {#sec-l03-tips}
+
+### Tidy data {#sec-l03-tidy}
+
+In a tidy data table:
+
+- each variable has its own column
+- each observation is placed in its own row
+- each value is placed in its own cell
+
+```{r}
+#| label: fig-l03-tidy
+#| fig-cap: "The three rules of tidy data."
+#| fig-alt: "A table of countries, years, cases and population with arrows showing that variables run down the columns, observations run along the rows and each value sits in one cell."
+include_img("tidy_full.png")
+```
+
+### Long or wide? {#sec-l03-long-wide}
+
+The same data can be arranged in a **long** format, where each variable keeps its own column and a table has more rows (@fig-l03-long), or in a **wide** format, where the values of a variable are spread over several columns (@fig-l03-wide).
+
+```{r}
+#| label: fig-l03-long
+#| fig-cap: "Long format: one row for each country, year and type of measure."
+#| fig-alt: "A long table with the columns country, year, key and value, where key holds the words cases and population."
+include_img("long_table.png")
+```
+
+```{r}
+#| label: fig-l03-wide
+#| fig-cap: "Wide format: one row for each country and one column for each year."
+#| fig-alt: "A wide table with one row per country and the columns 1999 and 2000."
+include_img("wide_table.png")
+```
+
+@fig-l03-excel-wide and @fig-l03-excel-both show the same idea in Excel: sales for each region over four quarters, first in a wide table and then next to its long equivalent.
+
+```{r}
+#| label: fig-l03-excel-wide
+#| fig-cap: "A wide table in Excel: one column for each quarter."
+#| fig-alt: "Excel table with the regions Mid West, North East, South and West in rows and the quarters Qtr1 to Qtr4 in columns."
+#| out-width: "70%"
+include_img("long_or_wide.png")
+```
+
+```{r}
+#| label: fig-l03-excel-both
+#| fig-cap: "The wide table (left) and its long equivalent (right), with the columns Region, Quarter and Sales."
+#| fig-alt: "Excel sheet showing the wide table on the left and, on the right, the same values stacked in three columns named Region, Quarter and Sales."
+#| out-width: "80%"
+include_img("long_and_wide.png")
+```
+
+#### Reshaping a table in Excel
+
+In the Data tab:
+
+1. Get Data > New Query > From File > From Workbook or CSV
+2. Select your file > Edit
+3. Select the columns to be reshaped
+4. Transform:
+    - Pivot Columns: from a long table to a wide table
+    - Unpivot Columns: from a wide table to a long table
+
+### Repeating actions automatically {#sec-l03-macros}
+
+In Excel, the Macro button records a sequence of actions and reproduces them later:
+
+- VBA code is recorded automatically
+- it is useful to process similar data files
+
+To record a macro:
+
+1. Go to the View tab
+2. Use Macros > Record Macro
+3. Do your actions
+4. Save the macro with a keyboard shortcut
+5. Use the macro again to reproduce your actions
+
+::: {.callout-note title="Live demonstration"}
+In the lecture, reshaping a table and recording a macro are demonstrated live before the exercise below.
+:::
+
+::: {.callout-tip title="Your turn: reshape the chess data"}
+Researchers are measuring how good at chess LLM algorithms (ChatGPT, Gemini, ...) are. They want to test the following hypothesis:
+
+`H1: The average number of moves to win a chess game is different for at least 1 of the LLM algorithms`
+
+**Reshape the data file "chess_llm.csv" to have one predictor variable called "llm_algorithm" and one outcome variable called "n_moves_to_win".**
+
+Suggested time: 10 minutes.
+:::
+
+::: {.callout-note title="Key points"}
+- Understand how the data were collected before analysing them, and keep an unmodified raw copy.
+- A latent variable is measured by several items, and its score is calculated from all of them.
+- Clean spreadsheets follow five rules: no charts, headings in row 1, columns starting at column A, a naming convention and a .csv file.
+- Five transformations cover most needs: extension, reduction, direction, aggregation and combination.
+- Tidy data have one variable per column, one observation per row and one value per cell.
+:::

@@ -1,0 +1,1337 @@
+# Statistics, Research Papers and Me {#sec-lecture-01}
+
+```{r}
+#| label: setup
+#| include: false
+source("R/setup.R")
+library(patchwork)
+```
+
+```{r}
+#| label: load-data
+#| include: false
+organisation_beta <- read_csv(here("data/organisation_beta.csv"))
+```
+
+This chapter introduces STA1005 and the way it links statistics to research papers. It opens with a five-minute experiment: a generative AI assistant writes a research paper from a small dataset, and we audit the result. It then gives the general information about the module, shows where statistics fit in the sections of a research paper, and covers the first two sections of a paper: the introduction, which presents the variables, and the literature review, which formulates the hypotheses.
+
+## Your first paper in 5 minutes {#sec-l01-first-paper}
+
+### The task
+
+Forget the introductions for now. The first task of the module is to produce **a publication-ready research paper**, under the following conditions:
+
+- **Data**: `organisation_beta.csv`, 20 employees of an organisation
+- **Author**: a generative AI assistant
+- **Time**: 5 minutes
+- **Our contribution**: one prompt
+
+Then we will decide together whether it deserves to be published.
+
+@tbl-l01-data shows the first eight rows of the data.
+
+```{r}
+#| label: tbl-l01-data
+#| tbl-cap: "The first eight rows of organisation_beta.csv."
+organisation_beta |>
+  head(8) |>
+  kable(digits = c(0, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0))
+```
+
+The file has 20 rows and 12 columns. **No codebook, no context, no idea how these data were collected.** Does the AI care?
+
+The prompt is the following:
+
+> I'm a PhD student in business. Attached is a dataset from an organisation: organisation_beta.csv.
+>
+> Write a complete, publication-ready research paper using these data, ready to submit to a good peer-reviewed management journal. It must include: a title, an abstract, an introduction, a literature review ending with clearly formulated hypotheses, a method section (participants, measures, analysis), a results section with the statistical tests and APA-formatted tables, a discussion with theoretical and practical implications, limitations, a conclusion, and a full reference list in APA 7 style.
+
+::: {.callout-warning title="Before you copy me"}
+This dataset is simulated, so uploading it is harmless. **Never** upload your participants' data to an AI tool without checking your ethics approval and DCU's approved tools.
+:::
+
+::: {.callout-note title="Live demonstration"}
+In the lecture, the prompt is run live with the data file attached, and the AI writes the paper in front of the class.
+:::
+
+::: {.callout-tip title="Your turn: predict what the machine will find"}
+While the machine writes: what do you think it will "discover" in these 20 employees?
+
+Suggested time: 5 minutes.
+:::
+
+### What came back
+
+The paper that came back (the second run in @tbl-l01-runs, generated with the prompt above and left unedited) starts like this:
+
+> **When Pay Does Not Follow Performance: Salary, Job Performance, Gender, and Job Satisfaction in a Small Multinational Organisation**
+>
+> *Abstract.* Theories of work motivation describe a chain in which job performance earns rewards and rewards produce job satisfaction. Merit pay relies on the first link, pay equity regulation asks whether that link operates equally for women and men [...] We examined each link using records for 20 employees of an organisation with units in France, Ireland, and Australia [...] it shows that a pay system can be gender-neutral without being meritocratic. We discuss implications for merit pay and for pay transparency regulation.
+
+The paper is **11,335 words** long, with 4 hypotheses, **94 $p$-values** in the text and 74 references. It includes Holm corrections, Bayes factors, bootstrap, robustness and sensitivity analyses. It took about 30 minutes of machine time and **0 minutes of human time**. A chat interface usually returns a shorter paper in a few minutes, but the papers discussed in this chapter were produced by an agent that could run Python, which is why they are longer and took about 30 minutes each.
+
+::: {.callout-tip title="Your turn: your verdict"}
+Hands up if you think this paper is:
+
+1. Well written?
+2. Statistically correct?
+3. Good enough to pass a journal's desk review?
+4. Something you would sign as **first author**?
+:::
+
+The rest of this section examines these four questions.
+
+### Same prompt, same data, three papers
+
+The same prompt was run three times, in three independent sessions of the same AI model (25 October 2026). @tbl-l01-runs compares the three papers.
+
+|  | Run 1 | Run 2 | Run 3 |
+|---|---|---|---|
+| **Title** | *Does Pay Follow Performance, and Does Satisfaction Follow Pay?* | *When Pay Does Not Follow Performance* | *A Transparent Small-Sample Test of Equity-Theory Predictions* |
+| **Hypotheses** | 5 | 4 + 1 research question | 3 + 2 research questions |
+| **Interaction hypothesis** | performance × gender on salary | none | salary × performance on satisfaction |
+| **Big idea** | pay audits in small units | "a pay system can be gender-neutral without being meritocratic" | equity and relative pay |
+
+: Titles, hypotheses and big ideas of the three papers written from the same prompt and the same data. {#tbl-l01-runs}
+
+**Same data, three different papers.** Which one is "the" result?
+
+The three papers also share the same fingerprints (@tbl-l01-fingerprints).
+
+|  | Run 1 | Run 2 | Run 3 |
+|---|---|---|---|
+| Hypotheses supported | 1 of 5 | 1 of 4 | 1 of 3 |
+| "Significant" location effects | Ireland +1.31 (*p* = .021), performance by location (*p* = .048) | Australia below Ireland (*p* = .024), performance by location (*p* = .048) | Ireland *r* = .53 (*p* = .017) |
+| Words / references | 11,020 / 78 | 11,335 / 74 | 10,721 / 80 |
+| $p$-values in the text | 46 | 94 | 67 |
+| Lines of analysis code | 770 | 839 | 861 |
+| `[Author to complete]` placeholders | 23 | 22 | 19 |
+
+: Counts that characterise the three papers. {#tbl-l01-fingerprints}
+
+All of this comes from **20 employees**. These counts were computed from the three papers, which are not reproduced in this book. The "significant" location effects are reported with caveats in the papers, but they are reported.
+
+### Plot twist: these employees do not exist
+
+I simulated `organisation_beta.csv` in R (the code is at the top of @sec-lecture-04):
+
+```r
+tibble(
+  gender   = sample(c("male", "female"), 20, replace = TRUE),
+  location = sample(c("Ireland", "France", "Australia"), 20, replace = TRUE),
+  perf     = rnorm(20, mean = 4, sd = 2),
+  salary   = rnorm(20, mean = 30000, sd = 1000),
+  js_score = -55 + 0.002 * salary + rnorm(20, mean = 2, sd = 1)
+)
+```
+
+The data contain **one real effect**: +2 points of job satisfaction per 1,000 of salary. Gender, location and performance were **drawn at random**: they cannot explain anything. The variables `salary_c`, `perf_c`, `IrvFr`, `IrvAus`, `C1` and `C2` are recodings that I added for teaching (see @sec-lecture-05). In the file, `js_score` and `perf` were also capped between 0 and 10, which is why one employee has a satisfaction of exactly 10.
+
+### The AI suspected it
+
+All three papers opened with a warning:
+
+> "If the data are simulated or were created for teaching, they cannot be submitted as empirical evidence: doing so would be **data fabrication**." (Run 2)
+
+> "Several features of the file are typical of simulated or teaching data rather than organisational records." (Run 1)
+
+And where did the AI put this warning?
+
+> **"Note to the author (delete this box before submission)"**
+
+The machine was honest. **It put its honesty in a box labelled "delete".**
+
+In fairness, these papers flagged the tiny sample, the implausible $r$ = .86, the nine-decimal scores and the pre-computed contrast codes. A less careful tool, or a prompt asking it to "fill in realistic details", will not. Either way, the decision is yours.
+
+Each paper also contains **19 to 23 placeholders for facts that only a human can supply**:
+
+> [AUTHOR TO CONFIRM: instrument and source citation, number of items, response format, scoring, internal consistency in this sample (e.g., Cronbach's $\alpha$ or McDonald's $\omega$) ...]
+
+> [Author to complete: the ethics committee, approval reference, and consent procedure ...]
+
+> [AUTHOR: ... state the currency ...]
+
+It is 2 am, the deadline is at 9 am. What do you type in the brackets?
+
+::: {.callout-important title="Anything that did not happen is fabrication"}
+Inventing participants, measures, reliabilities or approvals is **research misconduct**, whoever (or whatever) wrote the rest of the paper.
+:::
+
+### Story versus truth
+
+@tbl-l01-story compares what the papers say with what I actually typed in R.
+
+| What the papers say | What I actually typed in R | Verdict |
+|---|---|---|
+| Salary is strongly associated with satisfaction (*r* = .86) | `js_score = -55 + 0.002 * salary + ...` | Yes: true, and rightly flagged as implausibly strong |
+| Pay does not follow performance: "equality without meritocracy" | `perf` and `salary`: two independent `rnorm()` | No: a theory of my random number generator |
+| No gender pay gap, and a 5% gap ruled out under the EU Pay Transparency Directive | `gender`: `sample()` | No: policy advice about people who do not exist |
+| Irish employees are more satisfied (*p* = .017 to .029) | `location`: `sample()` | No: noise with $p < .05$ |
+| Performance differs between countries (*p* = .048) | `location`: `sample()` | No: noise with $p < .05$ |
+| "Consistent with" Lawler and Porter (1967) | Nothing | No: any pattern is consistent with some theory |
+
+: What the AI papers claim, compared with how the data were simulated. {#tbl-l01-story}
+
+**Every number is right. The paper is still wrong.** I re-ran their key results in R (@tbl-l01-lm). They are **all correct**:
+
+```{r}
+#| label: tbl-l01-lm
+#| echo: true
+#| tbl-cap: "Regression of job satisfaction on salary (in thousands), performance, gender and location."
+lm(js_score ~ I(salary / 1000) + perf + gender + location, data = organisation_beta) |>
+  broom::tidy(conf.int = TRUE) |>
+  select(term, estimate, conf.low, conf.high, p.value) |>
+  kable(digits = 3)
+```
+
+The arithmetic was never the problem. **The problem is everything around the numbers.** The reference category here is Australia (alphabetical order), so the Ireland coefficient is +1.30 ($p$ = .024): the same "finding" as Run 2's "Australia below Ireland". Same numbers, different words.
+
+### How often does noise look like a finding?
+
+To find out, I simulated new organisations with the same recipe and ran on each of them the 15 tests that the AI papers ran on relationships that are pure noise. @fig-l01-noise shows, for each simulated organisation, how many of these tests gave $p < .05$.
+
+```{r}
+#| label: fig-l01-noise
+#| fig-cap: "Share of simulated organisations by number of noise effects with $p < .05$, among the 15 tests run on pure noise."
+#| fig-alt: "Bar chart of the share of simulated organisations by number of noise effects with p below .05: none, one, two, or three or more. The bar for no false finding is the tallest, and the bars get shorter as the number of false findings increases."
+#| fig-height: 3.6
+
+simulate_organisation <- function(n = 20) {
+  tibble(
+    gender   = sample(c("male", "female"), n, replace = TRUE),
+    location = sample(c("Ireland", "France", "Australia"), n, replace = TRUE),
+    perf     = rnorm(n, mean = 4, sd = 2),
+    salary   = rnorm(n, mean = 30000, sd = 1000),
+    js_score = -55 + 0.002 * salary + rnorm(n, mean = 2, sd = 1)
+  ) |>
+    mutate(
+      js_score = pmin(pmax(js_score, 0), 10),
+      perf     = pmin(pmax(perf, 0), 10),
+      location = factor(location, levels = c("Ireland", "France", "Australia"))
+    )
+}
+
+# p-values of 15 tests run in the AI papers on relationships that are pure noise
+noise_p_values <- function(d) {
+  full_model <- summary(lm(js_score ~ salary + perf + gender + location, data = d))$coefficients
+  c(
+    perf_salary        = cor.test(d$perf, d$salary)$p.value,
+    perf_js            = cor.test(d$perf, d$js_score)$p.value,
+    gender_gap         = summary(lm(salary ~ perf + gender, data = d))$coefficients["gendermale", 4],
+    gap_by_performance = summary(lm(salary ~ perf * gender, data = d))$coefficients["perf:gendermale", 4],
+    equity_interaction = summary(lm(js_score ~ salary * perf, data = d))$coefficients["salary:perf", 4],
+    js_by_location     = anova(lm(js_score ~ location, data = d))$`Pr(>F)`[1],
+    perf_by_location   = anova(lm(perf ~ location, data = d))$`Pr(>F)`[1],
+    salary_by_location = anova(lm(salary ~ location, data = d))$`Pr(>F)`[1],
+    js_by_gender       = t.test(js_score ~ gender, data = d)$p.value,
+    perf_by_gender     = t.test(perf ~ gender, data = d)$p.value,
+    salary_by_gender   = t.test(salary ~ gender, data = d)$p.value,
+    model_perf         = full_model["perf", 4],
+    model_gender       = full_model["gendermale", 4],
+    model_france       = full_model["locationFrance", 4],
+    model_australia    = full_model["locationAustralia", 4]
+  )
+}
+
+set.seed(1005)
+simulated_p <- map(1:500, function(i) {
+  d <- simulate_organisation()
+  if (any(table(d$location) == 0) || min(table(d$gender)) < 2) return(NULL)
+  noise_p_values(d)
+}) |>
+  compact() |>
+  do.call(what = rbind)
+
+false_findings <- rowSums(simulated_p < .05)
+share_with_false_finding <- mean(false_findings > 0)
+
+tibble(false_findings = pmin(false_findings, 3)) |>
+  count(false_findings) |>
+  mutate(
+    share = n / sum(n),
+    false_findings = factor(false_findings, levels = 0:3, labels = c("0", "1", "2", "3 or more"))
+  ) |>
+  ggplot(aes(false_findings, share)) +
+  geom_col(fill = "#eb811b") +
+  scale_y_continuous(labels = scales::percent) +
+  labs(x = "Noise effects with p < .05 in one simulated organisation", y = "Organisations")
+```
+
+Same recipe, `r nrow(simulated_p)` new organisations, the 15 tests the AI papers ran on pure noise: **`r round(100 * share_with_false_finding)`% of these organisations "discover" at least one effect that does not exist.** <!-- check: the simulation loop runs 500 times and the filter drops the samples where a location is missing or a gender has fewer than 2 employees, so the text prints the number of organisations kept, not 500 -->
+
+Each test alone is wrong 5% of the time, as it should be: it is the number of tests that does the damage.
+
+### The references are real: that is the new problem
+
+All **232 references** of the three papers (132 distinct entries) were checked against Crossref, publishers and library catalogues:
+
+- **130 correct**, **none invented**
+- **1 DOI** that opens a different article from the same journal issue
+- **1 page range** copied from an error in the publisher's own record
+
+The wrong DOI is the one of Gerhart and Fang (2005) in Run 1, which points to Ericksen and Dyer (2005) in the same issue of the International Journal of Human Resource Management. The page range error is in Castilla and Benard (2010): 543 to 676 instead of 543 to 576, an error that also sits in the publisher's metadata.
+
+In 2023, GPT-4 still fabricated 18% of its citations [(Walters & Wilder, 2023)](https://doi.org/10.1038/s41598-023-41032-5). Today, wrong references are rare enough to slip through, while fabricated references in published papers are still rising [(Topaz et al., 2026)](https://doi.org/10.1016/S0140-6736%2826%2900603-3).
+
+::: {.callout-tip title="A correct reference is not a checked claim"}
+You still have to open each source and confirm that it says what your sentence says. Checking took four AI agents about 8 minutes: **verification is a good job for AI**, as long as you check the checkers on a sample.
+:::
+
+### Why the AI paper is not good
+
+There are eight reasons:
+
+1. **No world behind the words**: 19 to 23 placeholders per paper. Only you know how, where, when and from whom the data were collected
+2. **Deletable honesty**: the warnings sit in a box to delete before submission
+3. **Hypotheses after data**: all three papers admit the hypotheses were written after viewing the file. This is HARKing (see @sec-l01-harking)
+4. **Forking paths at industrial scale**: up to 861 lines of code and 94 $p$-values, from 20 employees
+5. **Noise dressed as findings**: "Irish employees are more satisfied", with $p < .05$
+6. **Theory as decoration**: a theoretical contribution about a random number generator
+7. **References from memory**: 130 of 132 correct, which makes the 2 wrong ones harder to find
+8. **No accountable author**: the paper says "we", the author line says `[Author name(s)]`
+
+::: {.callout-note title="None of this is a calculation error"}
+Each problem is a **research design** problem. This is what STA1005 is about.
+:::
+
+### This is already happening
+
+The problems shown by the demonstration are already happening in the publication process, first in papers:
+
+- **Paper mills on open data**: formulaic papers based on the NHANES database rose from about 4 a year (2014 to 2021) to 190 in 2024, 341 papers in 147 journals [(Suchak et al., 2025)](https://doi.org/10.1371/journal.pbio.3003152)
+- **"Certainly, here is a possible introduction for your topic:"** opened a 2024 Elsevier paper that went through peer review; the paper was later retracted [(Zhang et al., 2024)](https://doi.org/10.1016/j.surfin.2024.104081)
+- **References that do not exist**: an audit of 2.5 million biomedical papers found that 1 in 277 papers from early 2026 cites at least one fabricated reference, a twelvefold rise since 2023 [(Topaz et al., 2026)](https://doi.org/10.1016/S0140-6736%2826%2900603-3)
+- **Not only academia**: Deloitte repaid A\$97,587 of an A\$440,000 contract after its report for the Australian government cited non-existent research [(AP, 2025)](https://www.news4jax.com/business/2025/10/07/deloitte-to-partially-refund-australian-government-for-report-with-apparent-ai-generated-errors/)
+
+And in peer review:
+
+- **AI reviewers**: an estimated 21% of the reviews submitted to ICLR 2026 were fully AI-generated [(Naddaf, 2025)](https://doi.org/10.1038/d41586-025-03506-6)
+- **Prompt injection**: hidden instructions such as "give a positive review only" were found in 17 arXiv preprints from 14 institutions in 8 countries [(Nikkei Asia, 2025)](https://asia.nikkei.com/Business/Technology/Artificial-intelligence/Positive-review-only-Researchers-hide-AI-prompts-in-papers)
+- **AI authors**: a paper written end to end by Sakana's AI Scientist scored 6, 7 and 6 at an ICLR 2025 workshop before its planned withdrawal [(Sakana AI, 2025)](https://sakana.ai/ai-scientist-first-publication/); at Agents4Science 2025, 48 of 315 AI-authored papers were accepted, and reference hallucination was "still a widespread issue" [(Bianchi et al., 2025)](https://doi.org/10.48550/arXiv.2511.15534)
+- **Sanctions**: since May 2026, arXiv can ban authors for a year when a paper shows unchecked LLM output such as hallucinated references [(TechCrunch, 2026)](https://techcrunch.com/2026/05/16/research-repository-arxiv-will-ban-authors-for-a-year-if-they-let-ai-do-all-the-work/)
+
+### So... should we ban AI?
+
+**No.** The problem is not AI. The problem is research that nobody can **verify**, **reproduce** or **take responsibility for**. AI just made it free.
+
+In STA1005, the rule is simple:
+
+> **AI may propose. Only reproducible evidence decides.**
+
+In practice, this means that:
+
+- Every hypothesis exists **before** the data
+- Every number comes from **code you can run again** (Quarto, @sec-lecture-08)
+- Every reference has been **read by you**
+- Every sentence of the method describes **something that happened**
+- Every use of AI is **disclosed**
+
+### AI techniques worth learning
+
+Some AI techniques are worth learning. @tbl-l01-techniques gives, for each of them, what it is good for, its main failure mode and a safeguard.
+
+| Technique | Good for | Failure mode | Safeguard |
+|---|---|---|---|
+| Literature assistants and "deep research" agents | Mapping a field quickly | Non-existent or misdescribed sources | Open every source, check the DOI |
+| Structured extraction from pdfs | Variable tables, effect sizes | Silent omissions and misreadings | Extract a sample by hand and compare |
+| AI as Reviewer 2 | Stress-testing hypotheses and models | Confident but wrong criticism | You decide, and you keep a log |
+| Code assistants and agents (@sec-lecture-06) | R, jamovi, Quarto | Plausible code that answers another question | Read it, run it, check it with a second method |
+| Simulating your planned study | Checking that your model recovers a known effect, power | Simulating what you hope to find | Take effect sizes from the literature (e.g., meta-analyses) |
+| Multiverse / specification curve | Showing robustness to analytic choices | Cherry-picking one "universe" | Report all specifications |
+| LLMs as annotators of text data | Coding open-ended answers at scale | Drift between model versions, hidden bias | Validate against human coding, fix the model version |
+| Synthetic ("silicon") participants | Piloting the wording of a survey | Flattened, stereotyped "respondents" | Never a substitute for real data |
+
+: AI techniques worth learning, with their failure modes and safeguards. {#tbl-l01-techniques}
+
+::: {.callout-tip title="Simulation is how I built organisation_beta.csv"}
+A known truth lets you check that your analysis finds it. That is the opposite of the AI paper: start from a hypothesis, not from the data.
+:::
+
+### The rules around you
+
+Several rules apply to your use of AI, from your university to the publishers:
+
+- **DCU, research students** (September 2026): use DCU-approved AI tools for your PhD work, and declare every tool and its purpose in your thesis (or declare non-use) with the **TOPIC** template: Tools, Outputs, Prompts, Iterations, Critical reflection [(DCU Graduate Studies)](https://www.dcu.ie/sites/default/files/registry_access/2026-09/guidance-for-doctoral-students-and-supervisors-on-reporting-use-of-gen-ai_september_2026.pdf)
+- **DCU, all of us**: no DCU data in AI tools other than the ones DCU provides [(DCU position statement)](https://www.dcu.ie/ocoo/dcu-position-statement-use-artificial-intelligence-tools)
+- **Ireland**: submitting unauthorised AI output as your own work is academic misconduct [(NAIN, 2023)](https://www.qqi.ie/sites/default/files/2023-09/NAIN%20Generative%20AI%20Guidelines%20for%20Educators%202023.pdf)
+- **Europe**: "Hiding the use of AI or automated tools in the creation of content or drafting of publications" is an unacceptable research practice [(ALLEA, 2023)](https://allea.org/wp-content/uploads/2023/06/European-Code-of-Conduct-Revised-Edition-2023.pdf); researchers remain ultimately responsible for their output [(European Commission, Living Guidelines, 4th version, 2026)](https://research-and-innovation.ec.europa.eu/document/download/2b6cf7e5-36ac-41cb-aab5-0d32050143dc_en?filename=ec_rtd_ai-guidelines.pdf)
+- **Publishers**: an AI cannot be an author, because it "cannot take responsibility for the submitted work" [(COPE, 2023)](https://publicationethics.org/guidance/cope-position/authorship-and-ai-tools)
+
+These rules were checked on 25 October 2026. The DCU guidance for research students is dated 23 September 2026 and includes the TOPIC template as Appendix A. The European Commission's Living Guidelines moved to a 4th version on 15 October 2026. <!-- check: dated, these rules and links were checked on 25 October 2026 and change quickly -->
+
+## General information {#sec-l01-general}
+
+### Introductions
+
+Since 2019, I have been teaching **Data Analytics** and **Statistics** at DCU Business School.
+
+::: {.callout-tip title="Your turn: introduce yourself"}
+Please introduce yourself:
+
+- What is your first name?
+- Which school are you in?
+- What is your Ph.D about (in a few words)?
+- **Which AI tools do you already use for your PhD, and for what?**
+:::
+
+### What to expect
+
+This module focuses on a new way to teach statistics:
+
+1. **Understanding the basics**
+2. **Using open source software/coding language** (jamovi and R)
+3. **Applying this knowledge and these skills to research paper writing**
+4. **Using AI as a research assistant, never as the author**: AI proposes, you verify, reproduce and disclose
+
+In the end, I want you to become a Data Scientist with enough knowledge and skills to:
+
+- Challenge bad science and wrong ideas, **including the ones written by machines**
+- Apply to Data Science positions
+
+### AI in STA1005: the rules
+
+<!-- check: proposed policy, wording and the 6-page rule not final -->
+
+The use of AI in STA1005 falls into three categories:
+
+::: {.callout-tip title="Encouraged (and disclosed)"}
+Explaining concepts, debugging code, drafting R or Quarto code that you then run and check, language editing, criticising your own hypotheses
+:::
+
+::: {.callout-warning title="Allowed with a verification log"}
+Literature discovery (every reference opened and read), extracting variables from papers, drafting an analysis plan
+:::
+
+::: {.callout-important title="Not allowed"}
+Writing hypotheses after seeing the data and presenting them as predictions, describing participants, measures or procedures that did not exist, citing sources you have not read, uploading personal or confidential data to tools not approved by DCU, listing an AI as an author
+:::
+
+**Every submission includes an AI use statement (DCU's TOPIC template) and the code that reproduces every number.** <!-- check: proposed policy, wording and the 6-page rule not final -->
+
+### Helpful readings
+
+Helpful readings on statistics:
+
+- [**Teacups, giraffes, and statistics** by Hasse Walum and Desirée De Leon (2021)](https://tinystats.github.io/teacups-giraffes-and-statistics)
+- [**Introduction to Modern Statistics** by Mine Çetinkaya-Rundel and Johanna Hardin (2021 to 2024)](https://openintro-ims.netlify.app)
+- [**Learning statistics with jamovi: A tutorial for psychology students and other beginners** by Danielle Navarro and David Foxcroft (2019 to 2025)](https://www.learnstatswithjamovi.com)
+- [**Learning statistics with R: A tutorial for psychology students and other beginners** by Danielle Navarro (2019)](https://learningstatisticswithr.com/book)
+- [**Statistical Thinking for the 21st Century** by Russell A. Poldrack (2022 to 2024)](https://statsthinking21.github.io/statsthinking21-core-site)
+
+Helpful readings on research in the age of AI:
+
+- [**The garden of forking paths** by Andrew Gelman and Eric Loken (2013)](https://sites.stat.columbia.edu/gelman/research/unpublished/forking.pdf)
+- [**False-positive psychology** by Joseph Simmons, Leif Nelson and Uri Simonsohn (2011)](https://doi.org/10.1177/0956797611417632)
+- [**Many analysts, one data set** by Raphael Silberzahn and colleagues (2018)](https://doi.org/10.1177/2515245917747646)
+- [**Artificial intelligence and illusions of understanding in scientific research** by Lisa Messeri and Molly Crockett (2024)](https://doi.org/10.1038/s41586-024-07146-0)
+- [**Living guidelines on the responsible use of generative AI in research** by the European Commission (4th version, 2026)](https://research-and-innovation.ec.europa.eu/document/download/2b6cf7e5-36ac-41cb-aab5-0d32050143dc_en?filename=ec_rtd_ai-guidelines.pdf)
+
+### The assignment
+
+Based on your research topic, I will provide real data in April. Your task is to **write a publication-ready research paper** with:
+
+- A concise **introduction** and **literature review** with a few references leading to your hypotheses
+- A **method section** describing the variables, a representation of the model, and the equation testing the hypotheses
+- A **results section** of publication quality, including hypothesis testing and conditions of applications
+- A brief **discussion and conclusion**
+
+In addition to the paper, the submission includes: <!-- check: proposed policy, wording and the 6-page rule not final -->
+
+- An **AI use statement** following DCU's TOPIC template: Tools, Outputs, Prompts, Iterations, Critical reflection (or a statement that you used none)
+- The **Quarto file** that reproduces every number in the paper (@sec-lecture-08)
+
+::: {.callout-important title="The test your paper has to pass"}
+Can you reproduce, explain and defend **every number and every sentence**? If an AI wrote it and you cannot, it is not your paper.
+:::
+
+This paper will have **a maximum of 6 pages** and **a publication ready design**. **The deadline is June 21st, 2026.** <!-- check: the deadline (and the April data release) look dated for the 2026-2027 cohort, and the 6-page limit may change if the AI use statement is added -->
+
+::: {.callout-tip title="Your turn: find and audit a paper"}
+If you haven't done it already, can you look for the **quantitative academic journal paper which is the closest to your Ph.D**. This time, **use an AI research assistant and audit it**:
+
+1. Ask an AI tool for candidate papers (e.g., Elicit, Consensus, Semantic Scholar, or the "deep research" mode of Claude, ChatGPT or Gemini)
+2. **Verify every suggestion**: does the DOI resolve? Is there a regression, ANOVA or $t$-test with $p$-values? Does the AI's summary match the abstract?
+3. Send the pdf of the paper you choose to damien.dupre@dcu.ie with a **3-line verification log**: how many suggestions were real, relevant and correctly summarised?
+
+**Warning**:
+
+- This paper should not be one of yours if you already have published some
+- This paper should include a statistical analysis (i.e., Regression analysis, ANOVA, $t$-test) and if possible the corresponding $p$-values
+:::
+
+## Statistics and research papers {#sec-l01-papers}
+
+### Anatomy of a paper
+
+The shape of the contents of a research paper resembles an hourglass. It **starts wide** (introduction), **then narrows** (hypotheses, method and results) and **finally opens** (discussion and conclusion). A paper has five parts:
+
+1. **Introduction** outlines the research question and identifies the variables under investigation.
+2. **Literature Review** explains how these variables are connected, presents the theoretical model, and ends with the hypotheses to be tested.
+3. **Methods** details the variables and the mathematical equation that represents the model and includes the tests for all hypotheses.
+4. **Results** report the numerical outcomes of the hypothesis tests.
+5. **Discussion** and **Conclusion** interpret these findings and highlight the study's strengths and limitations.
+
+### Essential concepts to master
+
+In research outputs, all sections are linked, as shown in @fig-l01-sections.
+
+```{mermaid}
+%%| label: fig-l01-sections
+%%| fig-cap: "The sections of a research paper are linked."
+%%| fig-alt: "Flow chart with five boxes in a row, linked by arrows: Introduction, Literature Review, Methods, Results, and Discussion and Conclusion."
+%%| fig-width: 6.5
+flowchart LR
+  A[Introduction] --> B[Literature<br>Review]
+  B --> C[Methods]
+  C --> D[Results]
+  D --> E[Discussion &<br>Conclusion]
+```
+
+To understand the statistics in the results section it is essential to identify the concepts presented in each section (@fig-l01-concepts).
+
+```{mermaid}
+%%| label: fig-l01-concepts
+%%| fig-cap: "The concept that links each section of a research paper to the next."
+%%| fig-alt: "Flow chart with the same five boxes in a row. The arrows are labelled Variables, from Introduction to Literature Review, Hypotheses, from Literature Review to Methods, Model and Equation, from Methods to Results, and Statistical Test, from Results to Discussion and Conclusion."
+%%| fig-width: 6.5
+%%{init: {"flowchart": {"nodeSpacing": 25, "rankSpacing": 25, "padding": 8}}}%%
+flowchart LR
+  A[Introduction] -- Variables --> B[Literature<br>Review]
+  B -- Hypotheses --> C[Methods]
+  C -- Model &<br>Equation --> D[Results]
+  D -- Statistical<br>Test--> E[Discussion &<br>Conclusion]
+```
+
+Thus, it is essential to master the concepts of **Variable**, **Hypothesis**, **Model**, and **Equation** before the actual **Statistical Test**.
+
+### The AI shortcut runs backwards
+
+Research goes from ideas to data (@fig-l01-research-order):
+
+```{mermaid}
+%%| label: fig-l01-research-order
+%%| fig-cap: "The order of a research project: from ideas to data."
+%%| fig-alt: "Flow chart with five boxes in a row, linked by arrows: Theory and Literature, Hypotheses, Data, Statistical Test, and Conclusion."
+%%| fig-width: 6.5
+flowchart LR
+  A[Theory &<br>Literature] --> B[Hypotheses]
+  B --> C[Data]
+  C --> D[Statistical<br>Test]
+  D --> E[Conclusion]
+```
+
+The 5-minute AI paper goes from data to ideas (@fig-l01-ai-order):
+
+```{mermaid}
+%%| label: fig-l01-ai-order
+%%| fig-cap: "The order of the 5-minute AI paper: from data to ideas."
+%%| fig-alt: "Flow chart with five boxes in a row, linked by arrows: Data, Run many tests, Keep the significant ones, Write hypotheses to match, and Find a theory that fits."
+%%| fig-width: 6.5
+flowchart LR
+  A[Data] --> B[Run many<br>tests]
+  B --> C[Keep the<br>significant ones]
+  C --> D[Write hypotheses<br>to match]
+  D --> E[Find a theory<br>that fits]
+```
+
+**Same sections, opposite order.** The $p$-values of the second paper cannot be interpreted: the "predictions" were chosen after the results.
+
+### Which parts can AI do?
+
+@tbl-l01-ai-parts goes through the sections of a paper and says what AI is good at, what it cannot know and what remains your job.
+
+| Section | AI is good at | AI cannot know | Your job |
+|---|---|---|---|
+| Introduction | Fluent framing, structure | Whether facts and figures are true and current | Check every fact against its source |
+| Literature review | Summarising, finding related work | Whether a reference exists and says what is claimed | Open and read every reference |
+| Hypotheses | Generating many candidates | What you predicted **before** seeing the data | Write (and register) them before the data |
+| Method | Describing standard procedures | What was **actually** done | Describe only what happened |
+| Results | Computing and formatting | Which analysis is justified, how many were tried | Reproducible code, report every test |
+| Discussion | Generalising, "implications" | The limits of your design | Claims proportional to the evidence |
+
+: What AI is good at, what it cannot know and what remains your job, for each section of a paper. {#tbl-l01-ai-parts}
+
+## The introduction: variables and how to find them? {#sec-l01-intro}
+
+### Academic papers' introduction
+
+An introduction is a section **presenting your variables and why you investigate them**. There is little reference to previous academic research, just a description of actual facts.
+
+::: {.callout-tip title="How to start an introduction?"}
+- Method 1: **Number** (e.g., In 2022, the average gender pay gap in Ireland was 9.6%.)
+- Method 2: **Event** (e.g., In 2024, the Disney company agreed to settle a class-action after female employees in California accused it of systematically paying women less than men in comparable roles.)
+- Method 3: **Quote** (e.g., "The existence of a gender pay gap [...] points to enduring inequality in the valuation of work." (Goldin, 1990))
+:::
+
+It should end with your **Research Question**, a question that includes all the main variables investigated which wonders about a potential relationship between them. For example:
+
+- *"What is the relationship between Job Satisfaction, Salary and Gender?"*
+- *"How does sales experience influence the performance of sales managers and sales representatives?"*
+
+### What is a variable?
+
+A **variable** itself is a subtle concept, but basically it comes down to finding some way of assigning *numbers or characters* to **labels**. For example:
+
+- My **height** is *183 cm*
+- This morning, I had a *large* **coffee**
+- My **gender** is *male*
+
+The **bold part is "the thing that varies"** and the *italicised part is "the value of the variable"*.
+
+> Let's collect more data about our classmates on these three variables: height, coffee and gender!
+
+::: {.callout-important title="Warning"}
+- The variable **variability** corresponds to how numbers or characters vary according to each observation. <!-- check: the slide reads "how numbers or characters according each observation", which looks incomplete -->
+- Each variable has a **Role** and a **Type**, it is essential to learn how to identify them.
+:::
+
+### Variables are measurements, not column names
+
+@tbl-l01-guess shows what the AI had to guess from `organisation_beta.csv`.
+
+| Column | The AI's reading | What only the researcher knows |
+|---|---|---|
+| `js_score` | "job satisfaction", maximum of 10 | Which scale, how many items, which reliability? |
+| `perf` | "job performance" | Rated by whom: supervisor, self, sales figures? |
+| `salary` | "an annual amount" (Runs 1 and 3) | Annual? Gross? Which currency in Australia? |
+| `IrvFr`, `IrvAus` | "comparisons with Ireland were of interest" (Run 2) | A correct guess: contrast codes for @sec-lecture-05 |
+| file name | "Organisation Beta (a pseudonym)" (Run 3) | There is no organisation |
+
+: What the AI guessed from the columns of the file, and what only the researcher knows. {#tbl-l01-guess}
+
+A variable is defined by **how it was measured**. Without a codebook, any AI (or any human) is guessing.
+
+### Type of variables
+
+Variables can have different types:
+
+- **Categorical**: if the variable's possibilities are words or sentences (character string)
+    - if the possibilities cannot be ordered: **Categorical Nominal** (*e.g.*, $gender$ male, female, other)
+    - if the possibilities can be ordered: **Categorical Ordinal** (*e.g.*, $size$ S, M, L)
+- **Continuous**: if the variable's possibilities are numbers (*e.g.*, $age$, $temperature$, ...)
+
+Our first statistical software, jamovi, illustrates them with recognisable icons (@fig-l01-jamovi-icons).
+
+```{r}
+#| label: fig-l01-jamovi-icons
+#| fig-cap: "The icons used by jamovi for the three types of variables."
+#| fig-alt: "Three jamovi variable icons, each followed by its label: an orange ruler for Continuous, three blue bars of increasing height for Ordinal, and two blue circles and one orange circle for Nominal."
+#| out-width: "40%"
+include_img("jamovi_icons.png")
+```
+
+::: {.callout-important title="Warning"}
+Variables can be converted to either Categorical and Continuous but it is always better to keep them in their correct scale.
+:::
+
+### Why keep variables in their correct scale?
+
+In `organisation_beta.csv`, `salary_c` is simply `salary` cut at its mean into "low" and "high" (@fig-l01-scale):
+
+```{r}
+#| label: fig-l01-scale
+#| fig-cap: "Job satisfaction and salary, with salary kept continuous (left) or cut into low and high (right). The $R^2$ of each model is in the title of the panel."
+#| fig-alt: "Two panels. On the left, a scatter plot of job satisfaction against salary with a rising straight line and R squared of 0.73. On the right, job satisfaction for low and high salary shown as box plots with jittered points and R squared of 0.31."
+#| fig-width: 8
+#| fig-height: 3.6
+
+r2_continuous <- summary(lm(js_score ~ salary, data = organisation_beta))$r.squared
+r2_categorised <- summary(lm(js_score ~ salary_c, data = organisation_beta))$r.squared
+
+plot_continuous <- organisation_beta |>
+  ggplot(aes(salary, js_score)) +
+  geom_point(size = 3) +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
+  labs(title = bquote("salary (continuous):" ~ R^2 == .(round(r2_continuous, 2))))
+
+plot_categorised <- organisation_beta |>
+  mutate(salary_c = fct_relevel(salary_c, "low", "high")) |>
+  ggplot(aes(salary_c, js_score)) +
+  geom_boxplot(width = 0.4, outlier.shape = NA) +
+  geom_jitter(width = 0.08, height = 0, size = 3) +
+  labs(title = bquote("salary_c (low/high):" ~ R^2 == .(round(r2_categorised, 2))))
+
+plot_continuous + plot_categorised
+```
+
+Same employees, same effect: cutting salary into two groups **throws away more than half of the explained variance**.
+
+### Role of variables
+
+It is important to keep the two roles **"variable doing the explaining"** and **"variable being explained"** distinct. Let's denote the:
+
+- **Outcome** is the "variable to be explained" (also called $Y$, Dependent Variable, or DV)
+- **Predictor** is the "variable doing the explaining" (also called $X$, Independent Variable, or IV)
+
+Statistics is only about identifying relationship between Predictor and Outcome variables also called **effect**:
+
+> An effect between 2 variables means that the changes in the values of a predictor variable are related to changes in the values of an outcome variable.
+
+::: {.callout-tip title="Control Variables"}
+Variables not included in the model or in the hypotheses but they are in the equation. They are used to remove an irrelevant explanation of the variable changes.
+:::
+
+The objective is to find the best predictor variable(s) to predict the variability of the Outcome! One predictor is simple to handle, but using more than one requires more understanding!
+
+::: {.callout-note title="Outcome's variability is a birthday cake"}
+- If 1 guest eats all the cake: 1 predictor explains all the outcome.
+- If 1 guest eats a slice of the cake: 1 predictor explains only part of the outcome.
+- If more than 1 guests, they will all eat a slice of different size: each predictor will explain their own part of the outcome
+:::
+
+An effect between a predictor variable and an outcome variable corresponds to the model of @fig-l01-effect-model.
+
+```{dot}
+//| label: fig-l01-effect-model
+//| fig-cap: "The model of an effect: a predictor and an outcome."
+//| fig-alt: "A box labelled Predictor with an arrow pointing to a box labelled Outcome."
+//| fig-width: 2.2
+//| fig-height: 0.46
+digraph {
+  rankdir="LR"
+  node [shape=box]
+  Predictor -> Outcome
+}
+```
+
+This arrow does not suggest causation but indicates correlation between $Predictor$ and $Outcome$, there is no assumption of one causing the other. **An "effect" is reciprocal and does not involve causality**.
+
+::: {.callout-important title="Warning"}
+Causality analysis is another kind of test that involves:
+
+- To be sure that 2 variables are correlated
+- That one variable is the antecedent of the other
+- That no other variable is explaining this relationship
+:::
+
+A significant effect of a $Predictor$ on an $Outcome$ variable means that **a predictor is explaining enough variance of the outcome** variable. This shows a significant relationship.
+
+::: {.callout-note title="Outcome's variability is a birthday cake"}
+A significant effect means the slice eaten by the predictor is large enough.
+:::
+
+If there is **no effect** between the variables, they are not sharing enough of their variability (@fig-l01-venn-none). If there is a **significant effect** between the variables, they are sharing a big part of their variability (@fig-l01-venn-effect).
+
+::: {#fig-l01-venn layout-ncol=2}
+
+```{r}
+#| label: fig-l01-venn-none
+#| fig-cap: "No effect."
+#| fig-alt: "Two circles labelled Predictor and Outcome that overlap only a little."
+#| fig-width: 4
+#| fig-height: 3.6
+VennDiagram::draw.pairwise.venn(
+  100, 100, 10, c("Predictor", "Outcome"), ind = FALSE, cat.pos = c(0,0)) |>
+  grid::grid.draw()
+```
+
+```{r}
+#| label: fig-l01-venn-effect
+#| fig-cap: "Significant effect."
+#| fig-alt: "Two circles labelled Predictor and Outcome that overlap over a large part of their area."
+#| fig-width: 4
+#| fig-height: 3.6
+VennDiagram::draw.pairwise.venn(
+  100, 100, 40, c("Predictor", "Outcome"), ind = FALSE, cat.pos = c(0,0)) |>
+  grid::grid.draw()
+```
+
+Shared variability between a predictor and an outcome.
+:::
+
+To decide if the part of the shared variability is big enough, a statistical test is required.
+
+::: {.callout-tip title="Your turn: identify the variables of your paper"}
+In the research paper you have selected, **identify the variables that are used to produce statistical results (e.g. $p$-values).**
+
+Indicate their Type and Role by using the following table:
+
+|variable_name|variable_type|variable_role|
+|-|-|-|
+|var 1        |type         |role         |
+|...          |...          |...          |
+|var n        |type         |role         |
+
+**Then, and only then**: upload the pdf to an AI assistant and ask for the same table. Where do you and the AI disagree? Who is right?
+
+Send me both tables and one disagreement by email at damien.dupre@dcu.ie **before the next lecture.**
+:::
+
+::: {.callout-warning title="What can you upload?"}
+A published paper is fine. Your own unpublished data, or anything about your participants, is not, unless the tool is approved by DCU and your ethics approval allows it.
+:::
+
+## Literature review: formulate your hypotheses {#sec-l01-hypotheses}
+
+### Hypotheses in a nutshell
+
+Hypotheses are:
+
+1. Predictions supported by theory/literature
+2. Affirmations designed to precisely describe the relationships between variables
+
+> *"Hypothesis statements contain two or more variables that are measurable or potentially measurable and that specify how the variables are related"* (Kerlinger, 1986)
+
+Hypotheses include:
+
+- Predictor(s) / Independent Variable(s)
+- Outcome / Dependent Variable (DV)
+- Direction of the outcome if the predictor increases
+
+::: {.callout-important title="Warning"}
+A hypothesis cannot test equality between groups or modalities, it can only test differences or effects.
+:::
+
+### Hypotheses come before data {#sec-l01-harking}
+
+A hypothesis is a **prediction**, so it has to exist **before** anyone looks at the data.
+
+The AI paper did the opposite: it read the data, then wrote hypotheses that were "supported". This is **HARKing**: Hypothesising After the Results are Known [(Kerr, 1998)](https://doi.org/10.1207/s15327957pspr0203_4).
+
+::: {.callout-tip title="The fix: pre-registration"}
+A time-stamped record of your hypotheses, variables, model and equation **before** you access the data (e.g., [OSF Registries](https://osf.io/registries) or [AsPredicted](https://aspredicted.org)).
+:::
+
+> If it was not written down before the data, it is not a hypothesis: it is a description.
+
+### Alternative versus null hypotheses
+
+Every hypothesis has to state a change (between groups or according values), also called $H_a$ (for **alternative hypothesis**) or $H_1$. Every alternative hypothesis has a **null hypothesis** counterpart (no difference between groups or according values), also called $H_0$ (pronounce H naught or H zero). $H_a$ is viewed as a "challenger" to the null hypothesis $H_0$.
+
+**Statistics are used to estimate the probability of obtaining the observed results, assuming the null hypothesis is correct. If this probability is low, the null hypothesis is rejected and the alternative hypothesis is considered more plausible.**
+
+### Why testing everything is a trap
+
+An AI can write and test 50 hypotheses in a second. If **none** of them is true, what is the chance that at least one gets $p < .05$? @fig-l01-multiple-tests gives the answer.
+
+```{r}
+#| label: fig-l01-multiple-tests
+#| fig-cap: "Chance of at least one $p < .05$ as the number of tested hypotheses increases, when all of them are false."
+#| fig-alt: "Line chart of the chance of at least one p below .05 against the number of tested hypotheses, from 1 to 20, when all hypotheses are false. The line rises from 5 percent for one test to about 64 percent for 20 tests."
+
+tibble(n_tests = 1:20) |>
+  mutate(chance_false_positive = 1 - 0.95^n_tests) |>
+  ggplot(aes(n_tests, chance_false_positive)) +
+  geom_line(linewidth = 1.5, colour = "#eb811b") +
+  geom_point(size = 3) +
+  scale_y_continuous(labels = scales::percent, limits = c(0, 1)) +
+  labs(x = "Number of tested hypotheses (all false)", y = "Chance of at least one p < .05")
+```
+
+With 10 tests, **40%**. With 20 tests, **64%**. This is why every hypothesis has to be justified **before** it is tested.
+
+### Main effect hypothesis
+
+A **main effect hypothesis** is the **predicted relationship between one $Predictor$ and one $Outcome$ variable**.
+
+- The $Outcome$ needs to be Continuous (but some models can use a Categorical Outcome)
+- The $Predictor$ can be either Continuous or Categorical but the hypothesis formulation will change with its type
+
+The effect is represented as in @fig-l01-effect-model.
+
+::: {.callout-note title="How to use a template?"}
+In the formulation templates, **replace the variable names with yours** and *select the direction of the effect expected*.
+:::
+
+@tbl-l01-main-templates gives the template of a main effect hypothesis for each type of predictor.
+
+| Predictor | Template | Example |
+|:-----|:--------------|:--------------|
+| Case 1: continuous | The {**outcome**} {*increases/decreases/changes*} when {**predictor**} increases | **Job satisfaction** *increases* when **salary** increases |
+| Case 2: categorical (2 categories) | The {**outcome**} of {**predictor category 1**} is {*higher/lower/different*} than the {**outcome**} of {**predictor category 2**} | The **Job satisfaction** of **EU employees** is *higher* than the **job satisfaction** of **non EU employees** |
+| Case 3: categorical (3 or more categories) | The {**outcome**} of at least one of the {**predictor**} is {*higher/lower/different*} than the {**outcome**} of the other {**predictor**} | The **Job satisfaction** of at least one of the **company's departments** is *higher* than the **Job satisfaction** of the other **company's departments** |
+
+: Templates and examples of main effect hypotheses. {#tbl-l01-main-templates}
+
+Here are three examples of main effect hypotheses.
+
+**Example 1.**
+
+- Outcome = Exam Results (continuous from 0 to 100)
+- Predictor = Sleep Time (continuous from 0h to 24h)
+
+The effect is represented in @fig-l01-ex-sleep.
+
+```{dot}
+//| label: fig-l01-ex-sleep
+//| fig-cap: "Effect representation: sleep time and exam results."
+//| fig-alt: "A box labelled Sleep Time with an arrow pointing to a box labelled Exam Results."
+//| fig-width: 2.7
+//| fig-height: 0.46
+digraph {
+  rankdir="LR"
+  node [shape=box]
+  "Sleep Time" -> "Exam Results"
+}
+```
+
+Main Effect Hypothesis:
+
+- $H_a$: **Exam results** *increase* when students' **sleep time** increases
+
+**Example 2.**
+
+- Outcome = Exam Results (continuous from 0 to 100)
+- Predictor = Breakfast (categorical *yes* or *no*)
+
+The effect is represented in @fig-l01-ex-breakfast.
+
+```{dot}
+//| label: fig-l01-ex-breakfast
+//| fig-cap: "Effect representation: breakfast and exam results."
+//| fig-alt: "A box labelled Breakfast with an arrow pointing to a box labelled Exam Results."
+//| fig-width: 2.55
+//| fig-height: 0.46
+digraph {
+  rankdir="LR"
+  node [shape=box]
+  "Breakfast" -> "Exam Results"
+}
+```
+
+Main Effect Hypothesis:
+
+- $H_a$: **Exam results** of students **who eat breakfast** will be *higher* than **exam results** of students **who do not eat breakfast**
+
+**Example 3.**
+
+- Outcome = Driving Errors (continuous from 0 to Inf.)
+- Predictor = Talking on the Phone while Driving (categorical *yes*/*no*)
+
+The effect is represented in @fig-l01-ex-phone.
+
+```{dot}
+//| label: fig-l01-ex-phone
+//| fig-cap: "Effect representation: talking on the phone while driving and driving errors."
+//| fig-alt: "A box labelled Talking on the Phone while Driving with an arrow pointing to a box labelled Driving Errors."
+//| fig-width: 4.5
+//| fig-height: 0.46
+digraph {
+  rankdir="LR"
+  node [shape=box]
+  "Talking on the Phone while Driving" -> "Driving Errors"
+}
+```
+
+Main Effect Hypothesis:
+
+- $H_a$: **Driving errors** of **motorists who do not talk on the phone while driving** will be *lower* than **driving errors** of **motorists who talk on the phone while driving**
+
+### Interaction effect hypothesis
+
+An **interaction effect hypothesis** **predicts the influence of a second predictor on the relationship between a first predictor and an outcome variable**.
+
+::: {.callout-important title="Warning"}
+- The second predictor is also called moderator.
+- The main effect of each predictor must be hypothesised as well
+- The role of first and second predictors can be inverted with the exact same statistical results
+:::
+
+The effects are represented in @fig-l01-interaction-moderation. @fig-l01-interaction-terms gives exactly the same results.
+
+```{dot}
+//| label: fig-l01-interaction-moderation
+//| fig-cap: "Representation of an interaction effect: the second predictor acts on the effect of the first predictor on the outcome."
+//| fig-alt: "A box labelled Predictor 1 linked by a line to a box labelled Outcome, with an arrowhead at Outcome. A box labelled Predictor 2 points with an arrow to the middle of that line."
+//| fig-width: 3.7
+//| fig-height: 0.83
+digraph {
+  graph [rankdir = LR]
+  node [shape = box]
+  "Predictor 1"; "Predictor 2"; "Outcome"
+  node [shape = point, width = 0, height = 0]
+  ""
+
+  "Predictor 2" -> ""
+  "Predictor 1" -> "" [arrowhead = none]
+  "" -> Outcome
+
+  subgraph {
+    rank = same; "Predictor 2"; "";
+  }
+}
+```
+
+```{dot}
+//| label: fig-l01-interaction-terms
+//| fig-cap: "The same interaction effect, with the product of the two predictors as a third predictor."
+//| fig-alt: "Three boxes labelled Predictor 1, Predictor 2 and Predictor 1 X Predictor 2, each with an arrow pointing to a box labelled Outcome."
+//| fig-width: 3.3
+//| fig-height: 1.58
+digraph {
+  graph [rankdir = LR]
+  node [shape = box]
+
+  "Predictor 1" -> "Outcome"
+  "Predictor 2" -> "Outcome"
+  "Predictor 1 X Predictor 2" -> "Outcome"
+}
+```
+
+Imagine a first effect where Job Satisfaction increases when Salary increases (@fig-l01-interaction-single).
+
+<!-- check: the slide code has mean(q1, q2, q3, q4), which returns q1 only (the other arguments are read as trim and na.rm); changed to mean(c(q1, q2, q3, q4)) in this chunk -->
+
+```{r}
+#| label: fig-l01-interaction-single
+#| fig-cap: "Job satisfaction increases with salary."
+#| fig-alt: "Scatter plot of job satisfaction against salary for nine employees, with a fitted straight line that rises slightly."
+#| fig-height: 3.5
+tribble(
+  ~employee, ~salary, ~q1, ~q2, ~q3, ~q4,
+  1,         45000,   1,   5,   3,   2,
+  2,         55000,   5,   4,   6,   6,
+  3,         70000,   3,   1,   2,   3,
+  4,         80000,   8,   5,   2,   7,
+  5,         95000,   8,   9,   6,   5,
+  6,         75000,   3,   1,   2,   1,
+  7,         50000,   5,   2,   7,   7,
+  8,         45000,   1,   4,   6,   9,
+  9,         65000,   3,   1,   2,   3
+) |>
+  rowwise() |>
+  mutate(js_score = mean(c(q1, q2, q3, q4))) |>
+  ggplot(aes(salary, js_score)) +
+  geom_point(size = 3) +
+  geom_smooth(method = "lm", se = FALSE) +
+  scale_y_continuous(limits = c(0, 10))
+```
+
+This effect can change according to the values of a second predictor (@fig-l01-interaction-origin).
+
+<!-- check: the slide code has mean(q1, q2, q3, q4), which returns q1 only (the other arguments are read as trim and na.rm); changed to mean(c(q1, q2, q3, q4)) in this chunk -->
+
+```{r}
+#| label: fig-l01-interaction-origin
+#| fig-cap: "The effect of salary on job satisfaction differs between Irish and French employees."
+#| fig-alt: "Scatter plot of job satisfaction against salary for nine employees, with one fitted line for the Irish employees and one for the French employees. Both lines rise, and the line for the Irish employees is steeper."
+#| fig-height: 3.5
+tribble(
+  ~employee, ~salary, ~q1, ~q2, ~q3, ~q4, ~origin,
+  1,         45000,   1,   5,   3,   2,   "Irish",
+  2,         55000,   5,   4,   6,   6,   "Irish",
+  3,         70000,   3,   1,   2,   3,   "Irish",
+  4,         80000,   8,   5,   2,   7,   "Irish",
+  5,         95000,   8,   9,   6,   5,   "French",
+  6,         75000,   3,   1,   2,   1,   "French",
+  7,         50000,   5,   2,   7,   7,   "French",
+  8,         45000,   1,   4,   6,   9,   "French",
+  9,         65000,   3,   1,   2,   3,   "French"
+) |>
+  rowwise() |>
+  mutate(js_score = mean(c(q1, q2, q3, q4))) |>
+  ggplot(aes(salary, js_score, color = origin)) +
+  geom_point(size = 3) +
+  geom_smooth(method = "lm", se = FALSE, fullrange = TRUE) +
+  scale_y_continuous(limits = c(0, 10)) +
+  theme(legend.position = "bottom")
+```
+
+Here, the effect of **Salary** on **Job Satisfaction** is *higher* for **Irish employees** than it is for **French employees** because their line is steeper.
+
+The templates of an interaction effect hypothesis depend on the type of the second predictor (@tbl-l01-interaction-templates). As for the main effects, **replace the variable names with yours** and *select the direction of the effect expected*.
+
+| Predictor 2 | Template | Example |
+|:-----|:--------------|:--------------|
+| Case 1: continuous | The effect of {**predictor 1**} on {**outcome**} is {*higher/lower/different*} when {**predictor 2**} increases | The effect of **Salary** on **Job Satisfaction** is *higher* when **Employees' Age** increases |
+| Case 2: categorical (2 categories) | The effect of {**predictor 1**} on {**outcome**} is {*higher/lower/different*} for {**predictor 2 category 1**} than it is for {**predictor 2 category 2**} | The effect of **Salary** on **Job Satisfaction** is *higher* for **Irish employees** than it is for **French employees** |
+| Case 3: categorical (3 or more categories) | The effect of {**predictor 1**} on {**outcome**} is {*higher/lower/different*} for at least one of {**predictor 2**} | The effect of **Salary** on **Job Satisfaction** is *higher* for at least one of **Employees' Location** |
+
+: Templates and examples of interaction effect hypotheses. {#tbl-l01-interaction-templates}
+
+Here are two examples of interaction effect hypotheses.
+
+**Example 1.**
+
+- Outcome = Exam Results (continuous from 0 to 100)
+- Predictor 1 = Sleep Deprivation (categorical low, medium, high)
+- Predictor 2 = Gender (categorical male vs. female)
+
+The effects are represented in @fig-l01-ex-sleep-gender.
+
+```{dot}
+//| label: fig-l01-ex-sleep-gender
+//| fig-cap: "Effects representation: the effect of sleep deprivation on exam results depends on gender."
+//| fig-alt: "A box labelled Sleep Deprivation linked by a line to a box labelled Exam Results, with an arrowhead at Exam Results. A box labelled Gender points with an arrow to the middle of that line."
+//| fig-width: 4.26
+//| fig-height: 0.83
+digraph {
+  graph [rankdir = LR]
+
+  node [shape = box]
+  "Sleep Deprivation"; "Exam Results"; "Gender"
+  node [shape = point, width = 0, height = 0]
+  ""
+
+  "Gender" -> ""
+  "Sleep Deprivation" -> "" [arrowhead = none]
+  ""-> "Exam Results"
+
+  subgraph {
+    rank = same; "Gender"; "";
+  }
+}
+```
+
+Interaction Effect Hypothesis:
+
+- $H_a$: The effect of **sleep deprivation** on **exam results** is *higher* for **male students** than it is for **female students** <!-- check: the slide reads "Males students" and "Females students" -->
+
+::: {.callout-important title="Warning"}
+The main effect hypotheses of the two predictors also have to be formulated
+:::
+
+**Example 2.**
+
+- Outcome = Road Accidents (continuous from 0 to Inf.)
+- Predictor 1 = Alcohol Consumption (continuous from 0 to Inf.)
+- Predictor 2 = Driving Experience (categorical low, high)
+
+The effects are represented in @fig-l01-ex-alcohol.
+
+```{dot}
+//| label: fig-l01-ex-alcohol
+//| fig-cap: "Effects representation: the effect of alcohol consumption on road accidents depends on driving experience."
+//| fig-alt: "A box labelled Alcohol Consumption linked by a line to a box labelled Road Accidents, with an arrowhead at Road Accidents. A box labelled Driving Experience points with an arrow to the middle of that line."
+//| fig-width: 5.5
+//| fig-height: 0.83
+digraph {
+  graph [rankdir = LR]
+
+  node [shape = box]
+  "Alcohol Consumption"; "Road Accidents"; "Driving Experience"
+  node [shape = point, width = 0, height = 0]
+  ""
+
+  "Driving Experience" -> ""
+  "Alcohol Consumption" -> "" [arrowhead = none]
+  ""-> "Road Accidents"
+
+  subgraph {
+    rank = same; "Driving Experience"; "";
+  }
+}
+```
+
+Interaction Effect Hypothesis:
+
+- $H_a$: The effect of **alcohol consumption** on **road accidents** is *lower* for **experienced drivers** than it is for **inexperienced drivers**
+
+::: {.callout-important title="Warning"}
+The main effect hypotheses of the two predictors also have to be formulated
+:::
+
+### Hypotheses in published papers
+
+@fig-l01-ex1-title to @fig-l01-ex2-hyp2 show how hypotheses are written in two published papers.
+
+```{r}
+#| label: fig-l01-ex1-title
+#| fig-cap: "Title and authors of the first example paper."
+#| fig-alt: "Title page excerpt: Impact of job burnout on satisfaction and turnover intention: do generational differences matter? By Allan Cheng Chieh Lu and Dogan Gursoy, Washington State University."
+#| out-width: "70%"
+include_img("ex1_title.png")
+```
+
+```{r}
+#| label: fig-l01-ex1-hyp
+#| fig-cap: "The four hypotheses of the first example paper."
+#| fig-alt: "Four hypotheses, each starting with: when experiencing job burnout (as measured by emotional exhaustion, cynicism, and reduced professional efficacy). Hypotheses 1 and 2 say that Boomers will report significantly higher job satisfaction than Millennials and than Gen-Xers. Hypotheses 3 and 4 say that Boomers will report significantly lower turnover intention than Millennials and than Gen-Xers."
+#| out-width: "70%"
+include_img("ex1_hyp.png")
+```
+
+```{r}
+#| label: fig-l01-ex2-title
+#| fig-cap: "Title and authors of the second example paper."
+#| fig-alt: "Title page excerpt: The Role of Occupational Emotional Labor Requirements on the Surface Acting-Job Satisfaction Relationship. By Devasheesh P. Bhave, Singapore Management University, and Theresa M. Glomb, University of Minnesota."
+#| out-width: "70%"
+include_img("ex2_title.png")
+```
+
+```{r}
+#| label: fig-l01-ex2-hyp1
+#| fig-cap: "The first two hypotheses of the second example paper."
+#| fig-alt: "Hypothesis 1: Occupational EL requirements will be positively related to job satisfaction. Hypothesis 2: Surface acting will be negatively related to job satisfaction."
+#| out-width: "70%"
+include_img("ex2_hyp1.png")
+```
+
+```{r}
+#| label: fig-l01-ex2-hyp2
+#| fig-cap: "The third hypothesis of the second example paper."
+#| fig-alt: "Hypothesis 3: The negative association between surface acting and job satisfaction will be moderated by occupational EL requirements such that the relationship will be stronger for employees who work in occupations with higher EL requirements."
+#| out-width: "80%"
+include_img("ex2_hyp2.png")
+```
+
+### The hypothesis checklist
+
+When formulating a hypothesis:
+
+- Is your hypothesis a prediction and not a question?
+- Does your hypothesis include both Predictor and Outcome variables?
+- Are these variables included in your dataset?
+
+::: {.callout-note title="Note about hypotheses in academic papers"}
+- Don't trust research papers, most of them have incorrect formulations.
+- Use the templates shown previously.
+:::
+
+### AI as your Reviewer 2
+
+A good use of AI: **criticising** your hypotheses, not writing them. Here is a prompt to use:
+
+> Here are my hypotheses: [paste]. Here are the templates and the checklist used in my statistics course: [paste]. For each hypothesis, list the problems only (missing predictor or outcome, no direction, variable not in my dataset, equality instead of a difference, question instead of a prediction). Do not rewrite them. Do not invent variables. If a hypothesis has no problem, say so.
+
+Then **you** decide whether each criticism is right.
+
+::: {.callout-note title="Why 'do not rewrite them'?"}
+If the AI rewrites your hypotheses, you learn nothing and they stop being yours. Asking for problems only keeps you as the author and the AI as a sparring partner.
+:::
+
+### Special case: mediation hypothesis
+
+Remember the birthday cake metaphor: it symbolises the variability of the outcome variable to be explained by the predictors. Now, imagine one guest takes a slice, but the birthday person arrives and takes the slice from the guest to eat it.
+
+**A mediation is when a Predictor called mediator, explains part of the variability of the outcome already explained by a first predictor.** It is usually used to highlight the influence of psychological features. The effects are represented in @fig-l01-mediation.
+
+```{dot}
+//| label: fig-l01-mediation
+//| fig-cap: "Representation of a mediation: the second predictor explains part of the effect of the first predictor on the outcome."
+//| fig-alt: "A box labelled Predictor 1 with arrows pointing to a box labelled Predictor 2 and to a box labelled Outcome. The box Predictor 2 also has an arrow pointing to the box Outcome."
+//| fig-width: 3.7
+//| fig-height: 0.7
+digraph {
+  graph [rankdir = LR]
+
+  node [shape = box]
+  "Predictor 1"; "Predictor 2"; "Outcome"
+
+  "Predictor 1" -> {"Predictor 2" "Outcome"}
+  "Predictor 2" -> "Outcome"
+}
+```
+
+The formulation structure is:
+
+> The effect of {**predictor 1**} on {**outcome**} is explained by the {**predictor 2**}
+
+::: {.callout-important title="Warning"}
+A mediation effect involves 3 requirements:
+
+1. Predictor 1 needs to have a main effect on the Outcome
+2. Predictor 1 needs to have a main effect on the Predictor 2
+3. The main effect of Predictor 1 on the Outcome needs to disappear when Predictor 2 is taken into account
+:::
+
+For example, with the hypothesis "The effect of **employee's age** on **job satisfaction** is explained by their **salary**", the requirements are:
+
+1. Employee's age needs to have a main effect on job satisfaction
+2. Employee's age needs to have a main effect on their salary
+3. The main effect of Employee's age on the job satisfaction needs to disappear when salary is taken into account
+
+Here is another example of a mediation effect hypothesis:
+
+- Outcome = Happiness (continuous from 0 to 7)
+- Predictor 1 = Exam Results (continuous from 0 to 100)
+- Predictor 2 = Self-Esteem (continuous from 0 to 7)
+
+The effects are represented in @fig-l01-mediation-example.
+
+```{dot}
+//| label: fig-l01-mediation-example
+//| fig-cap: "Representation of a mediation: the effect of exam results on happiness is explained by self-esteem."
+//| fig-alt: "A box labelled Exam Results with arrows pointing to a box labelled Happiness and to a box labelled Self-Esteem. The box Self-Esteem also has an arrow pointing to the box Happiness."
+//| fig-width: 4.05
+//| fig-height: 0.7
+digraph {
+  graph [rankdir = LR]
+
+  node [shape = box]
+  "Self-Esteem"; "Exam Results"; "Happiness"
+
+  "Exam Results" -> {"Happiness" "Self-Esteem"}
+  "Self-Esteem" -> "Happiness"
+}
+```
+
+Mediation Effect Hypothesis:
+
+- $H_a$: The effect of **grades** on **happiness** is explained by **self-esteem**
+
+### Practising with hypotheses
+
+::: {.callout-tip title="Your turn: find the variables in these hypotheses"}
+In the following hypotheses, find the outcome variable and the predictor(s):
+
+1. Overweight adults who value longevity are more likely than other overweight adults to lose their excess weight
+2. Larger animals of the same species expend more energy than smaller animals of the same type.
+3. Rainbow trout suffer more lice when water levels are low than other trout.
+4. Professors who use a student-centred teaching method will have a greater positive rapport with their graduate students than professors who use a teacher-centred teaching method.
+
+Suggested time: 5 minutes.
+:::
+
+::: {.callout-note title="Solution" collapse="true"}
+Hypothesis 1:
+
+- Outcome = Excess weight
+- Predictor = The valuation of longevity (yes *vs* no)
+
+Hypothesis 2:
+
+- Outcome = Energy expended
+- Predictor = Animal size (larger *vs* smaller)
+
+Hypothesis 3:
+
+- Outcome = Suffering lice
+- Predictor = Trout type (rainbow *vs* other)
+
+Hypothesis 4:
+
+- Outcome = Rapport with graduate students
+- Predictor = Teaching method (student-centred *vs* teacher-centred)
+:::
+
+::: {.callout-tip title="Your turn: make your own hypotheses"}
+Write a hypothesis for each line of the following table, using the templates:
+
+| Outcome | Predictor 1 | Predictor 2 | Hypothesis Type |
+|----------|--------------|--------------|-----------------|
+| Work motivation | Gender (Female/Male) |  | Main Effect |
+| Work motivation | Gender (Female/Male) | Origin (French/Irish) | Interaction Effect |
+| Work motivation | Gender (Female/Male) | Origin (French/Irish/Italian) | Interaction Effect |
+| Job satisfaction | Stress (0 to 10) |  | Main Effect |
+| Job satisfaction | Stress (0 to 10) | Age (Millennials/Baby Boomers) | Interaction Effect |
+| Job satisfaction | Stress (0 to 10) | Age (in years) | Interaction Effect |
+
+Suggested time: 5 minutes.
+:::
+
+::: {.callout-note title="Solution" collapse="true"}
+1. The **work motivation** of **female employees** is *higher* than the **work motivation** of **male employees**
+2. The effect of **gender** on **work motivation** is *higher* for **Irish employees** than it is for **French employees**
+3. The effect of **employee origin** on **work motivation** is *higher* for **female employees** than it is for **male employees** <!-- check: this solution swaps the roles of the two predictors of the table (origin has 3 categories) and does not use the "at least one of" template -->
+4. **Job satisfaction** *decreases* when **stress** increases
+5. The effect of **stress** on **job satisfaction** is *higher* for **Millennials** than it is for **Baby boomers**
+6. The effect of **stress** on **job satisfaction** *increases* when **employee's age** increases
+:::
+
+::: {.callout-tip title="Your turn: homework exercise"}
+In the research paper that you have selected, **formulate the tested hypotheses using the templates seen in this chapter and the variables that you have previously determined**.
+
+Then use the **Reviewer 2 prompt** on your own hypotheses and keep a note of one criticism you accepted and one you rejected (and why).
+
+Send me your hypotheses and your two notes by email at damien.dupre@dcu.ie **before the next lecture.**
+:::
+
+::: {.callout-note title="Key points"}
+- AI may propose, but only reproducible evidence decides: hypotheses exist before the data, numbers come from code you can run again, references are read by you, the method describes what happened and every use of AI is disclosed.
+- An AI paper can be fluent and every number can be right while the research design is wrong: when the 15 tests of the AI papers are run on pure noise, `r round(100 * share_with_false_finding)`% of the simulated organisations "discover" at least one effect that does not exist.
+- A research paper has the shape of an hourglass, and its sections are linked by variables, hypotheses, a model and an equation, and finally a statistical test.
+- A variable is defined by how it was measured, has a type (categorical nominal, categorical ordinal or continuous) and a role (outcome, predictor or control), and is best kept in its correct scale.
+- A hypothesis is a prediction written before the data, with predictors, an outcome and a direction. Templates exist for main effects, interactions and mediations, and an effect is a shared variability, not causation.
+- Testing many hypotheses inflates false positives: if none of them is true, the chance of at least one $p < .05$ is 40% with 10 tests and 64% with 20 tests.
+:::

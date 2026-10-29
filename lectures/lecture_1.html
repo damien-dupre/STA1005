@@ -6,10 +6,10 @@
 <script src="lecture_1_files/libs/quarto-html/tippy.umd.min.js"></script>
 <link href="lecture_1_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="lecture_1_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="lecture_1_files/libs/quarto-html/quarto-syntax-highlighting-7e58e3368124f49f6e3733161a9b089d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="lecture_1_files/libs/quarto-html/quarto-syntax-highlighting-43623146b196eaba70cfe7d1c24286b6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <link href="lecture_1_files/libs/quarto-contrib/fontawesome6-6.7.2/all.min.css" rel="stylesheet">
 <link href="lecture_1_files/libs/quarto-contrib/fontawesome6-6.7.2/latex-fontsize.css" rel="stylesheet"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.7.31">
+  <meta name="generator" content="quarto-1.8.25">
 
   <meta name="author" content="Damien Dupré | DCU Business School">
   <title>STA1005 - Quantitative Research Methods</title>
@@ -30,8 +30,72 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+      }
+    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+    div.sourceCode
+      { color: #cccccc; background-color: #303030; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ffcfaf; } /* Alert */
+    code span.an { color: #7f9f7f; font-weight: bold; } /* Annotation */
+    code span.at { } /* Attribute */
+    code span.bn { color: #dca3a3; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #f0dfaf; } /* ControlFlow */
+    code span.ch { color: #dca3a3; } /* Char */
+    code span.cn { color: #dca3a3; font-weight: bold; } /* Constant */
+    code span.co { color: #7f9f7f; } /* Comment */
+    code span.cv { color: #7f9f7f; font-weight: bold; } /* CommentVar */
+    code span.do { color: #7f9f7f; } /* Documentation */
+    code span.dt { color: #dfdfbf; } /* DataType */
+    code span.dv { color: #dcdccc; } /* DecVal */
+    code span.er { color: #c3bf9f; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #c0bed1; } /* Float */
+    code span.fu { color: #efef8f; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #7f9f7f; font-weight: bold; } /* Information */
+    code span.kw { color: #f0dfaf; } /* Keyword */
+    code span.op { color: #f0efd0; } /* Operator */
+    code span.ot { color: #efef8f; } /* Other */
+    code span.pp { color: #ffcfaf; font-weight: bold; } /* Preprocessor */
+    code span.sc { color: #dca3a3; } /* SpecialChar */
+    code span.ss { color: #cc9393; } /* SpecialString */
+    code span.st { color: #cc9393; } /* String */
+    code span.va { } /* Variable */
+    code span.vs { color: #cc9393; } /* VerbatimString */
+    code span.wa { color: #7f9f7f; font-weight: bold; } /* Warning */
   </style>
-  <link rel="stylesheet" href="lecture_1_files/libs/revealjs/dist/theme/quarto-c5916cbd6332cd6c531568be1287aacb.css">
+  <link rel="stylesheet" href="lecture_1_files/libs/revealjs/dist/theme/quarto-00b2986bea2b35a4e695c736cff16cf3.css">
   <link href="lecture_1_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="lecture_1_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="lecture_1_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -184,7 +248,7 @@ Damien Dupré | DCU Business School
 <p>This lecture focuses on a new way to teach statistics:</p>
 <ol type="1">
 <li><p><strong>Understanding the basics</strong></p></li>
-<li><p><strong>Using open source software/coding language</strong> (JAMOVI and R)</p></li>
+<li><p><strong>Using open source coding language</strong> (R)</p></li>
 <li><p><strong>Applying these knowledge and skills to research papers writing</strong></p></li>
 </ol>
 <p>In the end, I want you to become a Data Scientist with enough knowledge and skills to:</p>
@@ -220,7 +284,7 @@ Damien Dupré | DCU Business School
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
 <ul>
 <li>This paper will have <strong>a maximum of 6 pages</strong> and <strong>a publication ready design</strong>.</li>
-<li><strong>The deadline is June 21st, 2026.</strong></li>
+<li><strong>The deadline is June 21st, 2027.</strong></li>
 </ul>
 </div>
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
@@ -233,15 +297,69 @@ Damien Dupré | DCU Business School
 </div>
 </div>
 </section>
+<section id="introducing-the-organisation-beta" class="slide level2 smaller">
+<h2>Introducing the Organisation Beta</h2>
+<p>Imagine the following case study, which we will use throughout the module:</p>
+<blockquote>
+<p>The CEO of <strong>Organisation Beta</strong> is concerned about the well-being of employees and wants to understand what explains their <strong>Job Satisfaction</strong>.</p>
+</blockquote>
+<p>The CEO shares <code>organisation_beta.csv</code>, a file with one row per employee (20 employees):</p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 81%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Column</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>gender</code></td>
+<td>Employee’s gender (female or male)</td>
+</tr>
+<tr class="even">
+<td><code>location</code></td>
+<td>Country where the employee works (Ireland, France or Australia)</td>
+</tr>
+<tr class="odd">
+<td><code>salary</code></td>
+<td>Salary in euros (from 28,451 to 31,516)</td>
+</tr>
+<tr class="even">
+<td><code>perf</code></td>
+<td>Job performance score (from 0 to 10)</td>
+</tr>
+<tr class="odd">
+<td><code>js_score</code></td>
+<td>Job satisfaction score (from 0 to 10)</td>
+</tr>
+</tbody>
+</table>
+<p>The file also contains an <code>employee</code> number (1 to 20), <code>salary_c</code> and <code>perf_c</code> (grouped versions of <code>salary</code> and <code>perf</code>) and contrast codes (see Lecture 5).</p>
+</section>
 <section id="your-turn" class="slide level2" data-background="#43464B">
 <h2>🛠️ Your Turn!</h2>
 <p>If you haven’t done it already, can you look for the <strong>quantitative academic journal paper which is the closest to your Ph.D</strong>.</p>
-<p>You need to download the pdf version of this paper and to send it to my email damien.dupre@dcu.ie .</p>
-<p><strong>Warning</strong>:</p>
+<p>You need to download the PDF version of this paper and to send it to my email before next lecture: <a href="mailto:damien.dupre@dcu.ie">damien.dupre@dcu.ie</a>.</p>
+<div class="callout callout-caution callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Warning</strong></p>
+</div>
+<div class="callout-content">
 <ul>
 <li>This paper should not be one of yours if you already have published some</li>
 <li>This paper should include a statistical analysis (i.e., Regression analysis, ANOVA, <span class="math inline">\(t\)</span>-test) and if possible the corresponding <span class="math inline">\(p\)</span>-values</li>
 </ul>
+</div>
+</div>
+</div>
 </section></section>
 <section>
 <section id="statistics-and-research-papers" class="title-slide slide level1 center">
@@ -315,6 +433,398 @@ Damien Dupré | DCU Business School
 </div>
 <p>Thus, it is essential to master the concepts of <strong>Variable</strong>, <strong>Hypothesis</strong>, <strong>Model</strong>, and <strong>Equation</strong> before the actual <strong>Statistical Test</strong>.</p>
 </div>
+</section>
+<section id="your-turn-1" class="slide level2" data-background="#43464B">
+<h2>🛠️ Your Turn!</h2>
+<p>Now we have the basics, let’s write our first <strong>publication-ready research paper</strong>.</p>
+<ul>
+<li><strong>Author</strong>: a generative AI assistant</li>
+<li><strong>Data</strong>: <code>organisation_beta.csv</code>, 20 rows, 12 columns. <strong>No context, no idea how these data were collected.</strong> Does the AI care?</li>
+<li><strong>Our contribution</strong>: one prompt</li>
+</ul>
+<p><code>Attached is a dataset: organisation_beta.csv. Write a publication-ready research paper using these data, ready to submit to a good peer-reviewed management journal.</code></p>
+<div class="cell">
+<div class="cell-output-display">
+<div class="countdown" id="timer_c372d823" data-warn-when="60" data-update-every="1" tabindex="0" style="right:0;bottom:0;">
+<div class="countdown-controls"><button class="countdown-bump-down">−</button><button class="countdown-bump-up">+</button></div>
+<code class="countdown-time"><span class="countdown-digits minutes">05</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
+</div>
+</div>
+</div>
+</section>
+<section id="what-came-back" class="slide level2 smaller">
+<h2>What Came Back</h2>
+<div style="font-family: Georgia, serif; background: #ffffff; border: 1px solid #cccccc; padding: 0.6em 1em; font-size: 0.85em;">
+<p><strong>Pay, Job Satisfaction, and Individual Performance: An Exploratory Analysis of a Small Multilocation Employee Dataset</strong></p>
+<p><em>Abstract.</em> This exploratory study examines associations among employee job satisfaction, individual performance, and salary in a supplied dataset of 20 employee records from Australia, France, and Ireland. The file contains no missing values, but it does not document the sampling process, measurement instruments, salary currency, or score scales. Pearson correlations, Spearman rank correlations, and exploratory linear regression with HC3 heteroskedasticity-robust standard errors were used. Job satisfaction was strongly positively associated with salary (Pearson r = .855, 95% CI [.664, .941], p &lt; .001; Spearman rho = .798, p &lt; .001). The association remained positive after adjusting for recorded location and gender (unstandardized coefficient = 434.77 salary units per satisfaction-score unit, 95% CI [235.03, 634.50], p &lt; .001). In contrast, job satisfaction was not associated with performance (r = .014, 95% CI [-.431, .454], p = .952), nor was salary (r = -.091, p = .704). Apparent location differences in performance were not robust across conventional ANOVA, Welch ANOVA, and Kruskal-Wallis tests. Given the small sample, undocumented measurement properties, and unknown data provenance, the findings are descriptive and cannot support causal claims or broad generalisation. The unusually strong salary-satisfaction association should be independently verified before substantive interpretation.</p>
+</div>
+<ul>
+<li>About 11 minutes of machine time, <strong>0 minutes of human time</strong></li>
+</ul>
+</section>
+<section id="same-prompt-same-data-three-papers" class="slide level2 smaller">
+<h2>Same Prompt, Same Data, Three Papers</h2>
+<p>The same prompt, run three times in three independent sessions of the same AI model (25 October 2026):</p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Run 1</th>
+<th>Run 2</th>
+<th>Run 3</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Title</strong></td>
+<td><em>Does Pay Follow Performance, and Does Satisfaction Follow Pay?</em></td>
+<td><em>When Pay Does Not Follow Performance</em></td>
+<td><em>A Transparent Small-Sample Test of Equity-Theory Predictions</em></td>
+</tr>
+<tr class="even">
+<td><strong>Hypotheses</strong></td>
+<td>5</td>
+<td>4 + 1 research question</td>
+<td>3 + 2 research questions</td>
+</tr>
+<tr class="odd">
+<td><strong>Interaction hypothesis</strong></td>
+<td>performance × gender on salary</td>
+<td>none</td>
+<td>salary × performance on satisfaction</td>
+</tr>
+<tr class="even">
+<td><strong>Big idea</strong></td>
+<td>pay audits in small units</td>
+<td>“a pay system can be gender-neutral without being meritocratic”</td>
+<td>equity and relative pay</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Same data, three different papers.</strong> Which one is “the” result?</p>
+</section>
+<section id="with-the-same-fingerprints" class="slide level2 smaller">
+<h2>…With the Same Fingerprints</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Run 1</th>
+<th>Run 2</th>
+<th>Run 3</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Hypotheses supported</td>
+<td>1 of 5</td>
+<td>1 of 4</td>
+<td>1 of 3</td>
+</tr>
+<tr class="even">
+<td>“Significant” location effects</td>
+<td>Ireland +1.31 (<em>p</em> = .021), performance by location (<em>p</em> = .048)</td>
+<td>Australia below Ireland (<em>p</em> = .024), performance by location (<em>p</em> = .048)</td>
+<td>Ireland <em>r</em> = .53 (<em>p</em> = .017)</td>
+</tr>
+<tr class="odd">
+<td>Words / references</td>
+<td>11,020 / 78</td>
+<td>11,335 / 74</td>
+<td>10,721 / 80</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(p\)</span>-values in the text</td>
+<td>46</td>
+<td>94</td>
+<td>67</td>
+</tr>
+<tr class="odd">
+<td>Lines of analysis code</td>
+<td>770</td>
+<td>839</td>
+<td>861</td>
+</tr>
+<tr class="even">
+<td><code>[Author to complete]</code> placeholders</td>
+<td>23</td>
+<td>22</td>
+<td>19</td>
+</tr>
+</tbody>
+</table>
+<p>From <strong>20 employees</strong>.</p>
+<aside class="notes">
+<p>Counts computed from the three papers in lectures/ai_demo/. The “significant” location effects are reported with caveats in the papers, but they are reported.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="plot-twist-employees-do-not-exist" class="slide level2">
+<h2>Plot Twist: Employees Do Not Exist</h2>
+<p>I simulated <code>organisation_beta.csv</code> in R:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a><span class="fu">tibble</span>(</span>
+<span id="cb1-2"><a href=""></a>  <span class="at">gender   =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"male"</span>, <span class="st">"female"</span>), <span class="dv">20</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb1-3"><a href=""></a>  <span class="at">location =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"Ireland"</span>, <span class="st">"France"</span>, <span class="st">"Australia"</span>), <span class="dv">20</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb1-4"><a href=""></a>  <span class="at">perf     =</span> <span class="fu">rnorm</span>(<span class="dv">20</span>, <span class="at">mean =</span> <span class="dv">4</span>, <span class="at">sd =</span> <span class="dv">2</span>),</span>
+<span id="cb1-5"><a href=""></a>  <span class="at">salary   =</span> <span class="fu">rnorm</span>(<span class="dv">20</span>, <span class="at">mean =</span> <span class="dv">30000</span>, <span class="at">sd =</span> <span class="dv">1000</span>),</span>
+<span id="cb1-6"><a href=""></a>  <span class="at">js_score =</span> <span class="sc">-</span><span class="dv">55</span> <span class="sc">+</span> <span class="fl">0.002</span> <span class="sc">*</span> salary <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">20</span>, <span class="at">mean =</span> <span class="dv">2</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span>
+<span id="cb1-7"><a href=""></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li><strong>One real effect</strong>: +2 points of job satisfaction per 1,000 of salary</li>
+<li>Gender, location and performance were <strong>drawn at random</strong></li>
+</ul>
+<div class="callout callout-warning callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Before you copy me</strong></p>
+</div>
+<div class="callout-content">
+<p>This dataset is simulated, so uploading it is harmless. <strong>Never</strong> upload your participants’ data to an AI tool without checking your ethics approval and DCU’s approved tools.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="review-before-submitting" class="slide level2">
+<h2>Review Before Submitting</h2>
+<p>AI usually creates <strong>placeholders for facts that only a human can supply</strong>:</p>
+<blockquote>
+<p>[AUTHOR TO CONFIRM: instrument and source citation, number of items, response format, scoring, internal consistency in this sample …]</p>
+</blockquote>
+<p>It is 2 am, the deadline is at 9 am. What do you type in the brackets?</p>
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Anything that did not happen is fabrication</strong></p>
+</div>
+<div class="callout-content">
+<p>Inventing participants, measures, reliabilities or approvals is <strong>research misconduct</strong>, whoever (or whatever) wrote the rest of the paper.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="every-number-is-right" class="slide level2 smaller">
+<h2>Every Number Is Right</h2>
+<p>I re-ran their key results in R. They are <strong>all correct</strong>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href=""></a>organisation_beta <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/organisation_beta.csv"</span>))</span>
+<span id="cb2-2"><a href=""></a></span>
+<span id="cb2-3"><a href=""></a><span class="fu">lm</span>(js_score <span class="sc">~</span> <span class="fu">I</span>(salary <span class="sc">/</span> <span class="dv">1000</span>) <span class="sc">+</span> perf <span class="sc">+</span> gender <span class="sc">+</span> location, <span class="at">data =</span> organisation_beta) <span class="sc">|&gt;</span></span>
+<span id="cb2-4"><a href=""></a>  broom<span class="sc">::</span><span class="fu">tidy</span>(<span class="at">conf.int =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb2-5"><a href=""></a>  <span class="fu">select</span>(term, estimate, conf.low, conf.high, p.value) <span class="sc">|&gt;</span></span>
+<span id="cb2-6"><a href=""></a>  <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th style="text-align: left;">term</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">conf.low</th>
+<th style="text-align: right;">conf.high</th>
+<th style="text-align: right;">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">-44.292</td>
+<td style="text-align: right;">-60.125</td>
+<td style="text-align: right;">-28.459</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">I(salary/1000)</td>
+<td style="text-align: right;">1.676</td>
+<td style="text-align: right;">1.144</td>
+<td style="text-align: right;">2.208</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">perf</td>
+<td style="text-align: right;">0.194</td>
+<td style="text-align: right;">-0.049</td>
+<td style="text-align: right;">0.437</td>
+<td style="text-align: right;">0.109</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">gendermale</td>
+<td style="text-align: right;">-0.729</td>
+<td style="text-align: right;">-1.518</td>
+<td style="text-align: right;">0.060</td>
+<td style="text-align: right;">0.068</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">locationFrance</td>
+<td style="text-align: right;">0.512</td>
+<td style="text-align: right;">-0.570</td>
+<td style="text-align: right;">1.594</td>
+<td style="text-align: right;">0.327</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">locationIreland</td>
+<td style="text-align: right;">1.298</td>
+<td style="text-align: right;">0.202</td>
+<td style="text-align: right;">2.395</td>
+<td style="text-align: right;">0.024</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The arithmetic was never the problem. <strong>The problem is everything around the numbers.</strong></p>
+<aside class="notes">
+<p>Reference category here is Australia (alphabetical), so the Ireland coefficient is +1.30 (p = .024): the same “finding” as Run 2’s “Australia below Ireland”. Same numbers, different words.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="the-references-are-real" class="slide level2">
+<h2>The References Are Real</h2>
+<p>All <strong>references</strong> of the papers were checked against Crossref, publishers and library catalogues: <strong>All correct</strong>, <strong>none invented</strong></p>
+<ul>
+<li>In 2023, GPT-4 still fabricated 18% of its citations <a href="https://doi.org/10.1038/s41598-023-41032-5">(Walters &amp; Wilder, 2023)</a>.</li>
+<li>Today, wrong references are rare enough to slip through, while fabricated references in published papers are still rising <a href="https://doi.org/10.1016/S0140-6736%2826%2900603-3">(Topaz et al., 2026)</a>.</li>
+</ul>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>A correct reference is not a checked claim</strong></p>
+</div>
+<div class="callout-content">
+<p>You still have to open each source and confirm that it says what your sentence says. Checking took four AI agents about 8 minutes: <strong>verification is a good job for AI</strong>, as long as you check the checkers on a sample.</p>
+</div>
+</div>
+</div>
+</section></section>
+<section>
+<section id="the-ai-shortcut-runs-backwards" class="title-slide slide level1 center">
+<h1>The AI Shortcut Runs Backwards</h1>
+<p>Research goes from ideas to data:</p>
+<div class="cell" data-reveal="true" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+  A[Theory &amp;&lt;br&gt;Literature] --&gt; B[Hypotheses]
+  B --&gt; C[Data]
+  C --&gt; D[Statistical&lt;br&gt;Test]
+  D --&gt; E[Conclusion]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<div class="fragment">
+<p>The 5-minute AI paper goes from data to ideas:</p>
+<div class="cell" data-reveal="true" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+  A[Data] --&gt; B[Run many&lt;br&gt;tests]
+  B --&gt; C[Keep the&lt;br&gt;significant ones]
+  C --&gt; D[Write hypotheses&lt;br&gt;to match]
+  D --&gt; E[Find a theory&lt;br&gt;that fits]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p><strong>Same sections, opposite order.</strong> The <span class="math inline">\(p\)</span>-values of the second paper cannot be interpreted: the “predictions” were chosen after the results.</p>
+</div>
+</section>
+<section id="why-the-ai-paper-is-not-good" class="slide level2">
+<h2>Why the AI Paper Is Not Good</h2>
+<ol type="1">
+<li><strong>No world behind the words</strong>: placeholders, em-dash, “delve into” and other absurd words</li>
+<li><strong>Hypotheses after data</strong>: all papers admit the hypotheses were written after viewing the file. This is HARKing</li>
+<li><strong>Noise dressed as findings</strong>: “Irish employees are more satisfied”, with <span class="math inline">\(p &lt; .05\)</span></li>
+<li><strong>Theory as decoration</strong>: a theoretical contribution about a random number generator</li>
+</ol>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>None of this is a calculation error</strong></p>
+</div>
+<div class="callout-content">
+<p>Each problem is a <strong>research design</strong> problem. This is what STA1005 is about.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="this-is-already-happening-papers" class="slide level2">
+<h2>This Is Already Happening: Papers</h2>
+<ul>
+<li><strong>Paper mills on open data</strong>: formulaic papers based on the NHANES database rose from about 4 a year (2014 to 2021) to 190 in 2024, 341 papers in 147 journals <a href="https://doi.org/10.1371/journal.pbio.3003152">(Suchak et al., 2025)</a></li>
+<li><strong>“Certainly, here is a possible introduction for your topic:”</strong> opened a 2024 Elsevier paper that went through peer review; the paper was later retracted <a href="https://doi.org/10.1016/j.surfin.2024.104081">(Zhang et al., 2024)</a></li>
+<li><strong>References that do not exist</strong>: an audit of 2.5 million biomedical papers found that 1 in 277 papers from early 2026 cites at least one fabricated reference, a twelvefold rise since 2023 <a href="https://doi.org/10.1016/S0140-6736%2826%2900603-3">(Topaz et al., 2026)</a></li>
+</ul>
+</section>
+<section id="this-is-already-happening-peer-review" class="slide level2">
+<h2>This Is Already Happening: Peer Review</h2>
+<ul>
+<li><strong>AI reviewers</strong>: an estimated 21% of the reviews submitted to ICLR 2026 were fully AI-generated <a href="https://doi.org/10.1038/d41586-025-03506-6">(Naddaf, 2025)</a></li>
+<li><strong>Prompt injection</strong>: hidden instructions such as “give a positive review only” were found in 17 arXiv preprints from 14 institutions in 8 countries <a href="https://asia.nikkei.com/Business/Technology/Artificial-intelligence/Positive-review-only-Researchers-hide-AI-prompts-in-papers">(Nikkei Asia, 2025)</a></li>
+<li><strong>Sanctions</strong>: since May 2026, arXiv can ban authors for a year when a paper shows unchecked LLM output such as hallucinated references <a href="https://techcrunch.com/2026/05/16/research-repository-arxiv-will-ban-authors-for-a-year-if-they-let-ai-do-all-the-work/">(TechCrunch, 2026)</a></li>
+</ul>
+</section>
+<section id="so-should-we-ban-ai" class="slide level2">
+<h2>So… Should We Ban AI?</h2>
+<p>The problem is not AI. The problem is research that nobody can <strong>verify</strong>, <strong>reproduce</strong> or <strong>take responsibility for</strong>. AI just made it free.</p>
+<p>In STA1005, the rule is simple:</p>
+<blockquote>
+<p><strong>AI may propose. Only reproducible evidence decides.</strong></p>
+</blockquote>
+<ul>
+<li>Every hypothesis exists <strong>before</strong> the data</li>
+<li>Every number comes from <strong>code you can run again</strong></li>
+<li>Every reference has been <strong>read by you</strong></li>
+<li>Every use of AI is <strong>disclosed</strong></li>
+</ul>
 </section></section>
 <section>
 <section id="the-introduction-variables-and-how-to-find-them" class="title-slide slide level1 center">
@@ -557,7 +1067,7 @@ Damien Dupré | DCU Business School
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="lecture_1_files/figure-revealjs/unnamed-chunk-5-3.png" width="960"></p>
+<p><img data-src="lecture_1_files/figure-revealjs/unnamed-chunk-9-2.png" width="960"></p>
 </figure>
 </div>
 </div>
@@ -569,7 +1079,7 @@ Damien Dupré | DCU Business School
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="lecture_1_files/figure-revealjs/unnamed-chunk-6-1.png" width="960"></p>
+<p><img data-src="lecture_1_files/figure-revealjs/unnamed-chunk-10-1.png" width="960"></p>
 </figure>
 </div>
 </div>
@@ -579,7 +1089,7 @@ Damien Dupré | DCU Business School
 </div>
 <p>To decide if the part of the shared variability is big enough, a statistical test is required.</p>
 </section>
-<section id="your-turn-1" class="slide level2" data-background="#43464B">
+<section id="your-turn-2" class="slide level2" data-background="#43464B">
 <h2>🛠️ Your Turn!</h2>
 <p>In the research paper you have selected, <strong>identify the variables that are used to produce statistical results (e.g.&nbsp;<span class="math inline">\(p\)</span>-values).</strong></p>
 <p>Indicate their Type and Role by using the following table:</p>
@@ -609,7 +1119,8 @@ Damien Dupré | DCU Business School
 </tr>
 </tbody>
 </table>
-<p>Send me the table by email at damien.dupre@dcu.ie <strong>before the next lecture.</strong></p>
+<p>Then, and only then: upload the pdf to an AI assistant and ask for the same table. Where do you and the AI disagree? Who is right?</p>
+<p>Send me both tables by email at damien.dupre@dcu.ie <strong>before the next lecture.</strong></p>
 </section></section>
 <section>
 <section id="literature-review-formulate-your-hypotheses" class="title-slide slide level1 center">
@@ -1063,7 +1574,7 @@ Damien Dupré | DCU Business School
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="lecture_1_files/figure-revealjs/unnamed-chunk-13-1.png" width="960"></p>
+<p><img data-src="lecture_1_files/figure-revealjs/unnamed-chunk-17-1.png" width="960"></p>
 </figure>
 </div>
 </div>
@@ -1075,7 +1586,7 @@ Damien Dupré | DCU Business School
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="lecture_1_files/figure-revealjs/unnamed-chunk-14-1.png" width="960"></p>
+<p><img data-src="lecture_1_files/figure-revealjs/unnamed-chunk-18-1.png" width="960"></p>
 </figure>
 </div>
 </div>
@@ -1390,6 +1901,27 @@ Damien Dupré | DCU Business School
 </div>
 </div>
 </section>
+<section id="ai-as-your-reviewer-2" class="slide level2 smaller">
+<h2>AI as Your Reviewer 2</h2>
+<p>A good use of AI: <strong>criticising</strong> your hypotheses, not writing them.</p>
+<blockquote>
+<p>Here are my hypotheses: [paste]. Here are the templates and the checklist used in my statistics course: [paste]. For each hypothesis, list the problems only (missing predictor or outcome, no direction, variable not in my dataset, equality instead of a difference, question instead of a prediction). Do not rewrite them. Do not invent variables. If a hypothesis has no problem, say so.</p>
+</blockquote>
+<p>Then <strong>you</strong> decide whether each criticism is right.</p>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Why “do not rewrite them”?</strong></p>
+</div>
+<div class="callout-content">
+<p>If the AI rewrites your hypotheses, you learn nothing and they stop being yours. Asking for problems only keeps you as the author and the AI as a sparring partner.</p>
+</div>
+</div>
+</div>
+</section>
 <section id="special-case-mediation-hypothesis" class="slide level2">
 <h2>Special Case: Mediation Hypothesis</h2>
 <p>Remember the birthday cake metaphor: it symbolise the variability of the outcome variable to be explained by the predictors.</p>
@@ -1494,12 +2026,12 @@ Damien Dupré | DCU Business School
 <li>Predictor 1 = Exam Results (continuous from 0 to 100)</li>
 <li>Predictor 2 = Self-Esteem (continuous from 0 to 7)</li>
 </ul>
-<div class="cell" data-fig-height="3" data-layout-align="default">
+<div class="cell" data-fig-height="2" data-layout-align="default">
 <div class="cell-output-display">
 <div>
 <p></p><figure class=""><p></p>
 <div>
-<svg width="960" height="288" viewbox="0.00 0.00 332.13 67.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
+<svg width="960" height="192" viewbox="0.00 0.00 332.13 67.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 63)">
 <polygon fill="white" stroke="transparent" points="-4,4 -4,-63 328.13,-63 328.13,4 -4,4"></polygon>
 <!-- Self&#45;Esteem -->
@@ -1555,8 +2087,8 @@ Damien Dupré | DCU Business School
 <h1>🛠️ Your Turn ! Find the variables in these hypotheses</h1>
 
 </section>
-<section id="find-the-variables-in-these-hypotheses" class="slide level2 smaller" data-background="#43464B">
-<h2>Find the variables in these hypotheses</h2>
+<section id="find-the-variables" class="slide level2" data-background="#43464B">
+<h2>Find the variables</h2>
 <p>In the following hypotheses, find the outcome variable and the predictor(s):</p>
 <ol type="1">
 <li><p>Overweight adults who value longevity are more likely than other overweight adults to lose their excess weight</p></li>
@@ -1566,7 +2098,7 @@ Damien Dupré | DCU Business School
 </ol>
 <div class="cell">
 <div class="cell-output-display">
-<div class="countdown" id="timer_28d3ada9" data-warn-when="60" data-update-every="1" tabindex="0" style="right:0;bottom:0;">
+<div class="countdown" id="timer_ff8799e9" data-warn-when="60" data-update-every="1" tabindex="0" style="top:0;right:0;">
 <div class="countdown-controls"><button class="countdown-bump-down">−</button><button class="countdown-bump-up">+</button></div>
 <code class="countdown-time"><span class="countdown-digits minutes">05</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
@@ -1659,7 +2191,7 @@ Damien Dupré | DCU Business School
 </table>
 <div class="cell">
 <div class="cell-output-display">
-<div class="countdown" id="timer_61d2d699" data-warn-when="60" data-update-every="1" tabindex="0" style="right:0;bottom:0;">
+<div class="countdown" id="timer_77999fcd" data-warn-when="60" data-update-every="1" tabindex="0" style="right:0;bottom:0;">
 <div class="countdown-controls"><button class="countdown-bump-down">−</button><button class="countdown-bump-up">+</button></div>
 <code class="countdown-time"><span class="countdown-digits minutes">05</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
@@ -1680,6 +2212,7 @@ Damien Dupré | DCU Business School
 <section id="homework-exercise" class="slide level2" data-background="#43464B">
 <h2>Homework Exercise</h2>
 <p>In the research paper that you have selected, <strong>formulate the tested hypotheses using the templates seen in the slide of the lecture and the variables that you have previously determined</strong></p>
+<p>Then use the Reviewer 2 prompt on your own hypotheses and keep a note of one criticism you accepted and one you rejected (and why).</p>
 <p>Send me your hypotheses by email at damien.dupre@dcu.ie <strong>before the next lecture.</strong></p>
 </section>
 <section id="section" class="slide level2" data-background="#43464B">
@@ -1893,7 +2426,7 @@ Damien Dupré | DCU Business School
         margin: 0.1,
 
         math: {
-          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
           config: 'TeX-AMS_HTML-full',
           tex2jax: {
             inlineMath: [['\\(','\\)']],
@@ -2005,13 +2538,14 @@ Damien Dupré | DCU Business School
           e.clearSelection();
         }
         const getTextToCopy = function(trigger) {
-            const codeEl = trigger.previousElementSibling.cloneNode(true);
-            for (const childEl of codeEl.children) {
-              if (isCodeAnnotation(childEl)) {
-                childEl.remove();
-              }
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
             }
-            return codeEl.innerText;
+          }
+          return codeEl.innerText;
         }
         const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
           text: getTextToCopy

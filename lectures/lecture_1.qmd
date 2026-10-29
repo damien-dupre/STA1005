@@ -47,7 +47,7 @@ This lecture focuses on a new way to teach statistics:
 
 1. **Understanding the basics**
 
-2. **Using open source software/coding language** (JAMOVI and R)
+2. **Using open source coding language** (R)
 
 3. **Applying these knowledge and skills to research papers writing**
 
@@ -82,21 +82,41 @@ Based on your research topic, I will provide real data in April. Your task is to
 
 ::: {layout-ncol="2"}
 - This paper will have **a maximum of 6 pages** and **a publication ready design**.
-- **The deadline is June 21st, 2026.**
+- **The deadline is June 21st, 2027.**
 
 ![](https://achonaonline.com/wp-content/uploads/2015/02/59369457.jpg){fig-align="center"}
 :::
+
+## Introducing the Organisation Beta {.smaller}
+
+Imagine the following case study, which we will use throughout the module:
+
+> The CEO of **Organisation Beta** is concerned about the well-being of employees and wants to understand what explains their **Job Satisfaction**.
+
+The CEO shares `organisation_beta.csv`, a file with one row per employee (20 employees):
+
+| Column | Description |
+|----|------------------|
+| `gender` | Employee's gender (female or male) |
+| `location` | Country where the employee works (Ireland, France or Australia) |
+| `salary` | Salary in euros (from 28,451 to 31,516) |
+| `perf` | Job performance score (from 0 to 10) |
+| `js_score` | Job satisfaction score (from 0 to 10) |
+
+The file also contains an `employee` number (1 to 20), `salary_c` and `perf_c` (grouped versions of `salary` and `perf`) and contrast codes (see Lecture 5).
 
 ## 🛠️ Your Turn! {background="#43464B"}
 
 If you haven't done it already, can you look for the **quantitative academic journal paper which is the closest to your Ph.D**. 
 
-You need to download the pdf version of this paper and to send it to my email damien.dupre@dcu.ie . 
+You need to download the PDF version of this paper and to send it to my email before next lecture: [damien.dupre@dcu.ie](mailto:damien.dupre@dcu.ie). 
 
-**Warning**:
+::: {.callout-caution}
+## Warning
 
 - This paper should not be one of yours if you already have published some
 - This paper should include a statistical analysis (i.e., Regression analysis, ANOVA, $t$-test) and if possible the corresponding $p$-values
+:::
 
 # 2. Statistics and Research Papers
 
@@ -143,6 +163,190 @@ flowchart LR
 ```
 
 Thus, it is essential to master the concepts of **Variable**, **Hypothesis**, **Model**, and **Equation** before the actual **Statistical Test**.
+
+## 🛠️ Your Turn! {background="#43464B"}
+
+Now we have the basics, let's write our first **publication-ready research paper**.
+
+- **Author**: a generative AI assistant
+- **Data**: `organisation_beta.csv`, 20 rows, 12 columns. **No context, no idea how these data were collected.** Does the AI care?
+- **Our contribution**: one prompt
+
+`Attached is a dataset: organisation_beta.csv. Write a publication-ready research paper using these data, ready to submit to a good peer-reviewed management journal.`
+
+```{r}
+countdown(minutes = 5, warn_when = 60)
+```
+
+## What Came Back {.smaller}
+
+::: {style="font-family: Georgia, serif; background: #ffffff; border: 1px solid #cccccc; padding: 0.6em 1em; font-size: 0.85em;"}
+**Pay, Job Satisfaction, and Individual Performance: An Exploratory Analysis of a Small Multilocation Employee Dataset**
+
+*Abstract.* This exploratory study examines associations among employee job satisfaction, individual performance, and salary in a supplied dataset of 20 employee records from Australia, France, and Ireland. The file contains no missing values, but it does not document the sampling process, measurement instruments, salary currency, or score scales. Pearson correlations, Spearman rank correlations, and exploratory linear regression with HC3 heteroskedasticity-robust standard errors were used. Job satisfaction was strongly positively associated with salary (Pearson r = .855, 95% CI [.664, .941], p < .001; Spearman rho = .798, p < .001). The association remained positive after adjusting for recorded location and gender (unstandardized coefficient = 434.77 salary units per satisfaction-score unit, 95% CI [235.03, 634.50], p < .001). In contrast, job satisfaction was not associated with performance (r = .014, 95% CI [-.431, .454], p = .952), nor was salary (r = -.091, p = .704). Apparent location differences in performance were not robust across conventional ANOVA, Welch ANOVA, and Kruskal-Wallis tests. Given the small sample, undocumented measurement properties, and unknown data provenance, the findings are descriptive and cannot support causal claims or broad generalisation. The unusually strong salary-satisfaction association should be independently verified before substantive interpretation.
+:::
+
+- About 11 minutes of machine time, **0 minutes of human time**
+
+## Same Prompt, Same Data, Three Papers {.smaller}
+
+The same prompt, run three times in three independent sessions of the same AI model (25 October 2026):
+
+| | Run 1 | Run 2 | Run 3 |
+|---|---|---|---|
+| **Title** | *Does Pay Follow Performance, and Does Satisfaction Follow Pay?* | *When Pay Does Not Follow Performance* | *A Transparent Small-Sample Test of Equity-Theory Predictions* |
+| **Hypotheses** | 5 | 4 + 1 research question | 3 + 2 research questions |
+| **Interaction hypothesis** | performance × gender on salary | none | salary × performance on satisfaction |
+| **Big idea** | pay audits in small units | "a pay system can be gender-neutral without being meritocratic" | equity and relative pay |
+
+**Same data, three different papers.** Which one is "the" result?
+
+## ...With the Same Fingerprints {.smaller}
+
+| | Run 1 | Run 2 | Run 3 |
+|---|---|---|---|
+| Hypotheses supported | 1 of 5 | 1 of 4 | 1 of 3 |
+| "Significant" location effects | Ireland +1.31 (*p* = .021), performance by location (*p* = .048) | Australia below Ireland (*p* = .024), performance by location (*p* = .048) | Ireland *r* = .53 (*p* = .017) |
+| Words / references | 11,020 / 78 | 11,335 / 74 | 10,721 / 80 |
+| $p$-values in the text | 46 | 94 | 67 |
+| Lines of analysis code | 770 | 839 | 861 |
+| `[Author to complete]` placeholders | 23 | 22 | 19 |
+
+From **20 employees**.
+
+::: {.notes}
+Counts computed from the three papers in lectures/ai_demo/. The "significant" location effects are reported with caveats in the papers, but they are reported.
+:::
+
+## Plot Twist: Employees Do Not Exist
+
+I simulated `organisation_beta.csv` in R:
+
+```r
+tibble(
+  gender   = sample(c("male", "female"), 20, replace = TRUE),
+  location = sample(c("Ireland", "France", "Australia"), 20, replace = TRUE),
+  perf     = rnorm(20, mean = 4, sd = 2),
+  salary   = rnorm(20, mean = 30000, sd = 1000),
+  js_score = -55 + 0.002 * salary + rnorm(20, mean = 2, sd = 1)
+)
+```
+
+- **One real effect**: +2 points of job satisfaction per 1,000 of salary
+- Gender, location and performance were **drawn at random**
+
+::: {.callout-warning}
+## Before you copy me
+This dataset is simulated, so uploading it is harmless. **Never** upload your participants' data to an AI tool without checking your ethics approval and DCU's approved tools.
+:::
+
+## Review Before Submitting
+
+AI usually creates **placeholders for facts that only a human can supply**:
+
+> [AUTHOR TO CONFIRM: instrument and source citation, number of items, response format, scoring, internal consistency in this sample ...]
+
+It is 2 am, the deadline is at 9 am. What do you type in the brackets?
+
+::: {.callout-important}
+## Anything that did not happen is fabrication
+Inventing participants, measures, reliabilities or approvals is **research misconduct**, whoever (or whatever) wrote the rest of the paper.
+:::
+
+## Every Number Is Right {.smaller}
+
+I re-ran their key results in R. They are **all correct**:
+
+```{r}
+#| echo: true
+organisation_beta <- readr::read_csv(here::here("data/organisation_beta.csv"))
+
+lm(js_score ~ I(salary / 1000) + perf + gender + location, data = organisation_beta) |>
+  broom::tidy(conf.int = TRUE) |>
+  select(term, estimate, conf.low, conf.high, p.value) |>
+  kable(digits = 3)
+```
+
+The arithmetic was never the problem. **The problem is everything around the numbers.**
+
+::: {.notes}
+Reference category here is Australia (alphabetical), so the Ireland coefficient is +1.30 (p = .024): the same "finding" as Run 2's "Australia below Ireland". Same numbers, different words.
+:::
+
+## The References Are Real
+
+All **references** of the papers were checked against Crossref, publishers and library catalogues: **All correct**, **none invented**
+
+- In 2023, GPT-4 still fabricated 18% of its citations [(Walters & Wilder, 2023)](https://doi.org/10.1038/s41598-023-41032-5). 
+- Today, wrong references are rare enough to slip through, while fabricated references in published papers are still rising [(Topaz et al., 2026)](https://doi.org/10.1016/S0140-6736%2826%2900603-3).
+
+::: {.callout-tip}
+## A correct reference is not a checked claim
+You still have to open each source and confirm that it says what your sentence says. Checking took four AI agents about 8 minutes: **verification is a good job for AI**, as long as you check the checkers on a sample.
+:::
+
+# The AI Shortcut Runs Backwards
+
+Research goes from ideas to data:
+
+```{mermaid}
+flowchart LR
+  A[Theory &<br>Literature] --> B[Hypotheses]
+  B --> C[Data]
+  C --> D[Statistical<br>Test]
+  D --> E[Conclusion]
+```
+
+. . .
+
+The 5-minute AI paper goes from data to ideas:
+
+```{mermaid}
+flowchart LR
+  A[Data] --> B[Run many<br>tests]
+  B --> C[Keep the<br>significant ones]
+  C --> D[Write hypotheses<br>to match]
+  D --> E[Find a theory<br>that fits]
+```
+
+**Same sections, opposite order.** The $p$-values of the second paper cannot be interpreted: the "predictions" were chosen after the results.
+
+## Why the AI Paper Is Not Good
+
+1. **No world behind the words**: placeholders, em-dash, "delve into" and other absurd words
+2. **Hypotheses after data**: all papers admit the hypotheses were written after viewing the file. This is HARKing
+3. **Noise dressed as findings**: "Irish employees are more satisfied", with $p < .05$
+4. **Theory as decoration**: a theoretical contribution about a random number generator
+
+::: {.callout-note}
+## None of this is a calculation error
+Each problem is a **research design** problem. This is what STA1005 is about.
+:::
+
+## This Is Already Happening: Papers
+
+- **Paper mills on open data**: formulaic papers based on the NHANES database rose from about 4 a year (2014 to 2021) to 190 in 2024, 341 papers in 147 journals [(Suchak et al., 2025)](https://doi.org/10.1371/journal.pbio.3003152)
+- **"Certainly, here is a possible introduction for your topic:"** opened a 2024 Elsevier paper that went through peer review; the paper was later retracted [(Zhang et al., 2024)](https://doi.org/10.1016/j.surfin.2024.104081)
+- **References that do not exist**: an audit of 2.5 million biomedical papers found that 1 in 277 papers from early 2026 cites at least one fabricated reference, a twelvefold rise since 2023 [(Topaz et al., 2026)](https://doi.org/10.1016/S0140-6736%2826%2900603-3)
+
+## This Is Already Happening: Peer Review
+
+- **AI reviewers**: an estimated 21% of the reviews submitted to ICLR 2026 were fully AI-generated [(Naddaf, 2025)](https://doi.org/10.1038/d41586-025-03506-6)
+- **Prompt injection**: hidden instructions such as "give a positive review only" were found in 17 arXiv preprints from 14 institutions in 8 countries [(Nikkei Asia, 2025)](https://asia.nikkei.com/Business/Technology/Artificial-intelligence/Positive-review-only-Researchers-hide-AI-prompts-in-papers)
+- **Sanctions**: since May 2026, arXiv can ban authors for a year when a paper shows unchecked LLM output such as hallucinated references [(TechCrunch, 2026)](https://techcrunch.com/2026/05/16/research-repository-arxiv-will-ban-authors-for-a-year-if-they-let-ai-do-all-the-work/)
+
+## So... Should We Ban AI?
+
+The problem is not AI. The problem is research that nobody can **verify**, **reproduce** or **take responsibility for**. AI just made it free.
+
+In STA1005, the rule is simple:
+
+> **AI may propose. Only reproducible evidence decides.**
+
+- Every hypothesis exists **before** the data
+- Every number comes from **code you can run again**
+- Every reference has been **read by you**
+- Every use of AI is **disclosed**
 
 # 3. The Introduction: Variables and how to find them?
 
@@ -335,7 +539,9 @@ Indicate their Type and Role by using the following table:
 |...          |...          |...          |
 |var n        |type         |role         |
 
-Send me the table by email at damien.dupre@dcu.ie **before the next lecture.**
+Then, and only then: upload the pdf to an AI assistant and ask for the same table. Where do you and the AI disagree? Who is right?
+
+Send me both tables by email at damien.dupre@dcu.ie **before the next lecture.**
 
 # 4. Literature Review: Formulate your Hypotheses
 
@@ -780,6 +986,19 @@ When formulating an hypothesis:
 - Use the templates shown previously.
 :::
 
+## AI as Your Reviewer 2 {.smaller}
+
+A good use of AI: **criticising** your hypotheses, not writing them.
+
+> Here are my hypotheses: [paste]. Here are the templates and the checklist used in my statistics course: [paste]. For each hypothesis, list the problems only (missing predictor or outcome, no direction, variable not in my dataset, equality instead of a difference, question instead of a prediction). Do not rewrite them. Do not invent variables. If a hypothesis has no problem, say so.
+
+Then **you** decide whether each criticism is right.
+
+::: {.callout-note}
+## Why "do not rewrite them"?
+If the AI rewrites your hypotheses, you learn nothing and they stop being yours. Asking for problems only keeps you as the author and the AI as a sparring partner.
+:::
+
 ## Special Case: Mediation Hypothesis
 
 Remember the birthday cake metaphor: it symbolise the variability of the outcome variable to be explained by the predictors.
@@ -841,7 +1060,7 @@ Here, the requirements are:
 - Predictor 2 = Self-Esteem (continuous from 0 to 7)
 
 ```{dot}
-//| fig-height: 3
+//| fig-height: 2
 
 digraph {
   graph [rankdir = LR]
@@ -860,7 +1079,7 @@ Mediation Effect Hypothesis:
 
 # 🛠️ Your Turn ! Find the variables in these hypotheses {background="#43464B"}
 
-## Find the variables in these hypotheses {background="#43464B" .smaller}
+## Find the variables {background="#43464B"}
 
 In the following hypotheses, find the outcome variable and the predictor(s):
 
@@ -873,7 +1092,7 @@ In the following hypotheses, find the outcome variable and the predictor(s):
 4. Professors who use a student-centred teaching method will have a greater positive rapport with their graduate students than professors who use a teacher-centred teaching method.
 
 ```{r}
-countdown(minutes = 5, warn_when = 60)
+countdown(minutes = 5, warn_when = 60, top = 0)
 ```
 
 ## Solution {background="#43464B" .smaller}
@@ -927,6 +1146,8 @@ countdown(minutes = 5, warn_when = 60)
 ## Homework Exercise  {background="#43464B"}
 
 In the research paper that you have selected, **formulate the tested hypotheses using the templates seen in the slide of the lecture and the variables that you have previously determined**
+
+Then use the Reviewer 2 prompt on your own hypotheses and keep a note of one criticism you accepted and one you rejected (and why).
 
 Send me your hypotheses by email at damien.dupre@dcu.ie **before the next lecture.**
 

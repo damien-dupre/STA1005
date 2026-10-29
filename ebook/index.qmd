@@ -1,0 +1,44 @@
+# Preface {.unnumbered}
+
+This book follows STA1005, Quantitative Research Methods, at DCU Business School. It is written from the slides of the lectures of the module, with one chapter for each lecture, so that what is shown in the lecture room can also be read, searched and revisited at your own pace.
+
+## What the module is about
+
+The module is built on three aims:
+
+1. **Understanding the basics**
+2. **Using open source software and coding languages** (jamovi and R)
+3. **Applying this knowledge and these skills to the writing of research papers**
+
+In the end, I want you to become a data scientist with enough knowledge and skills to challenge bad science and wrong ideas, and to apply to data science positions.
+
+## How the book is organised
+
+The nine chapters are grouped in three parts.
+
+The first part, *Research papers, models and data*, links statistics to the sections of a research paper. It introduces the module and shows how to identify variables and formulate hypotheses (@sec-lecture-01), explains how to represent the model tested in a paper and how to write its equation (@sec-lecture-02), and shows how to collect, clean and transform the data (@sec-lecture-03).
+
+The second part, *The General Linear Model*, is about the one test taught in the module. It introduces the model with continuous predictors, and shows how to run it in jamovi and how to report its results (@sec-lecture-04). It then turns to categorical predictors, their codings and contrasts (@sec-lecture-05), and covers the assumptions of the model, model selection, power analysis and reasonable statistics, ending with agentic AI for statistical analysis (@sec-lecture-06).
+
+The third part, *From analysis to report*, brings the pieces together. It introduces R for hypothesis testing (@sec-lecture-07) and Quarto to embed text and code output in professional documents (@sec-lecture-08). It ends with a practical session, followed by the details of the assignment (@sec-lecture-09).
+
+## How to read the book
+
+Every chapter ends with a box of **key points**. Along the way, you will find these boxes:
+
+- **Your turn** boxes are exercises, with a suggested time. When the slides give an answer, it follows in a **Solution** box that is closed by default: try the exercise first, then open the solution.
+- **Warning** boxes highlight what to be careful about.
+- **Live demonstration** boxes mark the moments when something is shown live in the lecture room, usually before an exercise.
+
+The code is hidden by default. It is shown only where reading or typing it is part of what is taught.
+
+## About the author
+
+Since 2019, I have been teaching **Data Analytics** and **Statistics** at DCU Business School. Don't hesitate to ask if you have any questions!
+
+- GitHub: [@damien-dupre](https://github.com/damien-dupre)
+- LinkedIn: [@damien-dupre](https://www.linkedin.com/in/damien-dupre/)
+- Website: <https://damien-dupre.github.io>
+- Email: <damien.dupre@dcu.ie>
+
+<!-- check: this book was drafted by Claude (Anthropic) from your lecture slides. The AI version of Lecture 1 asks students to disclose every use of AI, so consider adding an AI use statement to this preface. None has been added without your decision. -->

@@ -1,0 +1,846 @@
+# Statistics, Research Papers and Me {#sec-lecture-01}
+
+```{r}
+#| label: setup
+#| include: false
+source("R/setup.R")
+```
+
+This chapter introduces a new way to teach statistics, built on three aims:
+
+1. **Understanding the basics**
+2. **Using open source software and coding languages** (jamovi and R)
+3. **Applying this knowledge and these skills to the writing of research papers**
+
+In the end, I want you to become a data scientist with enough knowledge and skills to challenge bad science and wrong ideas, and to apply to data science positions.
+
+The chapter starts with general information about the module and the assignment (@sec-l01-general). It then looks at how a research paper is organised and why its structure matters for the statistics it reports (@sec-l01-papers). The last two sections follow the paper itself: the introduction, where the variables are presented (@sec-l01-intro), and the literature review, where the hypotheses are formulated (@sec-l01-hypotheses).
+
+## General information {#sec-l01-general}
+
+### About the module and its lecturer
+
+This chapter follows the first lecture of STA1005, Quantitative Research Methods. Since 2019, I have been teaching **Data Analytics** and **Statistics** at DCU Business School.
+
+### Further reading
+
+These books are helpful readings for the module:
+
+- [**Teacups, giraffes, and statistics** by Hasse Walum and Desirée De Leon (2021)](https://tinystats.github.io/teacups-giraffes-and-statistics)
+- [**Introduction to Modern Statistics** by Mine Çetinkaya-Rundel and Johanna Hardin (2021 to 2024)](https://openintro-ims.netlify.app)
+- [**Learning statistics with jamovi: A tutorial for psychology students and other beginners** by Danielle Navarro and David Foxcroft (2019 to 2025)](https://www.learnstatswithjamovi.com)
+- [**Learning statistics with R: A tutorial for psychology students and other beginners** by Danielle Navarro (2019)](https://learningstatisticswithr.com/book)
+- [**Statistical Thinking for the 21st Century** by Russell A. Poldrack (2022 to 2024)](https://statsthinking21.github.io/statsthinking21-core-site)
+
+### Details on the assignment
+
+Based on your research topic, I will provide real data in April. <!-- check: "April" and the deadline below are dated, confirm them for the current cohort --> Your task is to **write a publication-ready research paper** with:
+
+- A concise **introduction** and **literature review** with a few references leading to your hypotheses
+- A **method section** describing the variables, a representation of the model, and the equation testing the hypotheses
+- A **results section** of publication quality, including hypothesis testing and conditions of application
+- A brief **discussion and conclusion**
+
+This paper will have **a maximum of 6 pages** and **a publication-ready design**. **The deadline is June 21st, 2026.** <!-- check: deadline as written on the slide (June 21st, 2026), which now looks dated -->
+
+::: {.callout-tip title="Your turn: find a paper close to your PhD"}
+If you have not done it already, look for the **quantitative academic journal paper which is the closest to your Ph.D**.
+
+You need to download the PDF version of this paper and send it to my email damien.dupre@dcu.ie.
+
+**Warning:**
+
+- This paper should not be one of yours if you have already published some
+- This paper should include a statistical analysis (e.g., regression analysis, ANOVA, $t$-test) and, if possible, the corresponding $p$-values
+:::
+
+## Statistics and research papers {#sec-l01-papers}
+
+### Anatomy of a paper
+
+The shape of the contents of a research paper resembles an hourglass: it **starts wide** (introduction), **then narrows** (hypotheses, method and results) and **finally opens** (discussion and conclusion).
+
+### A closer look at papers
+
+A paper is made of the following sections:
+
+1. **Introduction** outlines the research question and identifies the variables under investigation.
+2. **Literature review** explains how these variables are connected, presents the theoretical model, and ends with the hypotheses to be tested.
+3. **Methods** details the variables and the mathematical equation that represents the model, and includes the tests for all hypotheses.
+4. **Results** report the numerical outcomes of the hypothesis tests.
+5. **Discussion** and **conclusion** interpret these findings and highlight the study's strengths and limitations.
+
+### Essential concepts to master
+
+In research outputs, all sections are linked, as shown in @fig-l01-sections.
+
+<!-- layout: the slides draw these two flowcharts from left to right (flowchart LR, with two-line arrow labels); they run from top to bottom here, with tighter spacing and one-line arrow labels, so that the text stays legible on a portrait page and on an e-reader -->
+
+```{mermaid}
+%%| label: fig-l01-sections
+%%| fig-cap: "The sections of a research paper are linked."
+%%| fig-alt: "Flowchart of five boxes from top to bottom, each followed by an arrow to the next: Introduction, Literature Review, Methods, Results, and Discussion and Conclusion."
+%%{init: {"flowchart": {"rankSpacing": 25, "nodeSpacing": 25, "padding": 10}}}%%
+flowchart TB
+  A[Introduction] --> B[Literature<br/>Review]
+  B --> C[Methods]
+  C --> D[Results]
+  D --> E[Discussion &<br/>Conclusion]
+```
+
+To understand the statistics in the results section it is essential to identify the concepts presented in each section, as shown in @fig-l01-concepts.
+
+```{mermaid}
+%%| label: fig-l01-concepts
+%%| fig-cap: "The concept that links each section of a research paper to the next."
+%%| fig-alt: "The same flowchart of five boxes, with a label on each arrow: Variables between Introduction and Literature Review, Hypotheses between Literature Review and Methods, Model and Equation between Methods and Results, and Statistical Test between Results and Discussion and Conclusion."
+%%{init: {"flowchart": {"rankSpacing": 30, "nodeSpacing": 25, "padding": 10}}}%%
+flowchart TB
+  A[Introduction] -- Variables --> B[Literature<br/>Review]
+  B -- Hypotheses --> C[Methods]
+  C -- Model & Equation --> D[Results]
+  D -- Statistical Test --> E[Discussion &<br/>Conclusion]
+```
+
+Thus, it is essential to master the concepts of **variable**, **hypothesis**, **model**, and **equation** before the actual **statistical test**.
+
+## The introduction: variables and how to find them {#sec-l01-intro}
+
+The introduction of a paper is where the variables are presented. This section explains what a variable is and how to identify its type and its role.
+
+### The introduction of an academic paper
+
+An introduction is a section **presenting your variables and why you investigate them**. There is little reference to previous academic research, just a description of actual facts.
+
+::: {.callout-tip title="How to start an introduction?"}
+- Method 1: **Number** (e.g., In 2022, the average gender pay gap in Ireland was 9.6%.)
+- Method 2: **Event** (e.g., In 2024, the Disney company agreed to settle a class-action after female employees in California accused it of systematically paying women less than men in comparable roles.)
+- Method 3: **Quote** (e.g., "The existence of a gender pay gap [...] points to enduring inequality in the valuation of work." (Goldin, 1990))
+:::
+
+The introduction should end with your **research question**: a question that includes all the main variables investigated and that asks about a potential relationship between them. For example:
+
+- *"What is the relationship between Job Satisfaction, Salary and Gender?"*
+- *"How does sales experience influence the performance of sales managers and sales representatives?"*
+
+### What is a variable?
+
+A **variable** itself is a subtle concept, but basically it comes down to finding some way of assigning *numbers or characters* to **labels**. For example:
+
+- My **height** is *183 cm*
+- This morning, I had a *large* **coffee**
+- My **gender** is *male*
+
+The **bold part is "the thing that varies"** and the *italicised part is "the value of the variable"*.
+
+::: {.callout-note title="Live demonstration"}
+In the lecture, more data are collected about the classmates on these three variables: height, coffee and gender.
+:::
+
+::: {.callout-important title="Warning"}
+- The **variability** of a variable corresponds to how its numbers or characters vary according to each observation. <!-- check: the slide reads "corresponds to how numbers or characters according each observation", a word seems to be missing -->
+- Each variable has a **role** and a **type**, and it is essential to learn how to identify them (@sec-l01-types and @sec-l01-roles).
+:::
+
+### Type of variables {#sec-l01-types}
+
+Variables can have different types:
+
+- **Categorical**: if the variable's possibilities are words or sentences (character strings)
+    - if the possibilities cannot be ordered: **categorical nominal** (e.g., $gender$: male, female, other)
+    - if the possibilities can be ordered: **categorical ordinal** (e.g., $size$: S, M, L)
+- **Continuous**: if the variable's possibilities are numbers (e.g., $age$, $temperature$, ...)
+
+Our first statistical software, jamovi, illustrates them with recognisable icons, as shown in @fig-l01-jamovi-icons.
+
+```{r}
+#| label: fig-l01-jamovi-icons
+#| fig-cap: "The jamovi icons for the three types of variable: continuous, ordinal and nominal."
+#| fig-alt: "Three jamovi icons with their labels. An orange ruler is labelled Continuous, three blue bars of increasing height are labelled Ordinal, and three overlapping circles, one orange and two blue, are labelled Nominal."
+#| out-width: "40%"
+include_img("jamovi_icons.png")
+```
+
+::: {.callout-important title="Warning"}
+Variables can be converted to either categorical or continuous, but it is always better to keep them in their correct scale.
+:::
+
+### Role of variables: predictors, outcomes and controls {#sec-l01-roles}
+
+It is important to keep the two roles **"variable doing the explaining"** and **"variable being explained"** distinct. Let's denote:
+
+- the **outcome** is the "variable to be explained" (also called $Y$, dependent variable, or DV)
+- the **predictor** is the "variable doing the explaining" (also called $X$, independent variable, or IV)
+
+Statistics is only about identifying the relationship between predictor and outcome variables, also called an **effect**:
+
+> An effect between 2 variables means that the changes in the values of a predictor variable are related to changes in the values of an outcome variable.
+
+::: {.callout-tip title="Control variables"}
+**Control variables** are variables not included in the model or in the hypotheses, but included in the equation. They are used to remove an irrelevant explanation of the variable changes.
+:::
+
+The objective is to find the best predictor variable(s) to predict the variability of the outcome! One predictor is simple to handle, but using more than one requires more understanding!
+
+::: {.callout-note title="Outcome's variability is a birthday cake"}
+- If 1 guest eats all the cake: 1 predictor explains all the outcome.
+- If 1 guest eats a slice of the cake: 1 predictor explains only part of the outcome.
+- If there is more than 1 guest, they will all eat a slice of a different size: each predictor will explain its own part of the outcome.
+:::
+
+An effect between a predictor variable and an outcome variable corresponds to the model in @fig-l01-effect.
+
+```{dot}
+//| label: fig-l01-effect
+//| fig-cap: "An effect between a predictor and an outcome."
+//| fig-alt: "Two boxes labelled Predictor and Outcome, with an arrow from Predictor to Outcome."
+//| fig-width: 2.6
+//| fig-height: 0.55
+
+digraph {
+  rankdir="LR"
+  node [shape=box]
+  Predictor -> Outcome
+}
+```
+
+This arrow does not suggest causation but indicates a correlation between $Predictor$ and $Outcome$; there is no assumption of one causing the other. **An "effect" is reciprocal and does not involve causality**.
+
+::: {.callout-important title="Warning"}
+Causality analysis is another kind of test that involves:
+
+- To be sure that 2 variables are correlated
+- That one variable is the antecedent of the other
+- That no other variable is explaining this relationship
+:::
+
+A significant effect of a $Predictor$ on an $Outcome$ variable means that **a predictor is explaining enough variance of the outcome** variable. This shows a significant relationship.
+
+::: {.callout-note title="Outcome's variability is a birthday cake"}
+A significant effect means the slice eaten by the predictor is large enough.
+:::
+
+If there is **no effect** between the variables, they are not sharing enough of their variability. If there is a **significant effect** between the variables, they are sharing a big part of their variability. @fig-l01-venn shows both situations.
+
+```{r}
+#| label: fig-l01-venn
+#| fig-cap: "Variability shared by a predictor and an outcome: little when there is no effect, a big part when the effect is significant."
+#| fig-subcap:
+#|   - "No effect."
+#|   - "Significant effect."
+#| fig-alt:
+#|   - "Two overlapping circles labelled Predictor and Outcome. The overlap is small and contains the number 10, while each outer part contains 90."
+#|   - "Two overlapping circles labelled Predictor and Outcome. The overlap is large and contains the number 40, while each outer part contains 60."
+#| layout-ncol: 2
+#| fig-width: 3
+#| fig-height: 3
+
+grid::grid.newpage()
+VennDiagram::draw.pairwise.venn(
+  100, 100, 10, c("Predictor", "Outcome"), ind = FALSE, cat.pos = c(0,0)) |>
+  grid::grid.draw()
+
+grid::grid.newpage()
+VennDiagram::draw.pairwise.venn(
+  100, 100, 40, c("Predictor", "Outcome"), ind = FALSE, cat.pos = c(0,0)) |>
+  grid::grid.draw()
+```
+
+To decide if the part of the shared variability is big enough, a statistical test is required.
+
+::: {.callout-tip title="Your turn: identify the variables of your paper"}
+In the research paper you have selected, **identify the variables that are used to produce statistical results (e.g. $p$-values).**
+
+Indicate their type and role by using the following table:
+
+| variable_name | variable_type | variable_role |
+|---------------|---------------|---------------|
+| var 1         | type          | role          |
+| ...           | ...           | ...           |
+| var n         | type          | role          |
+
+Send me the table by email at damien.dupre@dcu.ie **before the next lecture.**
+:::
+
+## Literature review: formulate your hypotheses {#sec-l01-hypotheses}
+
+The literature review ends with the hypotheses to be tested. This section explains how to formulate them.
+
+### Hypotheses in a nutshell
+
+**Hypotheses** are:
+
+1. Predictions supported by theory and literature
+2. Affirmations designed to precisely describe the relationships between variables
+
+> "Hypothesis statements contain two or more variables that are measurable or potentially measurable and that specify how the variables are related" (Kerlinger, 1986)
+
+Hypotheses include:
+
+- Predictor(s) / independent variable(s)
+- Outcome / dependent variable (DV)
+- Direction of the outcome if the predictor increases
+
+::: {.callout-important title="Warning"}
+Hypotheses cannot test equality between groups or modalities, they can only test differences or effects.
+:::
+
+### Alternative versus null hypotheses
+
+Every hypothesis has to state a change (between groups or according to values). It is called the **alternative hypothesis**, also written $H_a$ or $H_1$. Every alternative hypothesis has a **null hypothesis** counterpart (no difference between groups or according to values), written $H_0$ and pronounced "H naught" or "H zero". $H_a$ is viewed as a "challenger" to the null hypothesis $H_0$.
+
+**Statistics are used to estimate the probability of obtaining the observed results, assuming the null hypothesis is correct. If this probability is low, the null hypothesis is rejected and the alternative hypothesis is considered more plausible.**
+
+### Main effect hypotheses {#sec-l01-main-effect}
+
+A **main effect hypothesis** is the **predicted relationship between one $Predictor$ and one $Outcome$ variable**.
+
+- The $Outcome$ needs to be continuous (but some models can use a categorical outcome)
+- The $Predictor$ can be either continuous or categorical, but the hypothesis formulation will change with its type
+
+The effect is represented as in @fig-l01-effect, with an arrow from the predictor to the outcome.
+
+#### Templates for main effect hypotheses
+
+::: {.callout-note title="How to use a template?"}
+In the following formulation templates, **replace the variable names with yours** and *select the direction of the effect expected*.
+:::
+
+**Case 1: the predictor is continuous**
+
+The {**outcome**} {*increases/decreases/changes*} when {**predictor**} increases
+
+For example:
+
+> **Job satisfaction** *increases* when **salary** increases
+
+**Case 2: the predictor is categorical (2 categories)**
+
+The {**outcome**} of {**predictor category 1**} is {*higher/lower/different*} than the {**outcome**} of {**predictor category 2**}
+
+For example:
+
+> The **job satisfaction** of **EU employees** is *higher* than the **job satisfaction** of **non EU employees**
+
+**Case 3: the predictor is categorical (3 or more categories)**
+
+The {**outcome**} of at least one of the {**predictor**} is {*higher/lower/different*} than the {**outcome**} of the other {**predictor**}
+
+For example:
+
+> The **job satisfaction** of at least one of the **company's departments** is *higher* than the **job satisfaction** of the other **company's departments**
+
+#### Examples of main effect hypotheses
+
+**Example 1: sleep time and exam results**
+
+- Outcome = exam results (continuous from 0 to 100)
+- Predictor = sleep time (continuous from 0h to 24h)
+
+The effect is represented in @fig-l01-ex-sleep.
+
+```{dot}
+//| label: fig-l01-ex-sleep
+//| fig-cap: "Effect of sleep time on exam results."
+//| fig-alt: "Two boxes labelled Sleep Time and Exam Results, with an arrow from Sleep Time to Exam Results."
+//| fig-width: 3.2
+//| fig-height: 0.55
+
+digraph {
+  rankdir="LR"
+  node [shape=box]
+  "Sleep Time" -> "Exam Results"
+}
+```
+
+Main effect hypothesis:
+
+> $H_a$: **Exam results** *increase* when students' **sleep time** increases
+
+**Example 2: breakfast and exam results**
+
+- Outcome = exam results (continuous from 0 to 100)
+- Predictor = breakfast (categorical *yes* or *no*)
+
+The effect is represented in @fig-l01-ex-breakfast.
+
+```{dot}
+//| label: fig-l01-ex-breakfast
+//| fig-cap: "Effect of breakfast on exam results."
+//| fig-alt: "Two boxes labelled Breakfast and Exam Results, with an arrow from Breakfast to Exam Results."
+//| fig-width: 3.05
+//| fig-height: 0.55
+
+digraph {
+  rankdir="LR"
+  node [shape=box]
+  "Breakfast" -> "Exam Results"
+}
+```
+
+Main effect hypothesis:
+
+> $H_a$: **Exam results** of students **who eat breakfast** will be *higher* than **exam results** of students **who do not eat breakfast**
+
+**Example 3: talking on the phone while driving and driving errors**
+
+- Outcome = driving errors (continuous from 0 to Inf.)
+- Predictor = talking on the phone while driving (categorical *yes*/*no*)
+
+The effect is represented in @fig-l01-ex-phone.
+
+```{dot}
+//| label: fig-l01-ex-phone
+//| fig-cap: "Effect of talking on the phone while driving on driving errors."
+//| fig-alt: "Two boxes labelled Talking on the Phone while Driving and Driving Errors, with an arrow from the first to the second."
+//| fig-width: 5.4
+//| fig-height: 0.55
+
+digraph {
+  rankdir="LR"
+  node [shape=box]
+  "Talking on the Phone while Driving" -> "Driving Errors"
+}
+```
+
+Main effect hypothesis:
+
+> $H_a$: **Driving errors** of **motorists who do not talk on the phone while driving** will be *lower* than **driving errors** of **motorists who talk on the phone while driving**
+
+### Interaction effect hypotheses {#sec-l01-interaction}
+
+An **interaction effect hypothesis** predicts **the influence of a second predictor on the relationship between a first predictor and an outcome variable**.
+
+::: {.callout-important title="Warning"}
+- The second predictor is also called moderator.
+- The main effect of each predictor must be hypothesised as well.
+- The role of first and second predictors can be inverted with the exact same statistical results.
+:::
+
+The effects of an interaction are represented as in @fig-l01-interaction. The same model can also be represented as in @fig-l01-interaction-terms, with exactly the same results.
+
+```{dot}
+//| label: fig-l01-interaction
+//| fig-cap: "Representation of an interaction effect: the second predictor acts on the effect of the first predictor on the outcome."
+//| fig-alt: "Predictor 1 is linked to Outcome by an arrow. Predictor 2 has an arrow pointing to the middle of this link."
+//| fig-width: 4.4
+//| fig-height: 1
+
+digraph {
+  graph [rankdir = LR]
+  node [shape = box]
+  "Predictor 1"; "Predictor 2"; "Outcome"
+  node [shape = point, width = 0, height = 0]
+  ""
+
+  "Predictor 2" -> ""
+  "Predictor 1" -> "" [arrowhead = none]
+  "" -> Outcome
+
+  subgraph {
+    rank = same; "Predictor 2"; "";
+  }
+}
+```
+
+```{dot}
+//| label: fig-l01-interaction-terms
+//| fig-cap: "The same model with the main effect of each predictor and the interaction between them."
+//| fig-alt: "Three arrows point to the Outcome box, one from Predictor 1, one from Predictor 2 and one from a box labelled Predictor 1 X Predictor 2."
+//| fig-width: 4
+//| fig-height: 1.9
+
+digraph {
+  graph [rankdir = LR]
+  node [shape = box]
+
+  "Predictor 1" -> "Outcome"
+  "Predictor 2" -> "Outcome"
+  "Predictor 1 X Predictor 2" -> "Outcome"
+}
+```
+
+Imagine a first effect where job satisfaction increases when salary increases (@fig-l01-salary). Here, job satisfaction (`js_score`) is the average of four items (`q1` to `q4`).
+
+<!-- check: the slide has mean(q1, q2, q3, q4), which returns only q1 (the other values are read as the trim and na.rm arguments); changed to mean(c(q1, q2, q3, q4)) as in Chapter 3 -->
+```{r}
+#| label: fig-l01-salary
+#| echo: true
+#| fig-cap: "Job satisfaction score against salary for nine employees, with a straight line fitted to the data."
+#| fig-alt: "Scatter plot of job satisfaction score on the vertical axis against salary on the horizontal axis for nine employees. A fitted straight line rises slightly from left to right."
+#| fig-height: 3
+tribble(
+  ~employee, ~salary, ~q1, ~q2, ~q3, ~q4,
+  1,         45000,   1,   5,   3,   2,
+  2,         55000,   5,   4,   6,   6,
+  3,         70000,   3,   1,   2,   3,
+  4,         80000,   8,   5,   2,   7,
+  5,         95000,   8,   9,   6,   5,
+  6,         75000,   3,   1,   2,   1,
+  7,         50000,   5,   2,   7,   7,
+  8,         45000,   1,   4,   6,   9,
+  9,         65000,   3,   1,   2,   3
+) |>
+  rowwise() |>
+  mutate(js_score = mean(c(q1, q2, q3, q4))) |>
+  ggplot(aes(salary, js_score)) +
+  geom_point(size = 3) +
+  geom_smooth(method = "lm", se = FALSE) +
+  scale_y_continuous(limits = c(0, 10)) +
+  theme_bw()
+```
+
+This effect can change according to the values of a second predictor (@fig-l01-salary-origin).
+
+<!-- check: same mean(q1, q2, q3, q4) problem as above, changed to mean(c(q1, q2, q3, q4)) -->
+```{r}
+#| label: fig-l01-salary-origin
+#| echo: true
+#| fig-cap: "The effect of salary on job satisfaction for Irish and French employees."
+#| fig-alt: "Scatter plot of job satisfaction score against salary with two coloured groups of points, Irish and French employees, and one straight line for each group. The line of the Irish employees is steeper than the line of the French employees."
+#| fig-height: 3.5
+tribble(
+  ~employee, ~salary, ~q1, ~q2, ~q3, ~q4, ~origin,
+  1,         45000,   1,   5,   3,   2,   "Irish",
+  2,         55000,   5,   4,   6,   6,   "Irish",
+  3,         70000,   3,   1,   2,   3,   "Irish",
+  4,         80000,   8,   5,   2,   7,   "Irish",
+  5,         95000,   8,   9,   6,   5,   "French",
+  6,         75000,   3,   1,   2,   1,   "French",
+  7,         50000,   5,   2,   7,   7,   "French",
+  8,         45000,   1,   4,   6,   9,   "French",
+  9,         65000,   3,   1,   2,   3,   "French"
+) |>
+  rowwise() |>
+  mutate(js_score = mean(c(q1, q2, q3, q4))) |>
+  ggplot(aes(salary, js_score, color = origin)) +
+  geom_point(size = 3) +
+  geom_smooth(method = "lm", se = FALSE, fullrange = TRUE) +
+  scale_y_continuous(limits = c(0, 10)) +
+  theme_bw() +
+  theme(legend.position = "bottom")
+```
+
+Here, the effect of **salary** on **job satisfaction** is *higher* for **Irish employees** than it is for **French employees** because their line is steeper.
+
+#### Templates for interaction effect hypotheses
+
+As for the main effects, **replace the variable names with yours** and *select the direction of the effect expected*.
+
+**Case 1: the second predictor is continuous**
+
+The effect of {**predictor 1**} on {**outcome**} is {*higher/lower/different*} when {**predictor 2**} increases
+
+For example:
+
+> The effect of **salary** on **job satisfaction** is *higher* when **employees' age** increases
+
+**Case 2: the second predictor is categorical (2 categories)**
+
+The effect of {**predictor 1**} on {**outcome**} is {*higher/lower/different*} for {**predictor 2 category 1**} than it is for {**predictor 2 category 2**}
+
+For example:
+
+> The effect of **salary** on **job satisfaction** is *higher* for **Irish employees** than it is for **French employees**
+
+**Case 3: the second predictor is categorical (3 or more categories)**
+
+The effect of {**predictor 1**} on {**outcome**} is {*higher/lower/different*} for at least one of {**predictor 2**}
+
+For example:
+
+> The effect of **salary** on **job satisfaction** is *higher* for at least one of **employees' location**
+
+#### Examples of interaction effect hypotheses
+
+**Example 1: sleep deprivation and gender**
+
+- Outcome = exam results (continuous from 0 to 100)
+- Predictor 1 = sleep deprivation (categorical low, medium, high)
+- Predictor 2 = gender (categorical male vs. female)
+
+The effects are represented in @fig-l01-ex-sleep-gender.
+
+```{dot}
+//| label: fig-l01-ex-sleep-gender
+//| fig-cap: "Effects of sleep deprivation and gender on exam results, with gender acting on the effect of sleep deprivation."
+//| fig-alt: "Sleep Deprivation is linked to Exam Results by an arrow. Gender has an arrow pointing to the middle of this link."
+//| fig-width: 5.1
+//| fig-height: 1
+
+digraph {
+  graph [rankdir = LR]
+
+  node [shape = box]
+  "Sleep Deprivation"; "Exam Results"; "Gender"
+  node [shape = point, width = 0, height = 0]
+  ""
+
+  "Gender" -> ""
+  "Sleep Deprivation" -> "" [arrowhead = none]
+  ""-> "Exam Results"
+
+  subgraph {
+    rank = same; "Gender"; "";
+  }
+}
+```
+
+Interaction effect hypothesis:
+
+> $H_a$: The effect of **sleep deprivation** on **exam results** is *higher* for **male students** than it is for **female students**
+
+::: {.callout-important title="Warning"}
+The main effect hypotheses of the two predictors also have to be formulated.
+:::
+
+**Example 2: alcohol consumption and driving experience**
+
+- Outcome = road accidents (continuous from 0 to Inf.)
+- Predictor 1 = alcohol consumption (continuous from 0 to Inf.)
+- Predictor 2 = driving experience (categorical low, high)
+
+The effects are represented in @fig-l01-ex-alcohol.
+
+```{dot}
+//| label: fig-l01-ex-alcohol
+//| fig-cap: "Effects of alcohol consumption and driving experience on road accidents, with driving experience acting on the effect of alcohol consumption."
+//| fig-alt: "Alcohol Consumption is linked to Road Accidents by an arrow. Driving Experience has an arrow pointing to the middle of this link."
+//| fig-width: 5.6
+//| fig-height: 0.9
+
+digraph {
+  graph [rankdir = LR]
+
+  node [shape = box]
+  "Alcohol Consumption"; "Road Accidents"; "Driving Experience"
+  node [shape = point, width = 0, height = 0]
+  ""
+
+  "Driving Experience" -> ""
+  "Alcohol Consumption" -> "" [arrowhead = none]
+  ""-> "Road Accidents"
+
+  subgraph {
+    rank = same; "Driving Experience"; "";
+  }
+}
+```
+
+Interaction effect hypothesis:
+
+> $H_a$: The effect of **alcohol consumption** on **road accidents** is *lower* for **experienced drivers** than it is for **inexperienced drivers**
+
+::: {.callout-important title="Warning"}
+The main effect hypotheses of the two predictors also have to be formulated.
+:::
+
+### Hypotheses in published papers
+
+Two published papers show how hypotheses are written in practice. The first one studies the impact of job burnout on satisfaction and turnover intention (@fig-l01-paper1-title) and states four hypotheses (@fig-l01-paper1-hyp).
+
+```{r}
+#| label: fig-l01-paper1-title
+#| fig-cap: "Title of the first example paper."
+#| fig-alt: "Title of a research paper in capital letters: Impact of job burnout on satisfaction and turnover intention: do generational differences matter? The authors are Allan Cheng Chieh Lu and Dogan Gursoy, Washington State University."
+#| out-width: "70%"
+include_img("ex1_title.png")
+```
+
+```{r}
+#| label: fig-l01-paper1-hyp
+#| fig-cap: "Hypotheses of the first example paper."
+#| fig-alt: "Four hypotheses. When experiencing job burnout, measured by emotional exhaustion, cynicism and reduced professional efficacy, Boomers will report significantly higher job satisfaction than Millennials (Hypothesis 1) and than Gen-Xers (Hypothesis 2), and significantly lower turnover intention than Millennials (Hypothesis 3) and than Gen-Xers (Hypothesis 4)."
+#| out-width: "70%"
+include_img("ex1_hyp.png")
+```
+
+The second one studies the role of occupational emotional labour requirements in the relationship between surface acting and job satisfaction (@fig-l01-paper2-title) and states three hypotheses (@fig-l01-paper2-hyp1 and @fig-l01-paper2-hyp2).
+
+```{r}
+#| label: fig-l01-paper2-title
+#| fig-cap: "Title of the second example paper."
+#| fig-alt: "Title of a research paper on the role of occupational emotional labor requirements in the relationship between surface acting and job satisfaction. The authors are Devasheesh P. Bhave, Singapore Management University, and Theresa M. Glomb, University of Minnesota."
+#| out-width: "70%"
+include_img("ex2_title.png")
+```
+
+```{r}
+#| label: fig-l01-paper2-hyp1
+#| fig-cap: "First two hypotheses of the second example paper."
+#| fig-alt: "Hypothesis 1: Occupational EL requirements will be positively related to job satisfaction. Hypothesis 2: Surface acting will be negatively related to job satisfaction."
+#| out-width: "70%"
+include_img("ex2_hyp1.png")
+```
+
+```{r}
+#| label: fig-l01-paper2-hyp2
+#| fig-cap: "Third hypothesis of the second example paper."
+#| fig-alt: "Hypothesis 3: The negative association between surface acting and job satisfaction will be moderated by occupational EL requirements such that the relationship will be stronger for employees who work in occupations with higher EL requirements."
+#| out-width: "70%"
+include_img("ex2_hyp2.png")
+```
+
+### The hypothesis checklist
+
+When formulating a hypothesis, check that:
+
+- Your hypothesis is a prediction and not a question
+- Your hypothesis includes both predictor and outcome variables
+- These variables are included in your dataset
+
+::: {.callout-note title="Note about hypotheses in academic papers"}
+- Don't trust research papers, most of them have incorrect formulations.
+- Use the templates shown previously (@sec-l01-main-effect and @sec-l01-interaction).
+:::
+
+### Special case: mediation hypotheses
+
+Remember the birthday cake metaphor: it symbolises the variability of the outcome variable to be explained by the predictors. Now, imagine that one guest takes a slice, but the birthday person arrives and takes the slice from the guest to eat it.
+
+**A mediation is when a predictor, called the mediator, explains part of the variability of the outcome already explained by a first predictor.** It is usually used to highlight the influence of psychological features. The effects are represented as in @fig-l01-mediation.
+
+```{dot}
+//| label: fig-l01-mediation
+//| fig-cap: "Representation of a mediation: predictor 1 has an effect on predictor 2 and on the outcome, and predictor 2 has an effect on the outcome."
+//| fig-alt: "Three boxes labelled Predictor 1, Predictor 2 and Outcome. An arrow goes from Predictor 1 to Predictor 2, an arrow goes from Predictor 1 to Outcome, and an arrow goes from Predictor 2 to Outcome."
+//| fig-width: 4.4
+//| fig-height: 0.85
+
+digraph {
+  graph [rankdir = LR]
+
+  node [shape = box]
+  "Predictor 1"; "Predictor 2"; "Outcome"
+
+  "Predictor 1" -> {"Predictor 2" "Outcome"}
+  "Predictor 2" -> "Outcome"
+}
+```
+
+The formulation structure is:
+
+The effect of {**predictor 1**} on {**outcome**} is explained by the {**predictor 2**}
+
+::: {.callout-important title="Warning"}
+A mediation effect involves 3 requirements:
+
+1. Predictor 1 needs to have a main effect on the outcome
+2. Predictor 1 needs to have a main effect on predictor 2
+3. The main effect of predictor 1 on the outcome needs to disappear when predictor 2 is taken into account
+:::
+
+For example:
+
+> The effect of **employee's age** on **job satisfaction** is explained by their **salary**
+
+Here, the requirements are:
+
+1. Employee's age needs to have a main effect on job satisfaction
+2. Employee's age needs to have a main effect on their salary
+3. The main effect of employee's age on the job satisfaction needs to disappear when salary is taken into account
+
+**Example: exam results, self-esteem and happiness**
+
+- Outcome = happiness (continuous from 0 to 7)
+- Predictor 1 = exam results (continuous from 0 to 100)
+- Predictor 2 = self-esteem (continuous from 0 to 7)
+
+The effects are represented in @fig-l01-ex-mediation.
+
+```{dot}
+//| label: fig-l01-ex-mediation
+//| fig-cap: "Mediation of the effect of exam results on happiness by self-esteem."
+//| fig-alt: "Three boxes labelled Exam Results, Self-Esteem and Happiness. An arrow goes from Exam Results to Self-Esteem, an arrow goes from Exam Results to Happiness, and an arrow goes from Self-Esteem to Happiness."
+//| fig-width: 4.85
+//| fig-height: 0.85
+
+digraph {
+  graph [rankdir = LR]
+
+  node [shape = box]
+  "Self-Esteem"; "Exam Results"; "Happiness"
+
+  "Exam Results" -> {"Happiness" "Self-Esteem"}
+  "Self-Esteem" -> "Happiness"
+}
+```
+
+Mediation effect hypothesis:
+
+> $H_a$: The effect of **grades** on **happiness** is explained by **self-esteem** <!-- check: the slide writes "grades" here but "Exam Results" in the variable list and the diagram -->
+
+### Practising hypotheses
+
+::: {.callout-tip title="Your turn: find the variables in these hypotheses"}
+In the following hypotheses, find the outcome variable and the predictor(s):
+
+1. Overweight adults who value longevity are more likely than other overweight adults to lose their excess weight.
+2. Larger animals of the same species expend more energy than smaller animals of the same type.
+3. Rainbow trout suffer more lice when water levels are low than other trout.
+4. Professors who use a student-centred teaching method will have a greater positive rapport with their graduate students than professors who use a teacher-centred teaching method.
+
+Suggested time: 5 minutes.
+:::
+
+::: {.callout-note title="Solution" collapse="true"}
+**Hypothesis 1:**
+
+- Outcome = excess weight
+- Predictor = the valuation of longevity (yes *vs* no)
+
+**Hypothesis 2:**
+
+- Outcome = energy expended
+- Predictor = animal size (larger *vs* smaller)
+
+**Hypothesis 3:** <!-- check: the hypothesis also mentions low water levels, which the solution does not list as a predictor -->
+
+- Outcome = suffering lice
+- Predictor = trout type (rainbow *vs* other)
+
+**Hypothesis 4:** <!-- check: the slide labels this fourth solution "Hypothesis 3" a second time, numbered 4 here -->
+
+- Outcome = rapport with graduate students
+- Predictor = teaching method (student-centred *vs* teacher-centred)
+:::
+
+::: {.callout-tip title="Your turn: make your own hypotheses"}
+Formulate one hypothesis for each row of @tbl-l01-own-hypotheses.
+
+| Outcome          | Predictor 1          | Predictor 2                    | Hypothesis type    |
+|:-----------------|:---------------------|:-------------------------------|:-------------------|
+| Work motivation  | Gender (Female/Male) |                                | Main effect        |
+| Work motivation  | Gender (Female/Male) | Origin (French/Irish)          | Interaction effect |
+| Work motivation  | Gender (Female/Male) | Origin (French/Irish/Italian)  | Interaction effect |
+| Job satisfaction | Stress (0 to 10)     |                                | Main effect        |
+| Job satisfaction | Stress (0 to 10)     | Age (Millennials/Baby Boomers) | Interaction effect |
+| Job satisfaction | Stress (0 to 10)     | Age (in years)                 | Interaction effect |
+
+: Outcome, predictors and type of the hypotheses to formulate. {#tbl-l01-own-hypotheses}
+
+Suggested time: 5 minutes.
+:::
+
+::: {.callout-note title="Solution" collapse="true"}
+1. The **work motivation** of **female employees** is *higher* than the **work motivation** of **male employees**
+2. The effect of **gender** on **work motivation** is *higher* for **Irish employees** than it is for **French employees**
+3. The effect of **employee origin** on **work motivation** is *higher* for **female employees** than it is for **male employees** <!-- check: this solution swaps the two predictors of the table row (gender is predictor 1 and origin has 3 categories), whereas the template for 3 categories would read "for at least one of the origins" -->
+4. **Job satisfaction** *decreases* when **stress** increases
+5. The effect of **stress** on **job satisfaction** is *higher* for **Millennials** than it is for **Baby boomers**
+6. The effect of **stress** on **job satisfaction** *increases* when **employee's age** increases
+:::
+
+::: {.callout-tip title="Homework: formulate the hypotheses of your paper"}
+In the research paper that you have selected, **formulate the tested hypotheses using the templates seen in this lecture and the variables that you have previously determined**.
+
+Send me your hypotheses by email at damien.dupre@dcu.ie **before the next lecture.**
+:::
+
+::: {.callout-note title="Key points"}
+- A research paper has the shape of an hourglass and its sections are linked: variables (introduction), hypotheses (literature review), model and equation (methods), and the statistical test (results).
+- Every variable has a type (categorical nominal, categorical ordinal or continuous) and a role (outcome, predictor or control).
+- An effect is a relationship between a predictor and an outcome, not a causal claim. It is significant when the predictor explains enough of the variability of the outcome, which a statistical test decides.
+- A hypothesis is a prediction that includes the predictor(s), the outcome and the direction of the effect, and every alternative hypothesis has a null counterpart. Templates help to write main effect, interaction effect and mediation hypotheses.
+- An interaction hypothesis also needs the main effect hypotheses of both predictors, and a mediation hypothesis involves three requirements.
+:::

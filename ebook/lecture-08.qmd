@@ -1,0 +1,817 @@
+# Introduction to Quarto for Research {#sec-lecture-08}
+
+```{r}
+#| label: setup
+#| include: false
+source("R/setup.R")
+organisation_beta <- read_csv(here("data/organisation_beta.csv"))
+```
+
+With Posit Cloud, we will see how to create **Quarto** files (.qmd) to embed text and code output and generate professional outputs. Before starting, sign up for a free Posit Cloud account (<https://posit.cloud/>).
+
+The chapter first presents Quarto and the three parts of a Quarto file: the YAML, the Markdown text and the R code chunks. It then goes through each of them in turn, with exercises to try in Posit Cloud. It finishes with a gallery of what Quarto can produce, and with the Quarto journal templates and website templates.
+
+## What is Quarto? {#sec-l08-what}
+
+### An all-in-one document
+
+The goal is to create a document that is all-in-one:
+
+- documents that include the source code for their production
+- notebook AND plain-text flavours
+- programmatic automation and reproducibility
+
+Quarto is an open-source scientific and technical publishing system that builds on standard Markdown with features essential for scientific communication. It covers three aspects:
+
+- **Computations:** Python, R, Julia, Observable JS
+- **Markdown:** Pandoc flavoured Markdown with many enhancements
+- **Output:** documents, presentations, websites, books, blogs
+
+See <https://quarto.org> for more details.
+
+### Two sides of a Quarto file
+
+A Quarto file has two sides. On the editor side, you write text in Markdown, insert code using R or Python, and write "metadata" with YAML. On the output side, the file is rendered to HTML, PDF or Word, and many other variations too.
+
+The best way to see how this works is to try it by yourself, as in the first exercise below.
+
+### Where to find more resources
+
+More resources are available online:
+
+- [Official Quarto Website](https://quarto.org/)
+- [R for Data Science](https://r4ds.hadley.nz/quarto.html)
+- [Appsilon](https://appsilon.com/r-quarto-tutorial/)
+- [Making shareable documents with Quarto](https://openscapes.github.io/quarto-website-tutorial/)
+- [Quarto 2hr webinar](https://jthomasmock.github.io/quarto-2hr-webinar/materials/01-intro-quarto.html)
+
+## Your first Quarto document {#sec-l08-first}
+
+### Creating the document
+
+::: {.callout-tip title="Your turn: create your first Quarto document"}
+In your Posit Cloud:
+
+1. Create a new Quarto document: `File > New File > Quarto Document`
+2. A popup will appear, untick **"Use visual markdown editor"**
+3. Leave everything else as default and click `Create`
+4. If a warning appears, click `Install` on the message to install the {rmarkdown} package (@fig-l08-warning)
+5. Click the blue arrow `Render` and save the document as `report.qmd`
+
+```{r}
+#| label: fig-l08-warning
+#| fig-cap: "The warning shown at the top of the editor when the rmarkdown package is not installed."
+#| fig-alt: "Top of the RStudio editor for a file named test.qmd, with the Render button in the toolbar and the Source and Visual tabs. A yellow banner reads Package rmarkdown required but is not installed, followed by the links Install and Don't Show Again. The first lines of the file, with the YAML title Untitled, start below the banner."
+#| out-width: "100%"
+include_img("rmarkdown_warning.png")
+```
+
+Suggested time: 5 minutes.
+:::
+
+### A simple example
+
+Creating a document this way produces a default Quarto file. @fig-l08-editor shows this file in the editor: a YAML header at the top, two sections with some text, and two code chunks. @fig-l08-output shows the output obtained when the file is rendered. The first chunk displays its code and its result, whereas the second chunk only displays its result, because of its option `echo: false`.
+
+```{r}
+#| label: fig-l08-editor
+#| fig-cap: "A default Quarto document in the editor."
+#| fig-alt: "Screenshot of the RStudio editor showing the default Quarto file test.qmd. Lines 1 to 4 hold the YAML header, with the title Untitled and the format html. The text that follows has the headings Quarto and Running Code with a paragraph each, a first R chunk containing 1 + 1, a sentence about adding options, a second R chunk with the option echo: false containing 2 * 2, and a last sentence explaining the echo: false option."
+#| out-width: "100%"
+include_img("quarto_default.png")
+```
+
+```{r}
+#| label: fig-l08-output
+#| fig-cap: "The output obtained by rendering the default Quarto document."
+#| fig-alt: "Screenshot of the rendered output of the default Quarto file. It shows the title Untitled, the headings Quarto and Running Code with their paragraphs, the code 1 + 1 followed by its result [1] 2, then the result [1] 4 without its code, and the sentence about the echo: false option."
+#| out-width: "100%"
+include_img("quarto_create.png")
+```
+
+### The three parts of a Quarto file
+
+Quarto files have 3 different types of content: the YAML, the text and the code. Each of them is circled in red in the screenshots below.
+
+**1. The YAML.** Displayed between two series of `---` signs, it corresponds to the metadata shown in the header of the output file (e.g., title, author, date, ...) and the type of output (e.g., pdf, html, doc, ...). In @fig-l08-yaml, it is the block at the top of the file.
+
+```{r}
+#| label: fig-l08-yaml
+#| fig-cap: "The YAML of the default Quarto document, circled in red."
+#| fig-alt: "The same editor screenshot as before, with a red circle around lines 1 to 4: the three dashes, the title Untitled, the format html and the closing three dashes."
+#| out-width: "100%"
+include_img("quarto_default_yaml.png")
+```
+
+**2. The text.** Written in Markdown style (i.e., text without formatting), it is used as core description in the output document. In @fig-l08-markdown, the text is circled: the two section titles with their paragraphs, the sentence between the two chunks and the last sentence of the file.
+
+```{r}
+#| label: fig-l08-markdown
+#| fig-cap: "The Markdown text of the default Quarto document, circled in red."
+#| fig-alt: "The same editor screenshot as before, with red circles around the two section titles and their paragraphs, around the sentence You can add options to executable code like this, and around the last sentence about the echo: false option."
+#| out-width: "100%"
+include_img("quarto_default_markdown.png")
+```
+
+**3. The code.** Inserted in the Quarto file inside "chunks", the code is processed when creating the output and can display figures and tables. In @fig-l08-code, the two chunks are circled. The second one starts with the option `#| echo: false`.
+
+```{r}
+#| label: fig-l08-code
+#| fig-cap: "The R code chunks of the default Quarto document, circled in red."
+#| fig-alt: "The same editor screenshot as before, with a red circle around the first chunk, which contains 1 + 1, and another around the second chunk, which contains the option echo: false and 2 * 2."
+#| out-width: "100%"
+include_img("quarto_default_code.png")
+```
+
+### Rendering the output file
+
+To generate the output file:
+
+1. Go to `File > Render Document` (a `Render` shortcut icon is also displayed in the menu bar)
+2. Give a name to your document, click `OK`, and voila!
+
+The file can then be compared with its output: the editor side is shown in @fig-l08-editor and the output side in @fig-l08-output.
+
+## The YAML {#sec-l08-yaml}
+
+As seen above, the YAML is displayed between two series of `---` signs at the top of the file. This section shows how to write it to obtain an HTML output, and how to control the way code is executed.
+
+### Output HTML
+
+The simplest YAML only states the output format:
+
+```yaml
+---
+format: html
+---
+```
+
+A default YAML also includes a title and a date:
+
+```yaml
+---
+title: "My First Quarto Document"
+format: html
+date: "1984-03-23"
+---
+```
+
+A more elaborated YAML adds a subtitle, an author, a theme for the HTML output and options for the execution of the code:
+
+```yaml
+---
+title: "My First Quarto Document"
+subtitle: "My Subtitle"
+author: "Damien Dupre"
+date: "1984-03-23"
+format:
+  html:
+    theme: united
+
+execute:
+  warning: false
+
+---
+```
+
+### Execute code
+
+Quarto can use R or Python to execute code:
+
+- R code is executed natively with the `{knitr}` engine
+- Quarto can _also_ use the `Jupyter` engine to execute Julia, Python, or other languages that Jupyter supports
+
+If R code is found first, it will default to `knitr`:
+
+```yaml
+---
+format: html
+---
+```
+
+Or you can force using `knitr` if you're mixing R/Python content or if your first code chunk is not R:
+
+```yaml
+---
+format: html
+engine: knitr
+---
+```
+
+You can specify Jupyter to use defaults:
+
+```yaml
+---
+engine: jupyter
+---
+```
+
+Or a specific Python version:
+
+```yaml
+---
+engine: python3
+---
+```
+
+Quarto also introduces some of these as options for `execute:` in YAML, for similar concepts in other languages. <!-- check: "some of these" is not explained on the slide; presumably the knitr chunk options echo, warning and message -->
+
+```yaml
+---
+format: html
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+```
+
+## Markdown style {#sec-l08-markdown}
+
+The text of a Quarto file is written in Markdown style. For each feature below, the examples show what you type and what you get.
+
+### Emphasising text
+
+**What you type...**
+
+```markdown
+this is *italics*
+
+this is **bold**
+
+this is ***bold italics***
+```
+
+**What you get...**
+
+this is *italics*
+
+this is **bold**
+
+this is ***bold italics***
+
+### Creating lists
+
+**What you type...**
+
+```markdown
+- unnumbered lists
+- look like this
+
+1. numbered lists
+2. look like this
+```
+
+**What you get...**
+
+- unnumbered lists
+- look like this
+
+1. numbered lists
+2. look like this
+
+### Creating headings
+
+**What you type...**
+
+```markdown
+# Level 1 heading
+
+## Level 2 heading
+
+### Level 3 heading
+```
+
+**What you get...**
+
+#### Level 1 heading {.unnumbered .unlisted}
+
+##### Level 2 heading {.unnumbered .unlisted}
+
+###### Level 3 heading {.unnumbered .unlisted}
+
+The more `#` signs there are, the lower the level of the heading and the smaller its text in the output.
+
+### LaTeX equations
+
+**What you type...**
+
+```markdown
+$$
+JS_i = b_0 + b_1 Salary_i + b_2 Perf_i + e_i
+$$
+
+$$
+e_{i} \sim \mathcal{N}(0, \sigma_{i})
+$$
+```
+
+**What you get...**
+
+$$
+JS_i = b_0 + b_1 Salary_i + b_2 Perf_i + e_i
+$$
+
+$$
+e_i \sim \mathcal{N}(0, \sigma_i)
+$$
+
+### A Markdown example
+
+**Example of a Markdown document...**
+
+````markdown
+## Introduction
+
+Welcome to my **awesome** class. You
+will learn all kinds of useful things
+about Quarto.
+
+- Markdown is simple
+- You can add R code
+- You can add $\LaTeX$ inline
+- You can add LaTex equations:
+
+$$y=ax+b$$
+````
+
+<!-- check: the source above types "LaTex" whereas the output below reads "LaTeX" -->
+
+**Here's what the output looks like...**
+
+#### Introduction {.unnumbered .unlisted}
+
+Welcome to my **awesome** class. You will learn all kinds of useful things about Quarto.
+
+- Markdown is simple
+- You can add R code
+- You can add LaTeX inline
+- You can add LaTeX equations:
+
+$$y=ax+b$$
+
+<!-- note: the slide types $\LaTeX$ here, which shows the LaTeX logo in the slides; the \LaTeX command fails in inline maths in PDF and cannot be converted for EPUB, so the result is written as plain text in the book -->
+
+::: {.callout-tip title="Your turn: write a short Markdown document"}
+In Posit Cloud, with the file that you have previously created:
+
+1. Remove all content except the YAML
+2. Modify the YAML to include:
+
+   ```yaml
+   ---
+   format: html
+   execute:
+     echo: false
+     warning: false
+   ---
+   ```
+
+3. Write a sentence about your emotions (positive and negative) triggered by R, use `*` and `**` to highlight some part of your text in italic and bold
+4. Add a section title with `##` and a subsection title with `###`
+5. Click `Render` once finished
+
+Suggested time: 5 minutes.
+:::
+
+## R code chunks {#sec-l08-chunks}
+
+Code is inserted in a Quarto file inside chunks. This section shows how to write a chunk, how to set its options and how its output appears in the final document.
+
+### Anatomy of a code chunk
+
+````markdown
+```{{r}}
+#| label: organisation-beta-lm
+#| echo: false
+model <- lm(formula = js_score ~ salary + perf, data = organisation_beta)
+```
+````
+
+To write a chunk:
+
+- use 3x backticks on each end ` ``` `
+- place the engine (`r`) between curly braces `{r}`
+- place the options underneath, behind the `#|` (hashpipe): `#| option1: value`
+
+### The first code chunk {#sec-l08-first-chunk}
+
+In the first code chunk, all the **actions that will be applied to the following chunks** will be added (e.g., code options, libraries used, data downloaded, ...).
+
+````markdown
+```{{r}}
+#| label: setup
+#| include: false
+
+# libraries
+library(tidyverse)
+
+# data
+organisation_beta <- read_csv("/cloud/project/organisation_beta.csv")
+```
+````
+
+### Code chunk options
+
+Chunk output can be customised with hashpipe options (i.e., arguments set after the `#|`). Above, we use 1 argument: <!-- check: the setup chunk above sets two hashpipe options (label and include); the slide counts one -->
+
+- `#| include: false` prevents code and results from appearing in the finished file. Quarto still runs the code in the chunk, and the results can be used by other chunks.
+
+Additional options can be turned on only for one chunk:
+
+- `#| results: asis` will display the output of the code as regular text
+
+See the **[Quarto Reference Guide](https://quarto.org/docs/reference/cells/cells-knitr.html)** for a complete list of chunk options.
+
+### Figures in the output document
+
+As long as the package {tidyverse} is loaded and the data object created in the first setup chunk, then a **ggplot visualisation can be used in a separate chunk**:
+
+````markdown
+---
+title: "Untitled"
+format: html
+execute:
+  echo: false
+  warning: false
+---
+
+```{{r}}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+
+organisation_beta <- read_csv("/cloud/project/organisation_beta.csv")
+```
+
+# My Section Title
+
+My text followed by my figure.
+
+```{{r}}
+ggplot(organisation_beta) +
+  aes(salary, js_score) +
+  geom_point()
+```
+````
+
+### Working with code
+
+To display the output of your code in the final document, just include your code in a chunk:
+
+````markdown
+```{{r}}
+lm(formula = js_score ~ salary + perf, data = organisation_beta)
+```
+````
+
+In the final document, the chunk prints the result of the linear regression:
+
+```{r}
+lm(formula = js_score ~ salary + perf, data = organisation_beta)
+```
+
+Remember, when the code results in creating an object, while the object is created, no output is printed in the final document:
+
+````markdown
+```{{r}}
+model <- lm(formula = js_score ~ salary + perf, data = organisation_beta)
+```
+````
+
+To create an object and print your code in the same chunk, the name of the object has to be included in the chunk. This will print the content of the object:
+
+````markdown
+```{{r}}
+model <- lm(formula = js_score ~ salary + perf, data = organisation_beta)
+
+model
+```
+````
+
+In the final document, the content of the object is now printed:
+
+```{r}
+lm(formula = js_score ~ salary + perf, data = organisation_beta)
+```
+
+### Visualisation specific options
+
+Some chunk options are specific to visualisation outputs:
+
+- `fig-cap: "Example Caption"`
+- `fig-height: 2`
+- `fig-width: 12`
+
+Note, the default unit for height and width is inches.
+
+````markdown
+```{{r}}
+#| fig-cap: "Example Caption"
+#| fig-height: 2
+#| fig-width: 12
+
+ggplot(organisation_beta) +
+  aes(salary, js_score) +
+  geom_point()
+```
+````
+
+This chunk gives the figure of @fig-l08-example-caption in the output document.
+
+```{r}
+#| label: fig-l08-example-caption
+#| fig-cap: "Example Caption"
+#| fig-alt: "A wide and short scatterplot with salary on the horizontal axis and js_score on the vertical axis. The points are scattered with a slight upward trend."
+#| fig-height: 2
+#| fig-width: 12
+ggplot(organisation_beta) +
+  aes(salary, js_score) +
+  geom_point()
+```
+
+::: {.callout-note title="Live demonstration"}
+In the lecture, code chunks are demonstrated live before the exercise below.
+:::
+
+::: {.callout-tip title="Your turn: add code chunks to your report"}
+In your **report.qmd** document:
+
+1. **Create a first code chunk** called `setup`. In this chunk, load the `{report}` packages and create your data object with the following code: <!-- check: this exercise uses read.csv() whereas the setup chunk example and the second exercise use read_csv(); and step 3 needs ggplot2 (library(tidyverse)), which is only added at step 4 of the second exercise -->
+
+   ```r
+   organisation_beta <- read.csv("/cloud/project/organisation_beta.csv")
+   ```
+
+2. **Create a second code chunk**. In this chunk, run the following linear regression and add `#| results: asis` in its options:
+
+   ```r
+   lm_js <- lm(formula = js_score ~ salary + perf, data = organisation_beta)
+
+   report(lm_js)
+   ```
+
+3. Create a third code chunk. In this chunk, include the following visualisation:
+
+   ```r
+   ggplot(organisation_beta) +
+     aes(salary, js_score) +
+     geom_point() +
+     geom_smooth(method = "lm") +
+     theme_bw() +
+     labs(
+       x = "Employee Salary (Eur)",
+       y = "Employee's Job Satisfaction"
+     )
+   ```
+
+4. Render the document to observe its structure
+
+Suggested time: 5 minutes for steps 1 and 2, then 3 minutes for steps 3 and 4.
+:::
+
+## Gallery {#sec-l08-gallery}
+
+The gallery gives an idea of what can be produced with Quarto: professional websites, books, slide decks, CVs and academic papers. @fig-l08-site shows a professional website, @fig-l08-book a book and @fig-l08-papers the first page of an academic paper.
+
+```{r}
+#| label: fig-l08-site
+#| fig-cap: "A professional website: a home page with a biography, interests, education and links to profiles."
+#| fig-alt: "Screenshot of the home page of a personal website. A menu at the top lists About, Blog, Talks, Projects and Resume, followed by a search icon. A short biography on the left sits next to a portrait photograph with the person's name, job title and a row of icons linking to social and academic profiles. Below the biography are a list of interests and a list of education entries. A banner at the bottom shows a quotation over a patterned background and a button labelled see my projects."
+#| out-width: "70%"
+include_img("example_professional_site.png")
+```
+
+```{r}
+#| label: fig-l08-book
+#| fig-cap: "A book: a page of an online book, with its table of contents on the left, the text and a plot in the centre and the outline of the page on the right."
+#| fig-alt: "Screenshot of a page of the online book R for Data Science. A sidebar on the left holds a search box and the table of contents. The main column shows section 3.2.2, Creating a ggplot, with a code block that draws a scatterplot of hwy against displ, the resulting plot and two paragraphs of explanation. A column on the right lists the sections of the page."
+#| out-width: "100%"
+include_img("example_book.png")
+```
+
+```{r}
+#| label: fig-l08-papers
+#| fig-cap: "An academic paper: the first page of a manuscript with its title, abstract and keywords."
+#| fig-alt: "First page of an academic paper in PDF format, with numbered lines in the margin. It shows a centred title, an author name with an affiliation, an abstract, keywords, the first lines of the text and two footnotes."
+#| out-width: "60%"
+include_img("example_papers.png")
+```
+
+Slide decks and CVs can also be produced with Quarto.
+
+## Quarto journal templates {#sec-l08-journals}
+
+### Journal formats
+
+The Quarto team has developed several journal formats and made them available within the [quarto-journals GitHub organization](https://github.com/quarto-journals/). These formats include the following journals and publishers:
+
+- Association of Computing Machinery
+- American Chemical Society
+- American Geophysical Union
+- Biophysical journal
+- Elsevier Journals
+- American Statistical Association
+- Journal of Statistical Software
+
+Many more formats will be added over time.
+
+### Creating an article from a template
+
+The `quarto use template` command can be used to create an article from one of these formats from the Terminal (and not the console). For example:
+
+```bash
+quarto use template quarto-journals/acm
+quarto use template quarto-journals/acs
+quarto use template quarto-journals/agu
+quarto use template quarto-journals/biophysical-journal
+quarto use template quarto-journals/elsevier
+quarto use template quarto-journals/jasa
+quarto use template quarto-journals/jss
+quarto use template quarto-journals/plos
+```
+
+<!-- check: the list of journals above has seven entries but the commands include an eighth template, plos -->
+
+::: {.callout-note title="Live demonstration"}
+In the lecture, the creation of a document from a journal template is demonstrated live before the exercises below.
+:::
+
+::: {.callout-tip title="Your turn: create a document from a journal template"}
+1. Create a new quarto-journals document using one of the templates listed above, from the Terminal. Choose `Y` when asked if you trust the authors of this template and choose a directory name.
+2. Render the default `.qmd` document obtained to observe it.
+
+Suggested time: 5 minutes.
+:::
+
+::: {.callout-tip title="Your turn: add your analysis to the template document"}
+In this new .qmd document:
+
+1. Remove everything except the YAML
+2. Create a first `setup` chunk. In this chunk, load the `{report}` packages and create your data object with the following code: <!-- check: the object is named organisation.beta here but organisation_beta in the code of the next steps -->
+
+   ```r
+   organisation.beta <- read_csv("/cloud/project/organisation_beta.csv")
+   ```
+
+3. Create a second code chunk. In this chunk, run the following linear regression and add `#| results: asis` in its options:
+
+   ```r
+   lm_js <- lm(formula = js_score ~ salary + perf, data = organisation_beta)
+
+   report(lm_js)
+   ```
+
+4. Install the package {tidyverse} and add `library(tidyverse)` in the setup chunk
+5. Create a third code chunk. In this chunk, include the following visualisation:
+
+   ```r
+   ggplot(organisation_beta) +
+     aes(salary, js_score) +
+     geom_point() +
+     geom_smooth(method = "lm") +
+     theme_bw() +
+     labs(
+       x = "Employee Salary (Eur)",
+       y = "Employee's Job Satisfaction"
+     )
+   ```
+
+6. Render the document to observe its structure
+
+Suggested time: 5 minutes for steps 1 to 3, then 3 minutes for steps 4 to 6.
+:::
+
+## Quarto website templates {#sec-l08-websites}
+
+### Quarto websites
+
+Quarto websites are a convenient way to publish groups of documents. Documents published as part of a website share navigational elements, rendering options, and visual style.
+
+Website navigation can be provided through a global navbar, a sidebar with links, or a combination of both for sites that have multiple levels of content. You can also enable full text search for websites.
+
+Unfortunately, Quarto websites cannot be visualised on Posit Cloud, as it is not your computer. If you want to give it a go:
+
+1. Install R on your own computer from <https://cran.r-project.org/>
+2. Install RStudio on your own computer from <https://posit.co/download/rstudio-desktop>
+3. Install Quarto on your own computer from <https://quarto.org/>
+
+::: {.callout-note}
+Among the Integrated Development Environments (IDEs), there are also VScode, Positron, and many more.
+:::
+
+### Creating a website
+
+From the Terminal, the following command creates a new website project:
+
+```bash
+quarto create project website mysite
+```
+
+This website project is initiated by a folder called `mysite` located on the root of your terminal. <!-- check: "the root of your terminal" presumably means the current working directory of the Terminal -->
+
+The folder contains only 4 files:
+
+- `_quarto.yml` designs the overall style and the navbar
+- `index.qmd` corresponds to the homepage
+- `about.qmd` is another page
+- `styles.css` is for additional style not defined in `_quarto.yml`
+
+To improve your website:
+
+- Navigation instructions are here: <https://quarto.org/docs/websites/website-navigation.html>
+- Option instructions are here: <https://quarto.org/docs/reference/projects/websites.html>
+
+The website is then previewed with:
+
+```bash
+quarto preview mysite
+```
+
+This command renders the website by converting all the `.qmd` files to `.html` files stored in a `_site` folder. The website preview will open in a new web browser. As you edit and save `index.qmd` (or other files like `about.qmd`) the preview is automatically updated.
+
+### Demonstration: publishing a website on GitHub Pages
+
+::: {.callout-warning title="Warning"}
+Only run on your own computer if R, RStudio (or equivalent), and Quarto are installed.
+:::
+
+In the demonstration, the website is first created and previewed with the two commands above, run in the `Terminal` window. Then, in the `_quarto.yml` file, simply **change the output directory folder** to a folder named `docs` as follows:
+
+```yaml
+project:
+  type: website
+  output-dir: docs
+```
+
+Then render the website from the Terminal:
+
+```bash
+quarto render mysite
+```
+
+The default folder of your website should now look like @fig-l08-mysite-docs.
+
+```{r}
+#| label: fig-l08-mysite-docs
+#| fig-cap: "The folder of the website after rendering to the docs folder."
+#| fig-alt: "Screenshot of a file browser window titled mysite. It lists the file _quarto.yml, the folder _site, the file about.qmd, the folder docs, and the files index.qmd, nojekyll.txt and styles.css."
+#| out-width: "70%"
+include_img("mysite_docs.png")
+```
+
+<!-- check: the screenshot shows a file called nojekyll.txt, whereas the next step asks for a file called .nojekyll -->
+
+::: {.callout-note}
+The old folder `_site` will not be used any more and is now useless.
+:::
+
+Next, add a `.nojekyll` file to the root of your repository that tells GitHub Pages not to do additional processing of your published site using Jekyll (the GitHub default site generation tool).
+
+You can create it from the terminal when the website folder is the current directory. In Bash or zsh:
+
+```bash
+touch .nojekyll
+```
+
+In CMD:
+
+```bash
+type nul > .nojekyll
+```
+
+In PowerShell:
+
+```bash
+ni .nojekyll
+```
+
+In **GitHub**, just drag and drop all the files at once onto the upload page of your repository.
+
+<!-- note: the animation below is shown in the HTML version only (html:js): LaTeX cannot include a GIF, and in the EPUB it would add 31 MB -->
+
+::: {.content-visible when-format="html:js"}
+```{r}
+#| label: fig-l08-github-drop
+#| fig-cap: "Dragging and dropping the files of the website folder onto the upload page of a GitHub repository (animation)."
+#| fig-alt: "Animated screen recording. On the left, a browser shows the GitHub page of an empty repository named mysite, then its upload page. On the right, a window lists the files of the mysite folder: _quarto.yml, _site, about.qmd, docs, index.qmd, nojekyll.txt and styles.css. The files are selected and dragged onto the upload page, which lists them as they are uploaded. The repository page then shows the uploaded files with the commit message Add files via upload."
+#| out-width: "100%"
+include_img("github_drop_mysite.gif")
+```
+:::
+
+Finally, click **Settings** > **Pages** and choose:
+
+- `main` branch
+- `/docs` folder
+- and Save
+
+::: {.callout-note title="Key points"}
+- A Quarto file combines three parts: a YAML header, Markdown text and code chunks. Rendering the file produces the output document, for example in HTML, PDF or Word.
+- The YAML sits between two series of `---` signs and sets the output format and options such as `execute:`. R code is executed with the `knitr` engine by default.
+- Markdown marks up the text: `*` and `**` for italics and bold, `-` and numbers for lists, `#` for headings and `$$` for LaTeX equations.
+- An R code chunk has 3x backticks on each end, the engine between curly braces and its options after `#|`. Options such as `include`, `results`, `fig-cap`, `fig-height` and `fig-width` customise the output.
+- An object created in a chunk is not printed unless its name is included in the chunk.
+- Journal templates (`quarto use template`) and website projects (`quarto create project website`, `quarto preview`) extend Quarto to articles and to websites that can be published on GitHub Pages.
+:::

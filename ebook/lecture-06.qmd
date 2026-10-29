@@ -1,0 +1,788 @@
+# Assumptions of the General Linear Model {#sec-lecture-06}
+
+```{r}
+#| label: setup
+#| include: false
+source("R/setup.R")
+library(ggcorrplot)
+library(gt)
+library(patchwork)
+set.seed(123)
+iqsize <- read.table(here("data/iqsize.txt"), header = TRUE)
+organisation_beta <- readr::read_csv(here("data/organisation_beta.csv"))
+```
+
+This chapter covers six topics: the assumptions of the General Linear Model and how to check them, more assumptions (uncorrelated predictors and anomalous data), model selection, power analysis for sample size and effect size estimations, reasonable statistics, and agentic AI for statistical analysis.
+
+## Assumptions of general linear models {#sec-l06-assumptions}
+
+### The four requirements {#sec-l06-line}
+
+Statistical tests are widely used to test hypotheses, exactly as we did in the previous chapters (@sec-lecture-04 and @sec-lecture-05), but all statistical tests have requirements to meet before being applied. The General Linear Model has four requirements:
+
+1. **L**inearity (of the effects)
+2. **I**ndependence (of observations)
+3. **N**ormality (of the residuals)
+4. **E**qual variance (of the residuals)
+
+The initials of the four requirements spell LINE. While the assumptions of the Linear Model are never perfectly met in reality, we must check if they are reasonable enough that we can work with them.
+
+### Checking the assumptions in jamovi {#sec-l06-jamovi-checks}
+
+All assumptions can be checked with jamovi, except the independence of observations, which is more about self-assessment. In the Linear Regression options, open **Assumption Checks** and **tick all the boxes** (@fig-l06-jamovi-checks). Some boxes will be used for the additional assumptions (see @sec-l06-more), for example "Collinearity statistics" and "Cook's distance", but two are used to check the main assumptions: <!-- check: the slide says "following chapter" for the additional assumptions; read here as the next section of this lecture -->
+
+- **Q-Q plot of residuals** to check the normality of the residuals (assumption 3)
+- **Residual plots** to check the equal variance of the residuals (assumption 4)
+
+```{r}
+#| label: fig-l06-jamovi-checks
+#| fig-cap: "The Assumption Checks options of the Linear Regression in jamovi, with all the boxes ticked."
+#| fig-alt: "Screenshot of the jamovi Linear Regression window with js_score as dependent variable and salary as covariate. The Assumption Checks panel is open and all its boxes are ticked: Autocorrelation test, Collinearity statistics, Normality test, Q-Q plot of residuals and Residual plots, and Cook's distance under Data Summary."
+#| out-width: "60%"
+include_img("lm_assumption_jamovi.png")
+```
+
+### Assumption 1: linearity {#sec-l06-linearity}
+
+A pretty fundamental assumption of the General Linear Regression Model is that the relationship between $X$ and $Y$ actually is linear. To check it in jamovi, **plot the data and have a look**. @fig-l06-linearity shows the same data three ways.
+
+```{r}
+#| label: fig-l06-linearity
+#| fig-cap: "The same data shown as raw points (left), with the best linear model and its residuals (centre) and with a loess curve and its residuals (right)."
+#| fig-alt: "Three scatterplots of the same 24 points, which rise from about 0 on the left to about 10 near the middle of the x axis and then fall back to about 0 on the right, an inverted U shape. The left plot shows only the points. The centre plot adds a straight line rising across the plot, with vertical segments from each point to the line, many of them long. The right plot adds a curved line that follows the inverted U shape, with much shorter vertical segments."
+#| fig-width: 9
+#| fig-height: 3.5
+df <- data.frame(
+  x = c(0,5,10,6 ,9,13,15,16,20,21,24,26,29,30,32,34,36,38,40,43,44,45, 50,60) - 15,
+  y = c(0.00,0.10,0.25,0.15,0.24,0.26,0.30,0.31,0.40,0.41,0.49,0.50,0.56, 0.80,0.90,1.00,1.00,1.00,0.80,0.50,0.40,0.20,0.15,0.00)*10
+  )
+
+raw_plot <- df |>
+  ggplot(aes(x, y)) +
+  geom_point() +
+  theme_bw()
+
+linear_model_1 <- lm(y ~ x, data = df)
+
+df$predicted <- predict(linear_model_1)   # Save the predicted values
+df$residuals <- residuals(linear_model_1) # Save the residual values
+
+linear_plot <- df |>
+  ggplot(aes(x, y)) +
+  geom_segment(aes(xend = x, yend = predicted)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_bw()
+
+loess_model <- loess(y ~ x, data = df, span = 5)
+
+df$predicted <- predict(loess_model)   # Save the predicted values
+df$residuals <- residuals(loess_model) # Save the residual values
+
+loess_plot <- df |>
+  ggplot(aes(x, y)) +
+  geom_segment(aes(xend = x, yend = predicted)) +
+  geom_point() +
+  geom_smooth(method = "loess", span = 5) +
+  theme_bw()
+
+raw_plot + linear_plot + loess_plot
+```
+
+If the shape of the data is non linear then even the best linear model will have very big residuals and therefore very high $MSE$ or $RMSE$.
+
+### Assumption 2: independence {#sec-l06-independence}
+
+To check this assumption, you need to know how the data were collected. **Is there a reason why two observations could be artificially related?** For example, an experiment investigating marriage satisfaction according to the duration of the marriage will be flawed if data are collected from both partners. Indeed the satisfaction of one member of the couple should be correlated with the satisfaction of the other member. Make sure your participants do not know each other, or use the so-called "linear mixed models".
+
+In general, this is really **just a "catch all" assumption**, to the effect that "there's nothing else funny going on in the residuals". If there is something weird (e.g., the residuals all depend heavily on some other unmeasured variable) going on, it might screw things up.
+
+### Assumption 3: normality {#sec-l06-normality}
+
+Like many of the models in statistics, the General Linear Model **assumes that the residuals are normally distributed**. Note that **it's actually okay if the predictor and the outcome variables are non-normal**, as long as the residuals $e$ are normal.
+
+There are three kinds of residuals:
+
+- **Ordinary residuals**: the simple difference between what the model predicted and what was actually observed (called $e_i$). Think of it as "how far off was the prediction?" These residuals keep the same units as your variable, so if your predictors use different scales (e.g., salary in euros vs. performance rated 0 to 10), the residuals will reflect those different scales too.
+- **Standardised residuals**: ordinary residuals converted to a common scale (mean = 0, SD = 1) so you can compare them fairly across variables, even when the original measurements used different units.
+- **Studentised residuals**: similar to standardised residuals, but smarter! They also account for the fact that some data points have more influence on the regression line than others. This makes them the most reliable type for spotting genuine outliers.
+
+To check normality in jamovi, **use a Q-Q plot**. @fig-l06-qq compares four distributions (top row) with their Q-Q plots (bottom row). <!-- check: the code uses ..density..; this notation is deprecated since ggplot2 3.4.0 (after_stat(density) is the current form), kept as in the slide, and it still runs -->
+
+```{r}
+#| label: fig-l06-qq
+#| fig-cap: "Histograms (top row) and Q-Q plots (bottom row) of four simulated distributions: normal, skew_right, skew_left and fat_tails."
+#| fig-alt: "Eight plots in two rows of four, with one column for each of the distributions normal, skew_right, skew_left and fat_tails. The top row shows histograms: symmetric for normal and for fat_tails, which is wider, with a long right tail for skew_right and a long left tail for skew_left. The bottom row shows the matching Q-Q plots with a diagonal line. The dots follow the line for normal and fat_tails. For skew_right and skew_left the dots curve away from the line, in opposite directions."
+#| fig-width: 9
+#| fig-height: 5
+df <- data.frame(normal = rnorm(1000)) |>
+  mutate(
+    skew_right = ifelse(normal > 0, normal * 2.5, normal),
+    skew_left = ifelse(normal < 0, normal * 2.5, normal),
+    fat_tails = normal * 2.5
+  ) |>
+  pivot_longer(everything(), names_to = "type", values_to = "value") |>
+  mutate(type = factor(type, levels = c("normal", "skew_right", "skew_left", "fat_tails")))
+
+distribution_plot <- df |>
+  ggplot(aes(x = value, y = ..density..)) +
+  geom_histogram(colour = "black", fill = "white") +
+  facet_grid(.~type) +
+  theme_bw()
+
+qq_plot <- df |>
+  ggplot(aes(sample = value)) +
+  stat_qq() +
+  stat_qq_line() +
+  facet_grid(.~type) +
+  theme_bw()
+
+distribution_plot/qq_plot
+```
+
+If the residuals are normally distributed, then the line formed by the dots follows the diagonal line (plot 1 and 4). If the residuals are skewed right or left, then the line formed by the dots deviates from the diagonal (plot 2 and 3). <!-- check: in the code, fat_tails is the normal sample multiplied by 2.5, that is a wider normal distribution rather than a heavy-tailed one, which is why plot 4 follows the diagonal -->
+
+### Assumption 4: equal variance {#sec-l06-equalvar}
+
+Also called homogeneity or homoscedasticity, the General Linear Regression Model assumes that each residual $e_i$ is generated from a normal distribution: **the standard deviation of the residual should be the same for all values of the predictor**.
+
+In jamovi, use the **Residual plots** option, which provides a scatterplot of the residuals against each predictor variable, the outcome variable and the predicted values (@fig-l06-residuals). If the equal variance is met, **we should see no pattern in the first plot, only a cloud of points**. With other software, a line is drawn in this residual vs. fitted plot. A flat line would indicate equal variance of the residuals.
+
+```{r}
+#| label: fig-l06-residuals
+#| fig-cap: "Residual plots from jamovi: the residuals plotted against the fitted values (top), the outcome js_score (middle) and the predictor salary (bottom)."
+#| fig-alt: "Three scatterplots stacked vertically, each with the residuals, from about minus 2 to 2, on the vertical axis. The horizontal axes are the fitted values (4 to 10), js_score and salary (about 29000 to 31000). In the top plot the points form a cloud with no obvious pattern."
+#| out-width: "50%"
+include_img("lm_jamovi_residual.png")
+```
+
+### The assumptions in the equation {#sec-l06-explicit}
+
+Three of these assumptions are actually included in the ideal reporting of an equation such as:
+
+$$Y_{i} = b_{0} + b_{1}\,X_{i} + e_{i}$$
+
+$$e_{i} \overset{iid}{\sim} \mathcal{N}(0, \sigma^2_{i})$$
+
+where for each observation $i$, $\mathcal{N}$ indicates that residuals are Normally distributed and $iid$ indicates that these residuals are independent and identically distributed (equal variance). <!-- check: the slide writes the variance as sigma squared with the subscript i, although the text says the variance is equal for all observations -->
+
+::: {.callout-note title="Live demonstration"}
+In the lecture, the assumptions are checked live in jamovi before the exercise below. <!-- check: the slide is a bare "Live Demo" divider; what is shown is inferred from the exercise that follows -->
+:::
+
+::: {.callout-tip title="Your turn: test the assumptions of a regression"}
+Test the assumptions of the following linear regression: <!-- check: the slide does not say which data file to use; the examples of this lecture use organisation_beta -->
+
+$$js\_score = b_{0} + b_{1}\,perf + e$$
+
+1. **L**inearity (of the effects)
+2. **I**ndependence (of observations)
+3. **N**ormality (of the residuals)
+4. **E**qual variance (of the residuals)
+
+Suggested time: 5 minutes.
+:::
+
+## More assumptions of general linear models {#sec-l06-more}
+
+### Uncorrelated predictors {#sec-l06-collinearity}
+
+In a multiple General Linear Regression Model, you don't want your predictors to be too strongly correlated with each other. This isn't technically an assumption of the General Linear Regression Model, but in practice it's required: predictors that are too strongly correlated with each other (referred to as **collinearity**) can cause problems when evaluating the model. To check it in jamovi, use Regression > Correlation Matrix > Plot Correlation Matrix.
+
+Imagine American scientists trying to predict an individual's IQ by using their height, weight and the size of their brain as follows:
+
+$$IQ = b_0 + b_1\,Height + b_2\,Weight + b_3\,Brain + e$$
+
+@fig-l06-corr shows the correlation matrix of the variables of this example, where the outcome IQ is the variable PIQ.
+
+```{r}
+#| label: fig-l06-corr
+#| fig-cap: "Correlation matrix of PIQ, Brain, Height and Weight in the iqsize data."
+#| fig-alt: "Lower triangular correlation matrix of coloured tiles with the correlation printed in each tile. PIQ correlates 0.38 with Brain, minus 0.09 with Height and 0 with Weight. Brain correlates 0.59 with Height and 0.51 with Weight. Height and Weight correlate 0.7."
+#| fig-width: 4
+#| fig-height: 4
+#| out-width: "60%"
+iqsize |>
+  cor() |>
+  ggcorrplot(
+    hc.order = TRUE,
+    type = "lower",
+    outline.col = "white",
+    lab = TRUE
+  )
+```
+
+**Variance inflation factors** (VIFs) are a very good measure of the extent to which a variable is correlated with all the other variables in the model. **A cut-off value of 5 is commonly used**. To check it in jamovi, tick "Collinearity statistics" in Regression > Linear Regression > Assumption Checks. @tbl-l06-vif gives the VIF and the tolerance (tol) of the three predictors. All three VIFs are below the cut-off value of 5.
+
+```{r}
+#| label: tbl-l06-vif
+#| tbl-cap: "Variance inflation factor (vif) and tolerance (tol) of the three predictors of PIQ."
+res <- jmv::linReg(
+    data = iqsize,
+    dep = PIQ,
+    covs = vars(Brain, Height, Weight),
+    blocks = list(
+        list(
+            "Brain",
+            "Height",
+            "Weight")),
+    refLevels = list(),
+    collin = TRUE)
+
+res$models[[1]]$assump$collin$asDF |>
+  kable(digits = 2)
+```
+
+### No anomalous data {#sec-l06-anomalous}
+
+Again, this is not actually a technical assumption of the model (or rather, it's sort of implied by all the others), but there is **an implicit assumption that your General Linear Regression Model isn't being too strongly influenced by one or two anomalous data points**, because this raises questions about the adequacy of the model and the trustworthiness of the data in some cases.
+
+There are three kinds of anomalous data:
+
+- harmless outlier observations
+- high leverage observations
+- high influence observations
+
+As the meme in @fig-l06-meme jokes, it can be hard to tell an outlier from an influential point.
+
+```{r}
+#| label: fig-l06-meme
+#| fig-cap: "A meme about telling an outlier from an influential point."
+#| fig-alt: "Meme of a cartoon character with orange hair and a suspicious squint, captioned: Not sure if outlier or influential point."
+#| out-width: "70%"
+include_img("meme_outliers.jpg")
+```
+
+#### Harmless outlier observations
+
+A "harmless" outlier is **an observation that is very different from what the General Linear Regression Model predicts**. In practice, we operationalise this concept by saying that an outlier is an observation that has a very large studentised residual.
+
+A big outlier might correspond to junk data, e.g., the variables might have been recorded incorrectly in the data set, or some other defect may be detectable. **You shouldn't throw an observation away just because it's an outlier**. But the fact that it's an outlier is often a cue to look more closely at that case and try to find out why it's so different. @fig-l06-outlier shows the regression line fitted with and without an outlier.
+
+```{r}
+#| label: fig-l06-outlier
+#| fig-cap: "A harmless outlier: the regression line without the outlier (dashed) and with it (solid)."
+#| fig-alt: "Scatterplot of ten points that rise with x, except the point at x equal to 6, which lies far above the others at y equal to 20. A dashed line, labelled fit without outlier, runs through the other points. A solid line, labelled fit with outlier, is pulled upwards towards the unusual point."
+#| fig-width: 5
+#| fig-height: 5
+#| out-width: "60%"
+mydata <- within(data.frame(x=1:10), y <- rnorm(x, mean=x))
+fm.orig <- lm(y ~ x, data=mydata)
+mydata$y[6] <- 20
+fm.lm <- update(fm.orig)
+plot(y ~ x, data=mydata)
+abline(fm.orig, lty="dashed")    # use a dashed line
+abline(fm.lm)
+legend(
+  "topright",
+  inset=0.03,
+  bty="n",
+  legend = c("Fit without outlier", "Fit with outlier"),
+  lty = c("dashed", "solid")
+  )
+```
+
+#### High leverage observations
+
+The second way in which an observation can be unusual is if it has high leverage, which happens when the observation is **very different from all the other observations and influences the slope of the linear regression**. This doesn't necessarily have to correspond to a large residual. If the observation happens to be unusual on all variables in precisely the same way, it can actually lie very close to the regression line. High leverage points are also worth looking at in more detail, but they're much less likely to be a cause for concern. @fig-l06-leverage shows the regression line fitted with and without a high leverage observation.
+
+```{r}
+#| label: fig-l06-leverage
+#| fig-cap: "A high leverage observation: the regression line without it (dashed) and with it (solid)."
+#| fig-alt: "Scatterplot of ten points that rise with x, except the point at x equal to 9, which lies well below the others at y equal to 5. A dashed line, labelled fit without high leverage, rises through the other points. A solid line, labelled fit with high leverage, is flatter because it is pulled towards the unusual point."
+#| fig-width: 5
+#| fig-height: 5
+#| out-width: "60%"
+mydata <- within(data.frame(x=1:10), y <- rnorm(x, mean = x))
+fm.orig <- lm(y ~ x, data=mydata)
+mydata$y[9] <- 5
+fm.lm <- update(fm.orig)
+plot(y ~ x, data=mydata)
+abline(fm.orig, lty="dashed")    # use a dashed line
+abline(fm.lm)
+legend(
+  "topright",
+  inset = 0.03,
+  bty = "n",
+  legend = c("Fit without high leverage", "Fit with high leverage"),
+  lty = c("dashed", "solid")
+  )
+```
+
+#### High influence observations
+
+A high influence observation is an outlier that has high leverage. That is, it is **an observation that is very different to all the other ones in some respect, and also lies a long way from the regression line**. We operationalise influence in terms of a measure known as **Cook's distance**. In jamovi, information about Cook's distance can be calculated by clicking Assumption Checks > Data Summary options. For an observation, a Cook's distance greater than 1 is considered large. However, jamovi provides only a summary, so **check the maximum Cook distance and its average** to know if some observations have high influence. @fig-l06-influence shows the regression line fitted with and without a high influence observation.
+
+```{r}
+#| label: fig-l06-influence
+#| fig-cap: "A high influence observation: the regression line without it (dashed) and with it (solid)."
+#| fig-alt: "Scatterplot of ten points that rise with x, except the point at x equal to 9, which lies far above the others at y equal to 20. A dashed line, labelled fit without high influence, rises through the other points. A solid line, labelled fit with high influence, is steeper because it is pulled towards the unusual point."
+#| fig-width: 5
+#| fig-height: 5
+#| out-width: "60%"
+mydata <- within(data.frame(x=1:10), y <- rnorm(x, mean=x))
+fm.orig <- lm(y ~ x, data=mydata)
+mydata$y[9] <- 20
+fm.lm <- update(fm.orig)
+plot(y ~ x, data=mydata)
+abline(fm.orig, lty="dashed")    # use a dashed line
+abline(fm.lm)
+legend(
+  "topright",
+  inset = 0.03,
+  bty = "n",
+  legend = c("Fit without high influence", "Fit with high influence"),
+  lty = c("dashed", "solid")
+  )
+```
+
+::: {.callout-note title="Live demonstration"}
+In the lecture, the anomalous data are checked live in jamovi before the exercise below. <!-- check: the slide is a bare "Live Demo" divider; what is shown is inferred from the exercise that follows -->
+:::
+
+::: {.callout-tip title="Your turn: look for anomalous data"}
+Check if the relationship between $js\_score$ and $perf$ has some:
+
+1. **Harmless outlier observations:** check the studentised residuals. Are there any observations with values beyond +3 or -3?
+2. **High leverage observations:** look at the residual plots. Are there observations far from the others on the x-axis?
+3. **High influence observations:** check the Cook's distance summary. Is the maximum Cook's distance greater than 1?
+
+Suggested time: 5 minutes.
+:::
+
+## Model selection {#sec-l06-selection}
+
+### A first warning {#sec-l06-warning}
+
+::: {.callout-important title="Warning"}
+Model Selection is also called Hierarchical Linear Regression but is **NOT** Hierarchical Linear Model.
+:::
+
+- **Hierarchical Linear Regression** compares 2 or more models with fixed effects
+- **Hierarchical Linear Model** compares 2 or more models with random effects (also called Multilevel Model)
+
+Here we are using the term **Model Selection** for **Hierarchical Linear Regression**.
+
+### Default model testing {#sec-l06-default}
+
+Imagine you are **testing the model** that includes the variables $X$ and $Z$ have an effect on the variable $Y$ such as:
+
+$$H_a: Y = b_{0} + b_{1}\,X + b_{2}\,Z + e$$
+
+If nothing is specified, the null hypothesis $H_0$ is always the following:
+
+$$H_0: Y = b_{0} + e$$
+
+But when there are multiple predictors, the $p$-values provided are only in reference to this simplest model. If you want to evaluate the effect of the variable $Z$ while $X$ is taken into account, it is possible to specify $H_0$ as being not that simple such as:
+
+$$H_0: Y = b_{0} + b_{1}\,X + e$$
+
+This is a **model comparison**!
+
+For example, imagine a model predicting $js\_score$ with $salary$ and $perf$:
+
+$$js\_score = b_{0} + b_{1}\,salary + b_{2}\,perf + e\;(full\;model)$$
+
+In the Model Fit table of jamovi, this model will be compared to a null model as follows:
+
+$$js\_score = b_{0} + e\;(null\;model)$$
+
+However it is possible to use a more complicated model to be compared with:
+
+$$js\_score = b_{0} + b_{1}\,salary + e\;(simple\;model)$$
+
+Comparing the full model with a simple model consists of evaluating the added value of a new variable in the model, here $perf$.
+
+### Model comparison {#sec-l06-comparison}
+
+A model comparison can:
+
+- compare the full model with a shorter model (called the simple model)
+- indicate if a variable is useful in a model
+
+This principle is often referred to as **Ockham's razor** and is often summarised in terms of the following pithy saying: do not multiply entities beyond necessity. In this context, it means don't chuck in a bunch of largely irrelevant predictors just to boost your $R^2$.
+
+To evaluate the goodness of fit of a model, the **Akaike Information Criterion**, also called $AIC$ (Akaike 1974), is compared between the models:
+
+- the smaller the $AIC$ value, the better the model performance
+- $AIC$ can be added to the Model Fit Measures output table when the $AIC$ checkbox is clicked
+
+### Model comparison in jamovi {#sec-l06-comparison-jamovi}
+
+In Model Builder create Block 1 as your simple model and a New Block 2 with the additional predictor. Here Block 1 contains $salary$ and Block 2 adds $perf$ to predict $js\_score$.
+
+```{r}
+#| label: l06-model-comparison
+res <- jmv::linReg(
+  data = organisation_beta,
+  dep = js_score,
+  covs = vars(
+    salary,
+    perf
+  ),
+  blocks = list(
+    list("salary"),
+    list("perf")
+  ),
+  refLevels = list(),
+  aic = TRUE,
+  modelTest = TRUE)
+```
+
+@tbl-l06-modelfit gives the details of Model 1 (simple model) and Model 2 (full model), including the $AIC$ of each model (column `aic`).
+
+```{r}
+#| label: tbl-l06-modelfit
+#| tbl-cap: "Fit measures of Model 1 (simple model) and Model 2 (full model) predicting js_score in the organisation_beta data."
+res$modelFit$asDF |>
+  gt() |>
+  fmt_number(decimals = 3)
+```
+
+@tbl-l06-modelcomp gives the evaluation of the significant difference between the two models, with its $p$-value in the last column (`p`).
+
+```{r}
+#| label: tbl-l06-modelcomp
+#| tbl-cap: "Comparison of Model 1 and Model 2."
+res$modelComp$asDF |>
+  gt() |>
+  fmt_number(decimals = 3)
+```
+
+Here the difference between the two models is not statistically significant, therefore adding $perf$ in the full model doesn't help to increase the prediction (as indicated by the $AIC$). The $p$-value of the comparison is `r sprintf("%.3f", res$modelComp$asDF$p)`, and the $AIC$ is `r sprintf("%.3f", res$modelFit$asDF$aic[1])` for Model 1 and `r sprintf("%.3f", res$modelFit$asDF$aic[2])` for Model 2, so adding $perf$ does not lower it.
+
+::: {.callout-note title="Live demonstration"}
+In the lecture, a model comparison is run live in jamovi before the exercise below. <!-- check: the slide is a bare "Live Demo" divider; what is shown is inferred from the exercise that follows -->
+:::
+
+::: {.callout-tip title="Your turn: compare models with and without an interaction"}
+Compare the following full model:
+
+$$js\_score = b_{0} + b_{1}\,salary + b_{2}\,perf + b_{3}\,salary*perf + e$$
+
+With:
+
+$$js\_score = b_{0} + b_{1}\,salary + b_{2}\,perf + e$$
+
+**Is the addition of the interaction effect improving the accuracy of the model?**
+
+Hint: compare the $AIC$ values and check whether the $p$-value of the model comparison is significant.
+
+Suggested time: 5 minutes.
+:::
+
+## Power analysis for sample size and effect size estimations {#sec-l06-power}
+
+### Theoretical principle {#sec-l06-principle}
+
+Remember, the null hypothesis $H_0$ is the hypothesis that there is no relationship between the predictor and the outcome. If the null hypothesis is rejected, we accept the alternative hypothesis $H_a$ of a relationship between the predictor and the outcome.
+
+This means that four possible situations can occur when we run hypothesis tests:
+
+- We reject $H_0$ ...
+    - and in fact $H_a$ is true. This is a good outcome and one which is most often the motivation for the hypothesis test in the first place (True Positive)
+    - but in fact $H_a$ is false. This is known as a **Type I error** (False Positive)
+- We fail to reject $H_0$ ...
+    - and in fact $H_a$ is false. This is a good outcome (True Negative)
+    - but in fact $H_a$ is true. This is known as a **Type II error** (False Negative)
+
+Statistical power refers to the fourth situation and is the probability that we are able to detect the effect that we are looking for. <!-- check: the fourth situation in this list is the Type II error; power is the probability of rejecting H0 when Ha is true (the first situation), that is one minus the Type II error rate -->
+
+### Statistical power {#sec-l06-statpower}
+
+The ability to identify an effect if it exists (i.e., **statistical power**) depends at a minimum on three criteria:
+
+- The significance level $\alpha$ to reject $H_0$ (usually set at 0.05 or 5%)
+- The size $n$ of the sample being used
+- The proportion of the variability of the outcome variable explained by all the predictors (i.e., full model), known as the **effect size**
+
+The minimum level of statistical power to achieve is usually set at 0.8 or 80% (i.e., we want at least an 80% probability that the test will return an accurate rejection of $H_0$).
+
+- If all the criteria are known except $n$, then it is possible to approximate the $n$ necessary to obtain at least a 0.8 or 80% power to correctly reject $H_0$ before running the analysis (**prospective power analysis**).
+- It is also possible to evaluate the power that has been achieved once the analysis has been done (**retrospective power analysis**).
+
+### Sample size with prospective power analysis {#sec-l06-prospective}
+
+The main question of most researchers is: "How many participants are enough to test the formulated hypotheses?" Some would obtain a random answer from their colleagues such as "at least 100" or "at least 50 per group". However, **there is an actual exact answer** provided by the power analysis: "It depends on how big the effect size is".
+
+Prospective power analysis is reported in the Method section of research papers in order to **describe how the sample size has been estimated thanks to an approximated effect size at the model level** (e.g., small, medium, or large).
+
+The values of the approximated effect size depend on the type of model tested:
+
+- A model with 1 main effect of a categorical predictor with 2 categories uses Cohen's $d$
+- All other models, including main and interaction effects involving a categorical predictor with 3+ categories or a continuous predictor, use Cohen's $f$
+
+::: {.callout-note title="Note"}
+A model with only main effects of continuous predictors can use a $f$ or $f^2$
+:::
+
+@tbl-l06-effectsize gives the rule of thumb for small, medium and large effect sizes.
+
+```{r}
+#| label: tbl-l06-effectsize
+#| tbl-cap: "Effect size rule of thumb for Cohen's d, f and f squared."
+tribble(
+  ~`Effect Size`, ~Small, ~Medium, ~Large,
+  "$d$",   .20, .50, .80,
+  "$f$",   .10, .25, .40,
+  "$f^2$ ", .02, .15, .35
+) |>
+  kable(escape = FALSE)
+```
+
+Power analyses using Cohen's $f$ effect size (i.e., all models except the ones using a Cohen's $d$) are calculated with an additional parameter: **Numerator df** (degree of freedom). The degree of freedom of each effect is added to obtain the Numerator df:
+
+- In main effects:
+    - continuous predictors have 1 df
+    - categorical predictors have $k - 1$ df (number of categories - 1)
+- In interaction effects, the df of the predictors involved are multiplied
+
+For example, take the following model:
+
+$$js\_score = b_{0} + b_{1}\,salary + b_{2}\,location + b_{3}\,salary*location + e$$
+
+- $b_{1}\,salary$ has 1 df (continuous predictor)
+- $b_{2}\,location$ has 2 df (3 locations - 1)
+- $b_{3}\,salary*location$ has 2 df (1 * 2)
+
+The model's **Numerator df** is 5 (1+2+2).
+
+::: {.callout-note title="Note"}
+The number of groups is usually the same as **Numerator df**
+:::
+
+#### Software for power analysis
+
+There are multiple possibilities to perform a power analysis:
+
+- Websites hosted online such as <https://powerandsamplesize.com/> or <https://sample-size.net> (but none are satisfying)
+- Embedded in statistical software such as SPSS or jamovi (but none are satisfying)
+- Specific software such as G\*Power (free and the most used power analysis software)
+- Packages for coding languages (like `{pwr}` in R or `statsmodels` in Python)
+
+While the last option will be the best solution after being introduced to R (@sec-lecture-07), G\*Power is the most commonly used software and can be downloaded for free here: <https://www.psychologie.hhu.de/arbeitsgruppen/allgemeine-psychologie-und-arbeitspsychologie/gpower>
+
+G\*Power uses 3 characteristics to determine the type of power analysis:
+
+1. **Test family** (e.g., t-test for models with 1 predictor either continuous or having two categories, or F-test for all other models)
+2. **Statistical test** (e.g., mean comparison, ANOVA, multiple linear regression)
+3. **Type of power analysis** (e.g., prospective, also called "a priori", or retrospective, also called "post hoc")
+
+Whatever your model is, for sample size estimation with prospective power analysis use:
+
+- **F-tests**
+- **ANOVA: Fixed effects, special, main effects and interactions**
+- **A priori: Compute required sample size - given $\alpha$, power, and effect size**
+
+#### Applied example 1: one predictor with two categories
+
+The model characteristics, with $js\_score$ as continuous outcome, are one main effect of $gender$ (predictor with 2 categories: male and female employees), as in @fig-l06-example1.
+
+```{dot}
+//| label: fig-l06-example1
+//| fig-cap: "Example 1: gender predicts js_score."
+//| fig-alt: "Diagram with a box for gender and an arrow pointing to a box for js_score."
+//| fig-width: 2.5
+//| fig-height: 0.6
+digraph {
+  graph [rankdir = LR]
+  node [shape = box]
+
+  gender -> js_score
+}
+```
+
+The statistical power parameters are:
+
+- Alpha of 0.05 (5%)
+- Power of 0.8 (80% probability of accurately rejecting $H_0$)
+- Effect size of $d = 0.5$ (medium)
+
+This tells us that we need an absolute minimum of 128 individuals in our sample (64 male and 64 female employees) for an effect size of $d = 0.5$ to return a significant difference at an alpha of 0.05 with 80% probability.
+
+@fig-l06-gpower1 shows the G\*Power settings and results for this example: a t test of the difference between two independent means (two groups), with an a priori power analysis, a two-tailed test, an allocation ratio of 1 and the values above. The output gives a sample size of 64 in each group, so 128 in total.
+
+```{r}
+#| label: fig-l06-gpower1
+#| fig-cap: "G\\*Power settings and results for Example 1, with a t test of the difference between two independent means."
+#| fig-alt: "Screenshot of G*Power. Test family: t tests. Statistical test: Means, difference between two independent means (two groups). Type of power analysis: A priori, compute required sample size given alpha, power and effect size. Input parameters: two tails, effect size d of 0.5, alpha error probability of 0.05, power of 0.8 and allocation ratio N2/N1 of 1. Output parameters: noncentrality parameter delta of 2.8284271, critical t of 1.9789706, df of 126, sample size of 64 in group 1 and in group 2, total sample size of 128 and actual power of 0.8014596."
+include_img("gpower_exemple_1.png")
+```
+
+The same model can also be analysed with the F test settings recommended above (@fig-l06-gpower1-f). The effect size is then Cohen's $f$ of 0.25, the medium value for $f$ in @tbl-l06-effectsize, with 1 numerator df and 2 groups, and the total sample size is again 128.
+
+```{r}
+#| label: fig-l06-gpower1-f
+#| fig-cap: "G\\*Power settings and results for the same model analysed as an F test, with an effect size f of 0.25, 1 numerator df and 2 groups."
+#| fig-alt: "Screenshot of G*Power. Test family: F tests. Statistical test: ANOVA, fixed effects, special, main effects and interactions. Type of power analysis: A priori, compute required sample size given alpha, power and effect size. Input parameters: effect size f of 0.25, alpha error probability of 0.05, power of 0.8, numerator df of 1 and number of groups of 2. Output parameters: noncentrality parameter lambda of 8, critical F of 3.9163246, denominator df of 126, total sample size of 128 and actual power of 0.8014596."
+#| out-width: "80%"
+include_img("gpower_exemple_1_bis.png")
+```
+
+#### Applied example 2: one predictor with three categories
+
+The model characteristics, with $js\_score$ as continuous outcome, are one main effect of $location$ (predictor with 3 categories: Irish, French, and Australian), as in @fig-l06-example2.
+
+```{dot}
+//| label: fig-l06-example2
+//| fig-cap: "Example 2: location predicts js_score."
+//| fig-alt: "Diagram with a box for location and an arrow pointing to a box for js_score."
+//| fig-width: 2.5
+//| fig-height: 0.6
+digraph {
+  graph [rankdir = LR]
+  node [shape = box]
+
+  location -> js_score
+}
+```
+
+The statistical power parameters are:
+
+- Alpha of 0.05 (5%)
+- Power of 0.8 (80% probability of accurately rejecting $H_0$)
+- Effect size of $f = 0.25$ (medium)
+
+This tells us that we need an absolute minimum of 158 individuals in our sample for an effect size of $f = 0.25$ to return a significant difference at an alpha of 0.05 with 80% probability.
+
+@fig-l06-gpower2 shows the G\*Power settings and results for this example: the F test settings recommended above, with an effect size $f$ of 0.25, 2 numerator df and 2 groups, which give a total sample size of 158. <!-- check: the screenshot has Number of groups = 2 for a predictor with 3 categories (the Note above says the number of groups is usually the same as Numerator df); the total sample size is also 158 with 3 groups (checked in R with the noncentral F distribution) -->
+
+```{r}
+#| label: fig-l06-gpower2
+#| fig-cap: "G\\*Power settings and results for Example 2, with an effect size f of 0.25, 2 numerator df and 2 groups."
+#| fig-alt: "Screenshot of G*Power. Test family: F tests. Statistical test: ANOVA, fixed effects, special, main effects and interactions. Type of power analysis: A priori, compute required sample size given alpha, power and effect size. Input parameters: effect size f of 0.25, alpha error probability of 0.05, power of 0.8, numerator df of 2 and number of groups of 2. Output parameters: noncentrality parameter lambda of 9.875, critical F of 3.0540042, denominator df of 156, total sample size of 158 and actual power of 0.8022521."
+include_img("gpower_exemple_2.png")
+```
+
+#### Applied example 3: two predictors and their interaction
+
+The model characteristics, with $js\_score$ as continuous outcome, are:
+
+- 1 main effect of $location$ (predictor with 3 categories: Irish, French, and Australian)
+- 1 main effect of $salary$ (continuous predictor)
+- 1 interaction effect of $location$ and $salary$
+
+@fig-l06-example3 shows this model.
+
+```{dot}
+//| label: fig-l06-example3
+//| fig-cap: "Example 3: the main effects of location and salary and their interaction predict js_score."
+//| fig-alt: "Diagram with a box for salary on the left and a box for js_score on the right, joined by a line that ends with an arrow at js_score. A box for location above this line has an arrow pointing down at the middle of the line."
+//| fig-height: 1.1
+//| fig-width: 4
+digraph {
+  graph [rankdir = LR]
+
+  node [shape = box]
+  location; salary; js_score
+  node [shape = point, width = 0, height = 0]
+  ""
+
+  location -> ""
+  salary -> "" [arrowhead = none]
+  ""-> js_score
+
+  subgraph {
+    rank = same; location; "";
+  }
+}
+```
+
+The statistical power parameters are:
+
+- Alpha of 0.05 (5%)
+- Power of 0.8 (80% probability of accurately rejecting $H_0$)
+- Effect size of $f = 0.25$ (medium)
+
+This tells us that we need an absolute minimum of 211 individuals in our sample for an effect size of $f = 0.25$ to return a significant difference at an alpha of 0.05 with 80% probability.
+
+@fig-l06-gpower3 shows the G\*Power settings and results for this example: the same F test settings, with an effect size $f$ of 0.25, 5 numerator df (1 + 2 + 2, as calculated above for this model) and 3 groups, which give a total sample size of 211. <!-- check: the screenshot has Number of groups = 3, whereas the Note above says the number of groups is usually the same as Numerator df (5); the total sample size is also 211 with 5 or 6 groups (checked in R with the noncentral F distribution) -->
+
+```{r}
+#| label: fig-l06-gpower3
+#| fig-cap: "G\\*Power settings and results for Example 3, with an effect size f of 0.25, 5 numerator df and 3 groups."
+#| fig-alt: "Screenshot of G*Power. Test family: F tests. Statistical test: ANOVA, fixed effects, special, main effects and interactions. Type of power analysis: A priori, compute required sample size given alpha, power and effect size. Input parameters: effect size f of 0.25, alpha error probability of 0.05, power of 0.8, numerator df of 5 and number of groups of 3. Output parameters: noncentrality parameter lambda of 13.1875, critical F of 2.2574832, denominator df of 208, total sample size of 211 and actual power of 0.8005227."
+include_img("gpower_exemple_3.png")
+```
+
+### Effect size with retrospective power analysis {#sec-l06-retrospective}
+
+Reporting the effect size for each estimate (each hypothesis) in the Results section is the norm. With the General Linear Model, the effect size of each estimate is the corresponding standardised estimate $\beta$. Therefore, no other information needs to be reported.
+
+However, you will see a lot of different metrics in research papers using different statistical tests for their hypotheses. Here is a list of the most used:
+
+- Cohen's $d$ for a main effect in a model with 1 categorical predictor with 2 categories
+- Eta-squared $\eta^2$ or partial eta-squared $\eta^2_p$ for all the other models
+
+::: {.callout-note title="Note"}
+- The $\eta^2_p$ for a particular estimate corresponds to the effect size when the other effects in the model are deliberately ignored.
+- Both $\omega^2$ and $\epsilon^2$ (and their partial counterparts, $\omega^2_p$ and $\epsilon^2_p$) are unbiased estimators of the population's $\eta^2$ (or $\eta^2_p$, respectively), which is especially important in small samples.
+- $\eta^2_p$ aims at estimating the effect size in a design where all the variables have been experimentally manipulated (e.g., experimental groups). However, some predictors can only be observed. For such cases, we can use generalised eta squared $\eta^2_G$.
+:::
+
+## Reasonable statistics {#sec-l06-reasonable}
+
+### Bad versus good science {#sec-l06-badgood}
+
+**$p$-hacking.** Running statistical tests until finding a significant $p$-value is $p$-hacking. To avoid it, all the hypotheses should be tested with one unique test and not with one test by hypothesis. Ideally if another statistical test has to be run, it should be done on new data.
+
+**$p$-HARKing.** $p$-HARKing (Hypothesising After the Results are Known) is defined as presenting a post hoc hypothesis (i.e., one based on or informed by one's results) in one's research report as if it were, in fact, an a priori hypothesis.
+
+**Pre-registration and open science.** In order to avoid any kind of $p$-hacking or $p$-HARKing, research pre-registration is now possible with the open science framework (<https://osf.io/>). Some journals are also encouraging the publication of the data treatment code and all the data sources to replicate the results.
+
+## Agentic AI for statistical analysis {#sec-l06-agentic}
+
+### What about AI? {#sec-l06-whatai}
+
+Traditional AI assistants (like ChatGPT, Gemini, or Claude) respond to text prompts: you describe what you want and the AI generates text or code in return. Give them your hypotheses and your data, and they will run the calculation and print out a good quality results section!
+
+Now, you need to supervise and check for misunderstanding (e.g., have the hypotheses been tested in the same model? Are the confidence intervals reported?).
+
+**The issue is transparency!**
+
+### What is agentic AI? {#sec-l06-agentic-ai}
+
+**Agentic AI** goes one step further: it can **interact directly with software on your behalf**. Instead of just telling you what to do, it can click buttons, fill forms, navigate menus, and read results from your screen.
+
+For example, **Claude in Chrome** is a browser extension that allows Claude to click buttons and navigate menus as well as read outputs and interpret results. This means Claude can operate **jamovi Cloud** (<https://cloud.jamovi.org>) directly in your browser!
+
+### Claude in Chrome and jamovi Cloud {#sec-l06-claude-chrome}
+
+Here is how it works:
+
+1. Install the **Claude in Chrome** extension from the Chrome Web Store
+2. Open **jamovi Cloud** at <https://cloud.jamovi.org> in a Chrome tab
+3. Open the Claude side panel and describe your analysis task
+4. Claude navigates jamovi's menus, sets options, and runs the analysis for you
+
+What you can ask Claude to do, for example:
+
+- "Upload this dataset and run a linear regression predicting js_score from salary"
+- "Check all the assumption boxes for this regression"
+- "Run a correlation matrix for these variables"
+
+::: {.callout-important title="Important caveats"}
+<!-- check: availability (beta, paid plans only) and the jamovi Cloud guest plan limits are time-sensitive, confirm they are still current -->
+- Claude in Chrome is in **beta** and available on **paid plans only**
+- Always **review the results**
+- Claude cannot bypass login pages or CAPTCHAs, you must handle those yourself
+- jamovi Cloud has **limits** on the free guest plan (e.g., 100 columns, 16 MB file size)
+- **Never share sensitive data** without understanding the privacy implications of both jamovi Cloud and Claude in Chrome
+:::
+
+::: {.callout-note title="Live demonstration"}
+In the lecture, Claude in Chrome is demonstrated live on jamovi Cloud. <!-- check: the slide is a bare "Live Demo" divider; what is shown is inferred from the Claude in Chrome and jamovi Cloud slide before it -->
+:::
+
+::: {.callout-note title="Always more homework"}
+For the next lecture (@sec-lecture-07), read Chapter 12 of "Learning Statistics with jamovi" from <https://www.learnstatswithjamovi.com/>.
+:::
+
+::: {.callout-note title="Key points"}
+- The General Linear Model has four requirements: linearity of the effects, independence of observations, and normality and equal variance of the residuals. They are never perfectly met, so we check that they are reasonable enough.
+- In jamovi, tick all the Assumption Checks: the Q-Q plot of residuals checks normality and the residual plots check equal variance. Independence is a matter of self-assessment, based on how the data were collected.
+- Predictors should not be too strongly correlated (a VIF cut-off of 5 is commonly used) and no observation should be too influential (a Cook's distance greater than 1 is large). An outlier is a cue to look more closely at a case, not a reason to throw it away.
+- A model comparison tests whether a variable is useful by comparing a full model with a simple model, using the $AIC$ (the smaller, the better) and the $p$-value of the comparison.
+- A prospective power analysis gives the sample size needed for a given alpha, a power of at least 0.8 and an expected effect size. In the General Linear Model, the effect size of each estimate is the standardised estimate $\beta$.
+- To avoid $p$-hacking and $p$-HARKing, test all the hypotheses with one test, use new data for any other test, and pre-register the research.
+:::

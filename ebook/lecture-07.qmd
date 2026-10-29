@@ -1,0 +1,689 @@
+# Introduction to R for Hypothesis Testing {#sec-lecture-07}
+
+```{r}
+#| label: setup
+#| include: false
+source("R/setup.R")
+```
+
+This chapter introduces R for hypothesis testing. @sec-l07-r-rstudio and @sec-l07-coding explain what R and RStudio are, how to open them in Posit Cloud and how the RStudio window is organised. @sec-l07-basics presents the basics of R code (scripts, packages, functions and objects), and @sec-l07-access and @sec-l07-save show how to open and save data. @sec-l07-help points to resources for learning more and for solving problems. Finally, @sec-l07-lm and @sec-l07-results show how to write linear regression models with `lm()`, how to read their results and how to report them with the packages `{performance}` and `{report}`.
+
+**Recap.** Modern data science uses free and open-source languages. Proprietary languages (for example Matlab, Stata and SAS) and software (for example SPSS) are outdated, and the main open-source computer languages for data science are Python and R. Python is the language most used by computer engineers for web and app development, but R has some advantages:
+
+1. R is **easy to write**, to read and to use.
+2. It is focused on **reports and journal papers**, with reproducibility.
+3. It has advanced **statistical packages**.
+4. It has a **friendly and open** community.
+
+So let's useR!
+
+## R and RStudio {#sec-l07-r-rstudio}
+
+### What are R and RStudio?
+
+There are some key concepts you need to understand and to remember. **R** is the name of the language and **RStudio** is the name of the upgraded interface to write R code. R is usually used via RStudio and first-time users often confuse the two. At its simplest, **R is like a car's engine** while **RStudio is like a car's dashboard** (@fig-l07-car).
+
+```{r}
+#| label: fig-l07-car
+#| fig-cap: "The analogy used to separate R from RStudio."
+#| fig-subcap:
+#|   - "R: the engine."
+#|   - "RStudio: the dashboard."
+#| fig-alt:
+#|   - "Photograph of a car engine under an open bonnet, with a chrome air filter on top, red spark plug leads and black hoses."
+#|   - "Photograph of the front of a car interior: steering wheel, instrument cluster with speedometer and rev counter, air vents and climate controls."
+#| layout-ncol: 2
+include_img("car_motor.jpeg")
+include_img("car_dashboard.jpeg")
+```
+
+### Posit Cloud
+
+To use RStudio in Posit Cloud, go to <https://posit.cloud/> in your web browser (Chrome, Firefox, ...) and then:
+
+1. Sign up.
+2. In your workspace, click "new project".
+
+Most of the R code displayed in this chapter is also included in the lecture slides, which are available at <https://damien-dupre.github.io/STA1005/lectures/lecture_7>. Rather than typing the code manually, copy and paste it from this page or from the slides.
+
+## Coding in RStudio {#sec-l07-coding}
+
+### The RStudio panes
+
+When you create a new project, you will see the following three windows (also called panes):
+
+- **Console**: where the results are printed
+- **Workspace**: where the objects are stored <!-- check: the screenshot and the next slide call this pane "Environment", and the screenshot labels the Files pane "Information" -->
+- **Files, Plots, Packages, Help and Viewer**: where data science materials are
+
+@fig-l07-panes shows the RStudio window. The last window, the **Code Editor**, opens when creating a new R Script (it is already open in the figure).
+
+```{r}
+#| label: fig-l07-panes
+#| fig-cap: "The panes of RStudio: Editor (top left), Console (bottom left), Environment (top right) and the Files, Plots, Packages, Help and Viewer tabs (bottom right, labelled Information in the screenshot)."
+#| fig-alt: "Screenshot of RStudio with four panes. At the top left, the Editor shows an empty script called myscript.R. At the bottom left, the Console shows the start-up message of R. At the top right, the Environment tab says that the environment is empty. At the bottom right, the Files tab lists the project files, next to the Plots, Packages, Help and Viewer tabs. Grey labels name the Editor, the Console and the Information pane."
+#| out-width: "100%"
+include_img("rstudio_panes.png")
+```
+
+### Console: R's heart
+
+The console displays:
+
+1. **what has been run**,
+2. the **results** (or some parts) of what has been run, and
+3. the **status of the R process**.
+
+The status of R is indicated by the symbol in the console prompt (@fig-l07-console): <!-- check: the console screenshot shows R version 3.3.1 (2016), which is dated -->
+
+- `>` means ready to process code
+- `+` means incomplete command (escape with `Esc`)
+- a stop sign at the top right corner means the console is busy processing your code
+
+```{r}
+#| label: fig-l07-console
+#| fig-cap: "The RStudio console in its ready state, with the > prompt waiting for code."
+#| fig-alt: "Screenshot of the RStudio console. The start-up message of R, with its version number and licence notice, is followed by a blue > prompt and a cursor."
+#| out-width: "70%"
+include_img("r_console.png")
+```
+
+::: {.callout-warning title="The console doesn't save"}
+You can execute code by typing it directly into the Console. However, it will not be saved. And if you make a mistake you will have to re-type everything all over again.
+
+Instead, **write all your code in a document (R script or Quarto file) in the Code Editor**.
+:::
+
+### Environment: R's brain {#sec-l07-environment}
+
+The Environment tab of the Workspace pane shows you the **names of all the data objects** (like vectors, matrices and data frames) that you have defined in your current R session. You can also see **information** like the number of observations and rows in data objects. <!-- check: "observations and rows" are the same thing, the exercise in the data section asks for observations and variables -->
+
+### Files, Plots, Packages and Help
+
+- The **Files** panel gives access to the file directory.
+- The **Plots** panel shows all your plots. There are buttons for opening the plot in a pop-up window and for exporting it as a pdf or jpeg.
+- The **Packages** panel shows a list of all the R packages installed on the local or remote machine and indicates whether or not they are currently loaded.
+- With the **Help** menu for R functions you can access essential information to use them. Just have a look at some of them by pressing `F1` with the cursor on the function, using the `help()` function, or by typing `?` followed by the function name, such as:
+
+```r
+help(seq)
+?seq
+```
+
+### Code Editor: R's nervous system
+
+The Code Editor makes the link between all the previous panes and allows you to reproduce actions and behaviours. You can open as many R Script or Quarto files as you want. These documents are the only documents that have to be saved: there is no need to save your data, figures and calculations, as you can reproduce them every time instantaneously with the code.
+
+Finally, you can save your eyes and look like a nerd by changing the code's appearance.
+
+## The basics of R code {#sec-l07-basics}
+
+### R scripts and Quarto files
+
+**.R** is the extension for an R script (a document including R code). To create one, click **File > New File > R Script** in RStudio. An R script includes code which can be active or inactive (code after `#` is inactive), and it is used for code testing. For example, the following code is not active:
+
+```{r}
+#| echo: true
+# non active code
+```
+
+Whereas the following code is active. Everything after `#` is non-active and is used for comments:
+
+```{r}
+#| echo: true
+paste("active", "code")
+1 + 1 # everything after `#` is non active and is used for comments
+```
+
+**.qmd** is the extension for a Quarto file, a document that includes code and text. To create one, click **File > New File > Quarto document...** in RStudio. A Quarto file generates a specific type of output:
+
+- `.html` (web page, slides, books and dashboards)
+- `.pdf` (academic LaTeX papers and reports)
+- `.doc` (MS Word documents) <!-- check: Quarto creates .docx files for MS Word -->
+
+### Running R code
+
+In an R Script, place your cursor anywhere on the line you want to run and either:
+
+- press `Ctrl` + `Enter` (Windows)
+- press `command` + `Enter` (Mac)
+- click the `Run` button on RStudio's interface
+
+::: {.content-visible unless-format="pdf"}
+@fig-l07-run shows an example: the code `print("hello world")` is typed in a new R script and run with the `Run` button, and the console prints the result.
+
+```{r}
+#| label: fig-l07-run
+#| fig-cap: "Running a line of code from an R script with the Run button (animation)."
+#| fig-alt: 'Screen recording of RStudio in Posit Cloud. The code print("hello world") is typed in a new R script, the Run button is clicked and the console shows the command followed by [1] "hello world".'
+#| out-width: "70%"
+include_img("rstudio_run.gif")
+```
+:::
+
+### R packages
+
+R packages extend the functionality of R. They are written by a worldwide community of R users and can be downloaded for free from the internet. A good analogy is that **R packages are like apps you can download onto a mobile phone** (@fig-l07-phone).
+
+```{r}
+#| label: fig-l07-phone
+#| fig-cap: "The analogy used to explain R packages."
+#| fig-subcap:
+#|   - "R: a new phone."
+#|   - "R packages: apps you can download."
+#| fig-alt:
+#|   - "Photograph of a smartphone standing on a wooden table, its home screen showing a few app icons."
+#|   - "Close-up photograph of a phone screen full of app icons, including Instagram, Facebook and Twitter."
+#| layout-ncol: 2
+include_img("phone_design.jpeg")
+include_img("phone_apps.jpeg")
+```
+
+Say you have purchased a new phone: to use Instagram you need to **install the app once** and to **open the app** every time you use it. The process is very similar for using an R package. You need to:
+
+1. **Install the package** with the function `install.packages()`.
+
+   ```r
+   install.packages("praise")
+   ```
+
+2. **"Load" the package** with the function `library()`.
+
+   ```r
+   library(praise)
+   ```
+
+Once the package is loaded you can use all the functions from this package, such as:
+
+```r
+praise()
+```
+
+::: {.callout-tip title="Your turn: install and run a package"}
+Open an R Script in RStudio. In this document:
+
+1. Use line 1 to **install the package "praise"**:
+
+   ```r
+   install.packages("praise")
+   ```
+
+2. Use line 2 to **load the library praise**:
+
+   ```r
+   library(praise)
+   ```
+
+3. Use line 3 to **run the function `praise()`** as it is, without arguments:
+
+   ```r
+   praise()
+   ```
+
+Suggested time: 5 minutes.
+:::
+
+### Calling functions
+
+Functions are algorithms (or lines of code) which **transform data into something else**. For example, the function `lm()` uses data to compute the result of a linear regression model.
+
+Functions have **a name** and **several arguments** that require some information:
+
+```r
+function_name(argument_1 = value_1, argument_2 = value_2, ...)
+```
+
+For example, the function `seq()` makes a sequence of numbers. Its first argument `from` is the number starting the sequence and its second argument `to` is the last number of the sequence:
+
+```{r}
+#| echo: true
+seq(from = 1, to = 10)
+```
+
+::: {.callout-important title="Warning"}
+Arguments don't need to be explicitly called, they can also be matched by position:
+
+```{r}
+#| echo: true
+seq(1, 10)
+```
+:::
+
+### Assigning values to objects
+
+Usually the arguments of functions expect an object name to access the data. An object is a box that **can include anything** (for example values, data frames, figures, models, functions, ...) and **has a name** that you have to choose.
+
+To create an object, you need to **assign something** to a name using the `<-` operator. If you type the name of the object, R will print out its content:
+
+```{r}
+#| echo: true
+x <- 4
+x
+seq(x, 10)
+```
+
+It is very important to distinguish values and objects in R, as @tbl-l07-values shows.
+
+```{r}
+#| label: tbl-l07-values
+#| tbl-cap: "Types of values and objects in R."
+tribble(
+  ~Type,                 ~Class,            ~Example,
+  "Number",              "Numeric Value",   "`1, 2, ...`",
+  "Word with quotes",    "Character Value", '`"one", "two", ...`',
+  "Word without quotes", "Object Name",     "function name, data name, ..."
+) |>
+  kable()
+```
+
+### Different R objects
+
+These types of values are then stored in different objects. All object assignments have the same form:
+
+```r
+object_name <- object_content
+```
+
+You want your object names to be descriptive, so you will need a convention for multiple words. I recommend **snake_case**, where you separate lower-case words with `_` (the convention already suggested for column names in @sec-lecture-03). The following assignments create the different types of objects:
+
+```r
+numeric_value <- 1
+
+character_value <- "one"
+
+vectors_with_numeric_values <- c(1, 2)
+
+vectors_with_character_values <- c("one", "two")
+
+dataframe_example <- data.frame(col1 = c("one", "two"), col2 = c(1, 2))
+
+dataframe_example <- data.frame(
+  col1 = vectors_with_character_values,
+  col2 = vectors_with_numeric_values
+  )
+```
+
+::: {.callout-tip title="Your turn: make a bar chart"}
+In the same R Script in RStudio, **copy, paste and run** the following code:
+
+```r
+my_power <- c(0.5, 99.5)
+
+my_knowledge <- c("without R", "with R")
+
+barplot(height = my_power, names.arg = my_knowledge)
+```
+
+Once it works, try changing the values in `my_power` and `my_knowledge` to customise the chart.
+
+Suggested time: 5 minutes.
+:::
+
+## Accessing data in Posit Cloud {#sec-l07-access}
+
+### Upload and import
+
+Posit Cloud is a free remote computer: the computing is not run on your computer. To open data on Posit Cloud, you first need to `Upload` your file on this computer and then to `Import` the data in R:
+
+1. Upload your file.
+2. Import your data, with the `Import Dataset` button of the Environment pane (@fig-l07-import).
+
+```{r}
+#| label: fig-l07-import
+#| fig-cap: "The Import Dataset menu of the Environment pane, which lists the types of files that can be imported."
+#| fig-alt: "Screenshot of the Environment tab of RStudio with the Import Dataset menu open. The options are From Text (base), From Text (readr), From Excel, From SPSS, From SAS and From Stata."
+#| out-width: "80%"
+include_img("rstudio_import.png")
+```
+
+Remember that **.csv files are basically text files**.
+
+For early beginners on the Desktop version, directly open data with RStudio's `Import Dataset` button. If you see your data in the preview, you can click `Import` to create an object containing your data. A code will be executed: **copy and paste the first line of this code in your R script**. You will not have to do it manually once the code is in your script.
+
+### Opening data with code
+
+To ensure code reproducibility, open data with the appropriate function (for example `read.csv()` for csv files). The main argument of these functions is `file`, which corresponds to the path to a file, followed by the name of the file and its extension:
+
+```r
+# Windows
+my_file_object <- read.csv(file = "C:/path/to/my/file.csv")
+my_file_object <- read.csv("C:/path/to/my/file.csv")
+
+# Macos
+my_file_object <- read.csv(file = "/Users/path/to/my/file.csv")
+my_file_object <- read.csv("/Users/path/to/my/file.csv")
+```
+
+The following codes will generate an error:
+
+```r
+# Incomplete path
+my_file_object <- read.csv("/path/to/my/file.csv")
+# Missing file extension
+my_file_object <- read.csv("C:/path/to/my/file")
+# Use of backward slash
+my_file_object <- read.csv("C:\path\to\my\file.csv")
+```
+
+::: {.callout-tip title="Your turn: upload and import the data"}
+1. Click on `Upload` to upload the "organisation_beta.csv" file on your Posit Cloud.
+2. Click on `Import` to import these data in R.
+3. Check that the data appears in the Environment pane (see @sec-l07-environment). How many observations and variables does it have?
+4. Copy the code that ran and paste it in your R script.
+
+Suggested time: 5 minutes.
+:::
+
+The examples in the rest of this chapter use the object `organisation_beta`, which contains the data of the file "organisation_beta.csv". In this chapter, it is created with the following code, where `here()` gives the path to the file in the `data` folder:
+
+```{r}
+#| echo: true
+organisation_beta <- read_csv(here("data/organisation_beta.csv"))
+```
+
+## Saving your data {#sec-l07-save}
+
+Usually, **only R Script files (.R) or Quarto files (.qmd) have to be saved**, as they allow the full replicability of transformations and results. However, if you want to use the data that have been transformed, joined or pivoted, a function has to be used according to the type of export.
+
+The simplest export is a .csv file with the function `write.csv()`. It has two main arguments:
+
+- `x`, which is the name of the object to save
+- `file`, which is the name of the output file
+
+Note: don't forget the file extension in the argument `file`.
+
+```r
+# Saved in the current directory
+write.csv(x = my_file_object, file = "my_file_name.csv")
+write.csv(my_file_object, "my_file_name.csv")
+
+# Saved in the directory you prefer
+write.csv(my_file_object, "C:/path/to/my/my_file_name.csv") # Windows
+write.csv(my_file_object, "/Users/path/to/my/my_file_name.csv") # Macos
+```
+
+::: {.callout-tip title="Your turn: save the data"}
+Save the data contained in the object "organisation_beta" in a new .csv file (give a different name than "organisation_beta.csv" else this document will be overwritten).
+
+Suggested time: 3 minutes.
+:::
+
+## Learning more and solving problems {#sec-l07-help}
+
+### Becoming an expert in R
+
+Plenty of free learning materials are available online:
+
+- Video tutorials on YouTube and TikTok
+- Interactive tutorials, for example:
+    - [Posit Primers](https://posit.cloud/learn/primers)
+    - [Introduction to R](https://www.quantargo.com/courses/course-r-introduction)
+- Book tutorials, for example:
+    - [R for Data Science](https://r4ds.hadley.nz/) by Wickham & Grolemund (2023)
+    - [A ModernDive into R and the tidyverse](https://moderndive.com/v2/) by Ismay & Kim (2025)
+    - [Open Data Science](https://ohi-science.org/data-science-training/) by the Ocean Health Index Team (2019)
+
+Find all the free books in the [Big Book of R](https://www.bigbookofr.com/)!
+
+### How to solve your pRoblems
+
+When something does not work, follow these steps:
+
+1. **Look at your error.**
+    - If it is obvious, solve it by yourself.
+    - If it is not obvious, copy and paste the error in Google.
+2. **Look at your object** with `str(ObjectName)`.
+3. **Look at the function** and its documentation (`F1` or `?`).
+4. **Use GenAI.**
+
+## Linear regression models in R {#sec-l07-lm}
+
+### Model and equations
+
+A model contains:
+
+- only one outcome variable
+- one or more predictor variables of any type (categorical or continuous)
+- main and/or interaction effects
+
+To evaluate their relationship with the outcome, each effect hypothesis is related to a coefficient called **Estimate** and represented with $b$, as follows:
+
+$$Outcome = b_0 + b_1 Pred1 + b_2 Pred2 + b_3 Pred1 * Pred2 + e$$ {#eq-l07-model}
+
+Testing for the significance of the effect means evaluating if this estimate $b$ value is significantly **different, higher or lower than 0**, as hypothesised in $H_a$ by the scientist.
+
+### Estimates and linear regression in R
+
+The `lm()` function calculates each estimate and tests them against 0 for you. `lm()` has only two arguments that you should care about: `formula` and `data`.
+
+- `formula` is the translation of the equation of the model
+- `data` is the name of the data frame object containing the variables
+
+Here is a generic example:
+
+```r
+lm(formula = Outcome ~ Pred1 + Pred2, data = my_data_object)
+```
+
+Here is an example with `organisation_beta.csv`:
+
+```r
+lm(formula = js_score ~ salary + perf, data = organisation_beta)
+```
+
+### Mastering the formula
+
+`lm()` has only one difficulty: the `formula`. The `formula` is the direct translation of the equation tested (@eq-l07-model), but with its own representation:
+
+1. The `=` sign is replaced by `~` (read "according to" or "by").
+2. Each predictor is added with the `+` sign.
+3. An interaction effect uses the symbol `:` instead of `*`.
+
+Here are some generic equations and their conversion in `formula`:
+
+$$Outcome = b_0 + b_1 Pred1 + b_2 Pred2 + e$$
+
+```r
+lm(formula = Outcome ~ Pred1 + Pred2, data = my_data_object)
+```
+
+$$Outcome = b_0 + b_1 Pred1 + b_2 Pred2 + b_3 Pred3 + e$$
+
+```r
+lm(formula = Outcome ~ Pred1 + Pred2 + Pred3, data = my_data_object)
+```
+
+$$Outcome = b_0 + b_1 Pred1 + b_2 Pred2 + b_3 Pred1*Pred2 + e$$
+
+```r
+lm(formula = Outcome ~ Pred1 + Pred2 + Pred1 : Pred2, data = my_data_object)
+```
+
+Here are some equations from the `organisation_beta.csv` dataset and their conversion in `formula`:
+
+$$js\_score = b_0 + b_1 salary + b_2 perf + e$$
+
+```r
+lm(formula = js_score ~ salary + perf, data = organisation_beta)
+```
+
+$$js\_score = b_0 + b_1 salary + b_2 perf + b_3 salary * perf + e$$
+
+```r
+lm(formula = js_score ~ salary + perf + salary:perf, data = organisation_beta)
+```
+
+::: {.callout-tip title="Your turn: test two models"}
+Test the following models in Posit Cloud:
+
+$$js\_score = b_0 + b_1 salary + b_2 gender + e$$
+
+$$js\_score = b_0 + b_1 salary + b_2 gender + b_3 salary * gender + e$$
+
+Suggested time: 5 minutes.
+:::
+
+## Linear regression results {#sec-l07-results}
+
+### Categorical predictors
+
+Exactly as in jamovi (see @sec-lecture-05), `lm()` by default investigates continuous predictors or categorical predictors having 2 categories:
+
+```r
+lm_js <- lm(formula = js_score ~ salary + gender, data = organisation_beta)
+```
+
+However, to test the hypothesis of a categorical predictor having 3 or more categories, the ANOVA omnibus test is required. It can be obtained by using the `aov()` function with the lm model as input:
+
+```r
+lm_js <- lm(formula = js_score ~ salary + location, data = organisation_beta)
+
+aov(lm_js)
+```
+
+### The summary() output
+
+While the function `lm()` computes the model, the function `summary()` displays the results:
+
+```{r}
+#| echo: true
+lm_js <- lm(formula = js_score ~ salary + gender, data = organisation_beta)
+
+summary(lm_js)
+```
+
+The output of the `summary()` function is pretty dense, but let's analyse it line by line.
+
+The first line reminds us of what the actual regression model is:
+
+```
+Call:
+lm(formula = js_score ~ salary + gender, data = organisation_beta)
+```
+
+The next part provides a quick summary of the residuals (that is, the $e$ values):
+
+```
+Residuals:
+      Min       1Q   Median       3Q      Max
+ -2.04185 -0.49565  0.06529  0.61611  1.71635
+```
+
+This can be convenient as a quick check that the model is okay. **Linear regression assumes that these residuals were normally distributed, with mean 0.** In particular it's worth quickly checking to see if the median is close to zero, and to see if the first quartile is about the same size as the third quartile. If they look badly off, there's a good chance that the assumptions of regression are violated (see @sec-lecture-06).
+
+The next part of the R output looks at the coefficients of the regression model:
+
+```
+Coefficients:
+                Estimate  Std. Error t value   Pr(>|t|)
+ (Intercept) -49.1865081   7.6889114  -6.397 0.00000663 ***
+ salary        0.0018837   0.0002575   7.316 0.00000121 ***
+ gendermale   -0.5946699   0.4055990  -1.466      0.161
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+<!-- check: the slide shows -49.1865079 for the intercept, but summary(lm_js) prints -49.1865081 when this book is built; an exact calculation of the least-squares intercept gives -49.18650806, so the slide value differs only in the last digits (probably a numerical difference between computers); the value is changed here and in the list below to match the output above -->
+
+Each row in this table refers to one of the coefficients estimated in the regression model. The first row is the intercept term, and the later ones look at each of the predictors. The columns give you all of the relevant information:
+
+- The first column is the actual estimate of $b$ (for example, -49.1865081 for the intercept, 0.0018837 for salary and -0.5946699 for gender). <!-- check: the slide has -49.1865079, see the previous check -->
+- The second column is the standard error estimate (SE).
+- The third column gives you the $t$-statistic.
+- Finally, the fourth column gives you the actual $p$ value for each of these tests.
+
+The only thing that the previous table doesn't list is the degrees of freedom used in the $t$-test, which is always $N-K-1$ and is listed immediately below, in this line:
+
+```
+Residual standard error: 0.8854 on 17 degrees of freedom
+```
+
+The value of $df = 17$ is equal to $N-K-1$, so that's what we use for our $t$-tests. In the final part of the output we have the $F$-test and the $R^2$ values which assess the performance of the model as a whole:
+
+```
+Multiple R-squared:  0.7613,    Adjusted R-squared:  0.7333
+F-statistic: 27.12 on 2 and 17 DF,  p-value: 0.000005141
+```
+
+So in this case, the model performed significantly better than you'd expect by chance ($F(2,17) = 27.12$, $p < 0.001$), which isn't all that surprising: the $R^2 = 0.7333$ value indicates that the regression model accounts for 73.3% of the variability in the outcome measure. <!-- check: 0.7333 is the Adjusted R-squared, the Multiple R-squared is 0.7613 --> When we look back up at the $t$-tests for each of the individual coefficients, we have pretty strong evidence that salary has a significant effect.
+
+### Reporting clean results
+
+To communicate about your statistical analyses in an academic report, the simplest method is to find the values in the `summary()` output and to copy and paste them in the text according to the expected format that we have seen in the previous lectures (@sec-lecture-04 and @sec-lecture-05). However, this task can be long, difficult and lead to human errors. Thankfully, R has additional packages that provide alternative functions to read linear regression models and communicate results. Because there are too many packages, I will focus only on two additional packages: `{performance}` and `{report}`.
+
+### Assumption check with `{performance}`
+
+To install `{performance}` use the usual `install.packages()` function:
+
+```r
+install.packages("performance")
+```
+
+The package `{performance}` will print visualisations allowing to check the model's assumptions (see <https://easystats.github.io/performance/>). To print the performance diagnosis:
+
+1. Load the package `{performance}`.
+2. Create an object containing the output of the function `lm()`.
+3. Use this object as input of the function `check_model()` from the `{performance}` package.
+
+```{r}
+#| label: fig-l07-check-model
+#| echo: true
+#| fig-width: 9
+#| fig-height: 9
+#| fig-cap: "Diagnostic plots produced by check_model() for the model js_score ~ salary + perf."
+#| fig-alt: "Six diagnostic plots in three rows of two. Posterior predictive check: the lines of the model-predicted data follow the curve of the observed data closely. Linearity: the residuals plotted against the fitted values, with a reference line that is flat and close to zero. Homogeneity of variance: the square root of the absolute standardised residuals plotted against the fitted values, with a reference line that is roughly flat. Influential observations: standardised residuals plotted against leverage, with all points inside the contour lines. Collinearity: the variance inflation factors of perf and salary are both low, below 5. Normality of residuals: the dots fall close to the reference line, with small departures at both ends."
+library(performance)
+
+lm_js <- lm(formula = js_score ~ salary + perf, data = organisation_beta)
+
+check_model(lm_js)
+```
+
+### Automatic results with `{report}`
+
+To install `{report}` use the usual `install.packages()` function:
+
+```r
+install.packages("report")
+```
+
+The package `{report}` will print a text containing all the statistics already in sentences ready to be interpreted (see <https://easystats.github.io/report/>). To print the statistical analyses:
+
+1. Load the package `{report}`.
+2. Create an object containing the output of the function `lm()`.
+3. Use this object as input of the function `report()` from the `{report}` package.
+
+**Note: if used in a Quarto document, the chunk containing `report()` has to include the chunk option `results='asis'`.**
+
+The following chunk prints the analysis of the model as a text:
+
+```{r}
+#| echo: true
+#| warning: false
+#| results: asis
+library(report)
+
+lm_js <- lm(formula = js_score ~ salary + perf, data = organisation_beta)
+
+report(lm_js)
+```
+
+::: {.callout-tip title="Your turn: check and report three models"}
+In Posit Cloud, check the `check_model()` and `report()` output from the `lm()` function testing the following models:
+
+$$js\_score = b_0 + b_1 salary + b_2 gender + e$$
+
+$$js\_score = b_0 + b_1 salary + b_2 gender + b_3 salary * gender + e$$
+
+$$js\_score = b_0 + b_1 salary + b_2 location + b_3 salary * location + e$$
+
+Suggested time: 5 minutes.
+:::
+
+::: {.callout-note title="Key points"}
+- R is the language and RStudio is the interface used to write it. Write all your code in a script or a Quarto file, because the console does not save anything.
+- A package is installed once with `install.packages()` and loaded every time with `library()`. Functions are called with arguments, and objects are created with `<-`.
+- Data are opened with a function such as `read.csv()`, using the path, the name and the extension of the file, and saved with `write.csv()`.
+- In `lm()`, the `formula` replaces `=` by `~`, adds the predictors with `+` and writes an interaction with `:`.
+- `summary()` gives the residuals, the coefficients, the degrees of freedom, $R^2$ and the $F$-test, while `check_model()` and `report()` help to check the assumptions and to write the results.
+:::

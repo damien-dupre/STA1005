@@ -1,0 +1,96 @@
+project:
+  type: book
+  output-dir: _book
+
+lang: en-GB
+
+# The review notes written as HTML comments in the chapters (<!-- check: ... -->, and a
+# few <!-- note: ... --> and <!-- layout: ... -->) are removed from the HTML, PDF and EPUB
+# output. Delete the two lines below to keep them. Other comments are left alone, because
+# Quarto uses its own HTML comments to number the chapters and parts of the PDF and EPUB.
+filters:
+  - strip-comments.lua
+
+book:
+  title: "Quantitative Research Methods"
+  subtitle: "STA1005 course book, written from the lecture slides"
+  author:
+    - name: "Damien Dupré"
+      affiliations:
+        - name: "DCU Business School, Dublin City University"
+  date: today
+  date-format: "D MMMM YYYY"
+  search: true
+  reader-mode: true
+  downloads: [pdf, epub]
+  chapters:
+    - index.qmd
+    - part: "Research papers, models and data"
+      chapters:
+        - lecture-01.qmd
+        - lecture-02.qmd
+        - lecture-03.qmd
+    - part: "The General Linear Model"
+      chapters:
+        - lecture-04.qmd
+        - lecture-05.qmd
+        - lecture-06.qmd
+    - part: "From analysis to report"
+      chapters:
+        - lecture-07.qmd
+        - lecture-08.qmd
+        - lecture-09.qmd
+
+format:
+  html:
+    theme:
+      - cosmo
+      - book.scss
+    toc: true
+    toc-depth: 3
+    number-depth: 3
+    code-copy: true
+    # "Show all code" and "Hide all code" stay. "View Source" is off, because it would show
+    # the review notes written as comments in the .qmd files.
+    code-tools:
+      source: false
+    fig-align: center
+  pdf:
+    documentclass: scrbook
+    # No dot after section and figure numbers ("3.1 Title", "Figure 3.1: ...").
+    classoption: ["numbers=noenddot"]
+    papersize: a4
+    fontsize: 11pt
+    colorlinks: true
+    toc-depth: 2
+    # In a LaTeX book the chapter is level 0, so 2 numbers chapters, sections and
+    # subsections ("3.1.2"), as number-depth: 3 does in the HTML book.
+    number-depth: 2
+    fig-align: center
+    # Figures stay where they are written. Without this, a floating figure placed next to a
+    # table could make LaTeX drop text silently.
+    fig-pos: "H"
+    # Long lines of code wrap instead of running into the margin.
+    include-in-header:
+      text: |
+        \usepackage{fvextra}
+        \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+        \raggedbottom
+  epub:
+    toc-depth: 2
+    css: epub.css
+
+# Code is hidden by default, as in the slides. Chapters show the code that is
+# part of the teaching with the chunk option `#| echo: true`.
+execute:
+  echo: false
+  warning: false
+  message: false
+  fig-width: 7
+  fig-height: 4.5
+  fig-dpi: 150
+
+knitr:
+  opts_chunk:
+    comment: "#>"
+    fig.align: center

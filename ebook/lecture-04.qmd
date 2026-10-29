@@ -1,0 +1,629 @@
+# Understanding the General Linear Model {#sec-lecture-04}
+
+```{r}
+#| label: setup
+#| include: false
+source("R/setup.R")
+library(ggrepel)
+library(gt)
+library(papaja)
+library(patchwork)
+```
+
+```{r}
+#| label: data-models
+#| include: false
+organisation_beta <- readr::read_csv(here("data/organisation_beta.csv"))
+
+lm_1 <- lm(js_score ~ salary, data = organisation_beta) |> apa_print()
+lm_2 <- lm(js_score ~ salary*perf, data = organisation_beta) |> apa_print()
+```
+
+This chapter introduces the General Linear Model, the one test taught in this module, and shows how to run it in jamovi and how to report its results. @sec-l04-regressions presents the model, the way the best line through the data is found, and what the estimates of the model and their significance tell us. @sec-l04-continuous works through an example with continuous predictors, first a main effect and then an interaction effect, and explains how to read and report each table of the jamovi output.
+
+The results section of an academic paper is always structured in the same way:
+
+1. Descriptive statistics
+    - a short description of the variables (predictors and outcome)
+    - numeric summaries (mean and standard deviation values), distribution figures and a correlation matrix
+2. Inferential statistics
+    - indicating the relevance of the model
+    - communicating the hypothesis testing results and concluding **whether the alternative hypothesis is considered plausible or the null hypothesis is not rejected**
+
+This chapter is about the second part.
+
+## Regressions for hypothesis testing {#sec-l04-regressions}
+
+### The General Linear Model
+
+"Linear Model", "Linear Regression", "Multiple Regression" or simply "Regression" all refer to the same model: the **General Linear Model**. It contains:
+
+- one continuous outcome (or dependent) variable
+- one or more categorical or continuous predictors (or independent variables)
+- main effects and/or interaction effects
+
+It is written as in @eq-l04-glm.
+
+$$Y = b_{0} + b_{1}\,Predictor\,1 + b_{2}\,Predictor\,2+ ... + b_{n}\,Predictor\,n + e$$ {#eq-l04-glm}
+
+A linear regression is used **to test all the hypotheses at once** and to calculate the predictors' estimates.
+
+Specific tests are available for certain types of hypothesis, such as the t-test or ANOVA, but as they are special cases of linear regressions, their importance is limited (see [Jonas Kristoffer Lindeløv's blog post: Common statistical tests are linear models](https://lindeloev.github.io/tests-as-linear/)). Most of the common statistical models (t-test, correlation, ANOVA, chi-square, etc.) are **special cases of linear models**. <!-- check: as on the slide, but the linked page presents the chi-square tests as log-linear models (Poisson regression), which are not General Linear Models in the strict sense -->
+
+This beautiful simplicity means that there is less to learn. In particular, it all comes down to $y = ax + b$, which most students know from secondary school. Unfortunately, **stats intro courses are usually taught as if each test is an independent tool**, needlessly making life more complicated for students and teachers alike. Here, only **one test is taught to rule them all**: the General Linear Model (GLM).
+
+### Applied example
+
+Imagine the following case study.
+
+> The CEO of Organisation Beta has problems with the well-being of employees and wants to investigate the relationship between **Job Satisfaction (`js_score`)**, **salary** and **performance (`perf`)**.
+
+Therefore the CEO formulates three hypotheses:
+
+- $H_{a1}$: $js\_score$ increases when $salary$ increases
+- $H_{a2}$: $js\_score$ increases when $perf$ increases
+- $H_{a3}$: the effect of $salary$ on $js\_score$ increases when $perf$ increases
+
+The corresponding model is given in @eq-l04-case.
+
+$$js\_score_i = b_{0} + b_{1}\,salary_i + b_{2}\,perf_i + b_{3}\,salary*perf_i +  e_i$$ {#eq-l04-case}
+
+The data of Organisation Beta (file `organisation_beta.csv`) are not real: they were simulated for 20 employees with the following code. <!-- check: this sentence is not on a slide; it is written from the simulation code that sits, commented out, in the first chunk of lecture_4.qmd -->
+
+<!-- check: organisation_beta.csv also holds the columns IrvFr, IrvAus, C1 and C2, which this code does not create (the revamped Lecture 1 says they are recodings added for Lecture 5) -->
+
+```r
+tibble::tibble(
+  gender = sample(c("male", "female"), 20, replace = TRUE),
+  location = sample(c("Ireland", "France", "Australia"), 20, replace = TRUE),
+  perf = rnorm(20, mean = 4, sd = 2),
+  salary = rnorm(20, mean = 30000, sd = 1000),
+  js_score = -55 + 0.002 * salary + rnorm(20, mean = 2, sd = 1)
+) |>
+tibble::rownames_to_column("employee") |>
+dplyr::mutate(
+  js_score = case_when(
+    js_score > 10 ~ 10,
+    js_score < 0 ~ 0,
+    TRUE ~ js_score
+  ),
+  perf = case_when(
+    perf > 10 ~ 10,
+    perf < 0 ~ 0,
+    TRUE ~ perf
+  ),
+  salary_c = case_when(
+    salary >= mean(salary) ~ "high",
+    salary < mean(salary) ~ "low"
+  ),
+  perf_c = case_when(
+    perf >= mean(perf) + sd(perf) ~ "high",
+    perf < mean(perf) + sd(perf) & perf >= mean(perf) - sd(perf) ~ "medium",
+    perf < mean(perf) - sd(perf) ~ "low"
+  ),
+) |>
+readr::write_csv(here::here("data/organisation_beta.csv"))
+```
+
+This code is shown for information and is not run when the book is built: it has no seed, so each run draws new random values, and its last line overwrites `data/organisation_beta.csv`.
+
+### Finding the best line
+
+Draw all the possible lines on the frame. The best line, also called best fit, is the one which has the lowest amount of error. @fig-l04-lines shows 200 lines drawn over the data.
+
+```{r}
+#| label: fig-l04-lines
+#| fig-cap: "200 candidate lines drawn over the data."
+#| fig-alt: "Scatterplot of 200 black points with a loose upward trend, crossed by 200 faint grey straight lines that have very different intercepts and slopes. Most of the lines are far from the points."
+tibble(
+  salary = rnorm(200, mean = 5, sd = 5),
+  js_score = -1 + 0.02 * salary + rnorm(200, mean = 2, sd = 0.1),
+  b0 = rnorm(200, 0, 1),
+  b1 = rnorm(200, 0.02, 0.1)
+) |>
+ggplot(aes(salary, js_score)) +
+  geom_abline(aes(intercept = b0, slope = b1), alpha = 1/4) +
+  geom_point() +
+  theme(
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank()
+  )
+```
+
+There are 200 models on this plot, but a lot are really bad! We need to find the good models by making precise our intuition that a good model is "close" to the data.
+
+To find the best line (i.e., the best model), we need a way to quantify the distance between the data and a model. Then we can fit the model by finding the values of $b_0$ and $b_1$ that generate the model with the smallest distance from this data.
+
+### Best model, lowest error
+
+For each point, this specific prediction error is called the **residual** $e_i$, where $i$ is a specific observation (e.g., an employee here). The error of the model is the sum of the prediction errors for each point (the distance between the actual value and the predicted value). <!-- check: as on the slide, but the residuals of a regression with an intercept always sum to 0 (here -7e-17); what the best line minimises is the sum of the squared residuals (15.01 here), as the next paragraph explains with the MSE --> @fig-l04-residuals shows the residuals of the regression of job satisfaction on salary in the Organisation Beta data.
+
+```{r}
+#| label: fig-l04-residuals
+#| fig-cap: "Job satisfaction against salary for the 20 employees, with the regression line (blue) and the residuals (red segments)."
+#| fig-alt: "Scatterplot of job satisfaction against salary for 20 employees with an upward blue regression line. A short red vertical segment joins each point to the line; these segments are the residuals."
+linear_model_1 <- lm(js_score ~ salary, organisation_beta)
+
+organisation_beta$predicted <- predict(linear_model_1)   ## Save the predicted values
+organisation_beta$residuals <- residuals(linear_model_1) ## Save the residual values
+
+organisation_beta |>
+  ggplot(aes(salary, js_score, label = residuals)) +
+  geom_segment(aes(xend = salary, yend = predicted), color = "red") +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+The line which obtains the lowest error has the smallest residuals. This line is chosen by the linear regression. One common way to do this in statistics is to use the "Mean-Square Error" (aka $MSE$) or the "Root-Mean-Square Error" (aka $RMSE$). We compute the difference between actual and predicted values, square them, sum them and divide them by $n$ observations (and then take the square root of them for the $RMSE$), as written in @eq-l04-mse and @eq-l04-rmse.
+
+$$MSE = \frac{\sum_{i=1}^{N}(y\,predicted_{i} - y\,actual_{i})^{2}}{N}$$ {#eq-l04-mse}
+
+$$RMSE = \sqrt{\frac{\sum_{i=1}^{N}(y\,predicted_{i} - y\,actual_{i})^{2}}{N}}$$ {#eq-l04-rmse}
+
+@fig-l04-mse shows the same regression line and its residuals (top) together with the value of each residual (bottom).
+
+```{r}
+#| label: fig-l04-mse
+#| fig-cap: "The residuals of the regression: the regression line and the distance to each point (top), and the value of each residual (bottom)."
+#| fig-alt: "Two stacked plots. The top plot repeats the scatterplot of job satisfaction against salary, on a scale from 0 to 10, with the blue regression line and the red residual segments. The bottom plot shows each residual as a red bar above or below a dashed zero line, labelled with its value rounded to two decimals; the residuals range from -2.28 to 2.07."
+#| fig-height: 7
+plot_residual <- organisation_beta |>
+  ggplot(aes(salary, js_score)) +
+  geom_segment(aes(xend = salary, yend = predicted), colour = "red") +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  scale_y_continuous(limits = c(0, 10))
+
+distance_residual <- organisation_beta |>
+  ggplot(aes(salary, residuals, label = round(residuals, 2))) +
+  geom_hline(aes(yintercept = 0), linetype = "dashed") +
+  geom_col(colour = "red", fill = "red") +
+  geom_text(
+    aes(y = residuals, vjust = ifelse(residuals >= 0, 0, 1)),
+    position = position_dodge(width = 0.9),
+    size = 3
+  ) +
+  scale_y_continuous(limits = c(-2.5, 2.5))
+
+plot_residual / distance_residual
+```
+
+These calculations have lots of appealing mathematical properties, which we are not going to talk about here. You will just have to take my word for it!
+
+### Analysis of the estimates
+
+Once the best line is found, each estimate of the tested equation (i.e., $b_0, b_1, ..., b_n$) is calculated by a software:
+
+- $b_0$ is the intercept and has no interest for hypothesis testing
+- $b_1, ..., b_n$ are the predictors' effect estimates and each of them is used to test a hypothesis
+
+The predictors' effect estimates $b_1, ..., b_n$ are **the value of the slope of the best line**. Each of them indicates **by how many units the outcome variable increases, decreases or changes when the predictor increases by 1 unit**. Technically, $b$ is a weight or multiplier applied to the predictor's values to obtain the outcome's expected values.
+
+If $b_1, ..., b_n = 0$, then:
+
+- the regression line is horizontal (no slope)
+- when the predictor increases by 1 unit, the outcome variable does not change
+- **the null hypothesis is not rejected**
+
+On the contrary, if $b_1, ..., b_n > 0$ or $< 0$, then:
+
+- the regression line is positive (slope up) or negative (slope down)
+- when the predictor increases by 1 unit, the outcome variable increases or decreases by $b$
+- **the alternative hypothesis is considered plausible**
+
+<!-- check: as on the slide, but this mixes up the estimate of the sample and the parameter of the population: an estimate is almost never exactly 0, and the null hypothesis is rejected only when the estimate is significantly different from 0, as the next section says -->
+
+@fig-l04-overlay illustrates both cases with the Organisation Beta data.
+
+### Significance of an effect estimate
+
+The statistical significance of an effect estimate depends on the **strength of the relationship** and on the **sample size**. An estimate of $b_1 = 0.02$ can be very small but still significantly different from $b_1 = 0$, whereas an estimate of $b_1 = 0.35$ can be stronger but in fact not significantly different from $b_1 = 0$.
+
+The significance is the probability to obtain your results with your sample in the null hypothesis scenario. It is also called the $p$-value, and it is between 0% and 100%, which corresponds to a value between 0.0 and 1.0.
+
+**If the $p$-value is lower than 5% or 0.05, then the probability to obtain your results in the null hypothesis scenario is low enough to say that the null hypothesis scenario is rejected and there must be a link between the variables.** <!-- check: as on the slide, but the $p$-value is the probability of obtaining results at least as extreme as the observed ones if the null hypothesis is true, and a $p$-value below 0.05 does not show that "there must be a link between the variables" -->
+
+Remember that the $p$-value is the probability of the data given the null hypothesis: $P(data|H_0)$.
+
+### Estimating the coefficients with software
+
+As previously indicated, you will not have to calculate all the possible lines in your data to find the best fit: a software will do it for you.
+
+- jamovi, JASP and SPSS have a graphical user interface (GUI)
+- R, Python and Julia are language based and have no interface
+
+@fig-l04-lm-example shows the elements of a regression estimated by such a software: the regression line, its intercept $b_0$ and slope $b_1$, and the error term $e$ of each observation.
+
+```{r}
+#| label: fig-l04-lm-example
+#| fig-cap: "A regression line with its intercept (b0), its slope (b1) and the error term (e) of each observation."
+#| fig-alt: "Scatterplot of black points with a blue regression line rising from left to right and labelled Regression line. Red vertical segments from the points to the line are labelled error term (e). Green brackets mark b0, the height at which the line starts on the vertical axis, and b1, the slope of the line."
+#| out-width: "40%"
+include_img("lm_example.png")
+```
+
+The output of any software is two tables: the Model Fit Measures table and the Model Coefficients table.
+
+- The **Model Fit Measures** table tests the prediction **accuracy of your overall model** (all predictors taken into account).
+- The **Model Coefficients** table provides an estimate for each predictor $b_1, ..., b_n$ (as well as the intercept $b_0$). The value of the estimate is statistically tested with a $p$-value to see if it is statistically different from 0 (the null hypothesis). Therefore, this table is **used to test each hypothesis** separately.
+
+### jamovi: Stats. Open. Now.
+
+jamovi is a statistical spreadsheet software designed to be **easy to use**. It is a compelling alternative to costly statistical products such as SPSS, SAS and JMP, to cite a few. It will always be **free and open** because jamovi is made by the scientific community, for the scientific community.
+
+- It can be **downloaded from its website**: <https://www.jamovi.org/>
+- It can also be **used without installation**, in a web browser, at <https://cloud.jamovi.org/> for an **online demo**, but this demo undergoes periods of downtime and may cease functioning (without warning) at any time.
+
+::: {.callout-important title="Free book on jamovi"}
+The book "Learning Statistics with jamovi" is free here: <https://www.learnstatswithjamovi.com/>
+:::
+
+@fig-l04-jamovi-gui shows the graphical user interface of jamovi when it opens: a spreadsheet on the left and the results on the right. The Analyses tab gives access to the families of analyses (Exploration, T-Tests, ANOVA, Regression, Frequencies and Factor).
+
+<!-- check: the screenshot shows jamovi version 1.6.7 -->
+
+```{r}
+#| label: fig-l04-jamovi-gui
+#| fig-cap: "The graphical user interface of jamovi."
+#| fig-alt: "Screenshot of jamovi with an empty spreadsheet with columns A, B and C on the left and the jamovi logo with its version number on the right. The Analyses tab is selected and shows Exploration, T-Tests, ANOVA, Regression, Frequencies and Factor, with Modules at the far right."
+#| out-width: "100%"
+include_img("jamovi_gui.png")
+```
+
+### Anatomy of jamovi
+
+Four features of jamovi are worth knowing before running a regression.
+
+First, jamovi uses different symbols for the **variable types** (@fig-l04-icons): continuous, ordinal and nominal.
+
+```{r}
+#| label: fig-l04-icons
+#| fig-cap: "The jamovi symbols for continuous, ordinal and nominal variables."
+#| fig-alt: "Three icons with their names: a ruler for Continuous, three bars of increasing height for Ordinal and three overlapping circles, one orange and two blue, for Nominal."
+#| out-width: "40%"
+include_img("jamovi_icons.png")
+```
+
+Second, jamovi distinguishes **factors** from **covariates**. A factor is a predictor of type categorical (nominal or ordinal), whereas a covariate is a predictor of type continuous.
+
+::: {.callout-important title="Warning"}
+The expected variable type is displayed in the bottom right corner of the boxes.
+:::
+
+Third, you can customise your analysis by **unfolding optional boxes** (the Model Builder and the Estimated Marginal Means boxes used later in this chapter are examples).
+
+Fourth, two linear regression tables are produced **by default**: Model Fit Measures and Model Coefficients.
+
+## Hypotheses with continuous predictors {#sec-l04-continuous}
+
+### Main effect example
+
+The first example tests the effect of $salary$ on $js\_score$. The variables are:
+
+- Outcome: $js\_score$ (from 0 to 10)
+- Predictor: $salary$ (from 0 to Inf.)
+
+The hypotheses are:
+
+- $H_a$: $js\_score$ increases when $salary$ increases (i.e., $b_1>0$)
+- $H_0$: $js\_score$ stays the same when $salary$ increases (i.e., $b_1=0$)
+
+The equation of the model is given in @eq-l04-main.
+
+$$js\_score = b_{0} + b_{1}\,salary + e$$ {#eq-l04-main}
+
+@tbl-l04-data lists the data of the employees.
+
+```{r}
+#| label: tbl-l04-data
+#| tbl-cap: "Salary and job satisfaction of the 20 employees of Organisation Beta."
+organisation_beta |>
+  dplyr::select(employee, salary, js_score) |>
+  gt() |>
+  cols_align(align = "center") |>
+  opt_row_striping()
+```
+
+@fig-l04-scatter maps every employee according to their salary and their job satisfaction.
+
+```{r}
+#| label: fig-l04-scatter
+#| fig-cap: "Scatterplot mapping every employee according to their salary and their job satisfaction."
+#| fig-alt: "Scatterplot of job satisfaction, from 0 to 10, against salary, from about 28,500 to 31,500, with 20 red points labelled by employee number. Job satisfaction tends to be higher for higher salaries."
+organisation_beta |>
+  ggplot(aes(x = salary, y = js_score, label = employee)) +
+  geom_point(color = "red", size = 3) +
+  geom_text_repel(point.padding = 0.5, size = 4) +
+  scale_y_continuous(limits = c(0, 10))
+```
+
+@fig-l04-overlay adds the two models to compare: the best model under $H_1$ (the blue line, which is the best line found by the regression) and the null model under $H_0$ (the red horizontal line, drawn at the mean of $js\_score$). <!-- check: the text of the slide calls the alternative hypothesis H_a, but the figure labels it H_1 -->
+
+```{r}
+#| label: fig-l04-overlay
+#| fig-cap: "Scatterplot with effect overlay, showing the best model under $H_1$ and the null model under $H_0$."
+#| fig-alt: "Scatterplot of job satisfaction against salary with 20 black points. A rising blue line is labelled H1: b1 > 0 and a horizontal red line at the mean job satisfaction is labelled H0: b1 = 0."
+organisation_beta |>
+  ggplot(aes(x = salary, y = js_score, label = employee)) +
+  geom_point(color = "black", size = 3) +
+  geom_smooth(method = "lm", formula = "y ~ x", linewidth = 1.2, fullrange = TRUE, se = FALSE) +
+  geom_hline(yintercept = mean(organisation_beta$js_score), color = "red", linewidth = 1.2) +
+  scale_y_continuous(limits = c(0, 10)) +
+  annotate(
+    "text",
+    x = 29000,
+    y = 7.5,
+    label = "H[0]:b[1] == 0",
+    color = "red",
+    size = 4.5,
+    parse = TRUE
+  ) +
+  annotate(
+    "text",
+    x = 30500,
+    y = 10,
+    label = "H[1]:b[1] > 0",
+    color = "blue",
+    size = 4.5,
+    parse = TRUE
+  )
+```
+
+### Testing the main effect in jamovi {#sec-l04-main-jamovi}
+
+To test this model in jamovi:
+
+1. Open your file.
+2. Set the variables as **continuous**.
+3. Go to **Analyses** > **Regression** > **Linear Regression**.
+4. Set $js\_score$ as the Dependent Variable (DV, i.e., the outcome) and $salary$ as a Covariate (i.e., a continuous predictor).
+
+@fig-l04-main-jamovi shows the result. On the left, $js\_score$ is in the Dependent Variable box and $salary$ is the only variable in the Covariates box, while the Factors box is empty. On the right, jamovi displays the two default tables, Model Fit Measures and Model Coefficients, which are explained in @sec-l04-fit and @sec-l04-coef.
+
+```{r}
+#| label: fig-l04-main-jamovi
+#| fig-cap: "The linear regression of job satisfaction on salary in jamovi: options (left) and default tables (right)."
+#| fig-alt: "Screenshot of jamovi. On the left, the Linear Regression options with js_score as Dependent Variable, salary as the only Covariate and no Factor. On the right, a Model Fit Measures table with R of 0.86 and R squared of 0.73, and a Model Coefficients table with an intercept of -48.58 and a salary estimate of 0.00, both with p below .001."
+#| out-width: "100%"
+include_img("jamovi_lm_main.png")
+```
+
+### Worked example: the Model Fit Measures table {#sec-l04-fit}
+
+The first table of the output is the **Model Fit Measures** table. It tests the prediction **accuracy of your overall model** (all predictors taken into account), by comparing the alternative model with a null model without the predictor:
+
+$$Model_{a}: js\_score = b_{0} + b_{1}\;salary + e\;vs.\; Model_{0}: js\_score = b_{0} + e$$
+
+@fig-l04-mfm shows the default columns of the table for our example.
+
+```{r}
+#| label: fig-l04-mfm
+#| fig-cap: "Model Fit Measures table with the default columns."
+#| fig-alt: "Table titled Model Fit Measures with the columns Model, R and R squared, and one row: model 1, R of 0.86 and R squared of 0.73."
+#| out-width: "70%"
+include_img("jamovi_mfm.png")
+```
+
+- The **Model** column indicates the reference of the model in case you want to compare multiple models.
+- $R$ is the correlation between the outcome variable and all predictors taken into account (i.e., the closer to 1 or -1 the better; however, in social science, models with more than 0.2 or less than -0.2 are already excellent). <!-- check: R in the Model Fit Measures table is a multiple correlation, so it cannot be negative; the slide mentions -1 and -0.2. Also, R = 0.2 means R2 = 0.04, that is 4% of the variance explained, which is hardly "excellent" -->
+- $R^2$ is the percentage of variance of the outcome explained by the model (e.g., $R^2 = 0.73$ means the model explains 73% of the variance of the outcome variable). $R^2$ is also called the **Coefficient of Determination**.
+
+In our example, $R = 0.86$ and $R^2 = 0.73$.
+
+More measures can be added to the table with the options of jamovi. @fig-l04-mfm-full shows the table with all the options: after Model, $R$ and $R^2$ come the Adjusted $R^2$, the AIC, the BIC and the RMSE, followed by the Overall Model Test with $F$, df1, df2 and $p$.
+
+```{r}
+#| label: fig-l04-mfm-full
+#| fig-cap: "Model Fit Measures table with all the options."
+#| fig-alt: "Table titled Model Fit Measures with the columns Model, R, R squared, Adjusted R squared, AIC, BIC and RMSE, followed by an Overall Model Test group with F, df1, df2 and p. The single row reads 1, 0.86, 0.73, 0.72, 57.02, 60.01, 0.87, 48.96, 1, 18 and less than .001."
+#| out-width: "100%"
+include_img("jamovi_mfm_full.png")
+```
+
+- $Adjusted\,R^2$ is a more conservative version of $R^2$, usually not reported.
+- $AIC$, $BIC$ and $RMSE$ are useful to compare multiple models: the lower the better.
+- The **Overall Model F Test** is the statistical test to show that your model has significantly better predictions than a model without any predictor.
+    - $F$ is the value of the statistical test comparing the results obtained with this sample using the full model with the results obtained with this sample using a model only with the intercept (i.e., $H_0$).
+    - $df1$ is the degree of freedom "between group". Its value corresponds to the number of predictors in your model: $df1 = K$ (this is the easy explanation, see more details page 398 of "Learning Statistics with jamovi").
+    - $df2$ is the degree of freedom "within group". Its value corresponds to the number of observations minus the number of parameters minus 1: $df2 = N - K - 1$. <!-- check: as on the slide, but if the intercept is counted among the parameters, N minus the parameters minus 1 gives 17 here; the table shows 18, which is N - K - 1 with K the number of predictors (16 for the interaction model, where K = 3) -->
+    - $p$ is the $p$-value, i.e., the probability to obtain our prediction with our sample in the null hypothesis scenario (i.e., $p = P(data|H_0)$).
+
+In our example, the Overall Model Test gives $F = 48.96$ with $df1 = 1$ (one predictor), $df2 = 18$ (20 observations minus 1 predictor minus 1) and $p < .001$.
+
+To communicate results about a model, APA style is a good guide. **Report the following values** using the Model Fit Measures table with all the options (@fig-l04-mfm-full), as written in @eq-l04-report-fit:
+
+$$R^2 = value_{R^2}, F(value_{df1},value_{df2}) = value_{F}, p = value_{p}$$ {#eq-l04-report-fit}
+
+For our example, the sentence to include in the results section is:
+
+> The predictions from the alternative model (i.e., with our predictors) are significantly better than the predictions from a null model (`r lm_1$full_result$modelfit$r2`).
+
+<!-- check: recent versions of papaja may also print a 90% confidence interval of R2 in the sentence above (for example "R2 = .73, 90% CI [0.48, 0.86], F(1, 18) = 48.96, p < .001"), which the equation above does not list; compare with your own render. The same applies to the overall model sentence of the interaction example -->
+
+<!-- check: the note below writes p < 0.001, whereas apa_print() normally prints the APA format p < .001 -->
+
+::: {.callout-important title="Note about p-values"}
+- If the value in the table is $< 0.001$, then write $p < 0.001$ in the text.
+- Or else, write $p = value_p$ (e.g., $p = 0.58$) but never $p =< 0.001$.
+:::
+
+### Worked example: the Model Coefficients table {#sec-l04-coef}
+
+The second table of the output is the **Model Coefficients** table. It provides an estimate for each predictor $b_1, ..., b_n$ (as well as the intercept $b_0$). The value of the estimate is statistically tested with a $p$-value to see if it is statistically different from 0 (the null hypothesis). @fig-l04-mc shows the default columns of the table for our example.
+
+```{r}
+#| label: fig-l04-mc
+#| fig-cap: "Model Coefficients table with the default columns."
+#| fig-alt: "Table titled Model Coefficients for js_score with the columns Predictor, Estimate, SE, t and p. The intercept row reads -48.58, 7.92, -6.13 and less than .001. The salary row reads 0.00, 2.65e-4, 7.00 and less than .001."
+#| out-width: "80%"
+include_img("jamovi_mc.png")
+```
+
+- **Predictor** is the list of variables associated with parameters in your model (main and interaction effects), including the intercept.
+- **Estimate** is the non-standardised relationship estimate of the best prediction line (expressed in the unit of the variable).
+- **SE** is the standard error and indicates how spread out the values are around the estimate. <!-- check: as on the slide, but the standard error is the standard deviation of the sampling distribution of the estimate, that is how much the estimate would vary from one sample to another -->
+- $t$ is the value of the statistical test comparing the estimate obtained with this sample with an estimate of 0 (i.e., $H_0$).
+- $p$ is the $p$-value, i.e., the probability to obtain our prediction with our sample in the null hypothesis scenario.
+
+In our example, the table has two rows: the intercept and $salary$. The estimate of $salary$ is displayed as 0.00: it is expressed in the unit of $salary$, so its value is very small, and the table shows only two decimals. Its test gives $t = 7.00$ and $p < .001$.
+
+More columns can be added to the table with the options of jamovi. @fig-l04-mc-full shows the table with all the options: a 95% confidence interval (Lower and Upper) next to the standard error, and, at the right-hand end, the standardised estimate (Stand. Estimate) with its own 95% confidence interval.
+
+```{r}
+#| label: fig-l04-mc-full
+#| fig-cap: "Model Coefficients table with all the options."
+#| fig-alt: "Table titled Model Coefficients for js_score with the columns Predictor, Estimate, SE, a 95 per cent confidence interval (Lower, Upper), t, p, Stand. Estimate and a second 95 per cent confidence interval (Lower, Upper). The intercept row has -48.58, 7.92, -65.21, -31.94, -6.13 and p below .001. The salary row has 0.00, 2.65e-4, 0.00, 0.00, 7.00, p below .001, a standardised estimate of 0.86 and an interval from 0.60 to 1.11."
+#| out-width: "100%"
+include_img("jamovi_mc_full.png")
+```
+
+- The **Omnibus ANOVA Test** is an alternative way to test the model's coefficients, but it should be **used only for a categorical predictor with more than 2 modalities**. <!-- check: the Omnibus ANOVA Test is discussed here and below, but the screenshot of the Model Coefficients table with all the options does not show it -->
+- The **Estimate Confidence Interval** defines the limits of the range in which the estimate can still lie, given the sample size. <!-- check: as on the slide, but a confidence interval gives the plausible values of the parameter in the population, not the values between which the estimate of the sample can lie -->
+- The **Standardised Estimate** indicates the strength and direction of the relationship in terms of correlation.
+
+Note that in our example, because there is only one predictor:
+
+1. The standardised estimate is the correlation (0.86 in @fig-l04-mc-full, the same value as $R$ in @fig-l04-mfm-full). <!-- check: the interval of the standardised estimate in the screenshot goes up to 1.11, which a correlation cannot reach (an exact 95% confidence interval of a correlation of 0.86 with 20 observations is about 0.66 to 0.94) -->
+2. The $F$-test in the Model Fit Measures table is the same as the $F$-test in the Omnibus ANOVA Test.
+3. The $p$-value in the Model Fit Measures table is the same as the one in the Omnibus ANOVA Test and in the Model Coefficients table.
+
+**Report the following values** using the Model Coefficients table with all the options (@fig-l04-mc-full), as written in @eq-l04-report-coef, where $df_2$ is the value of df2 in the Model Fit Measures table:
+
+$$b = value_b, 95\%\ CI [value_{lower\,CI}, value_{upper\,CI}], t(df_2) = value_t, p = value_{p}$$ {#eq-l04-report-coef}
+
+For our example, the sentence to include in the results section is:
+
+> The effect of $salary$ on $js\_score$ is statistically significant, therefore $H_0$ can be rejected (`r lm_1$full_result$salary`).
+
+<!-- check: because salary is in large units, b and its 95% CI are expected to print as 0.00 [0.00, 0.00], as in the jamovi table -->
+
+### p-hacking in correlation tables
+
+The use of correlation tables is widespread in the literature, and they are a great tool for descriptive analysis, but **do not test your hypotheses with correlation tables**. A good practice is to remove all $p$-values or $p$-stars from them.
+
+$p$-values should only be produced to test a hypothesis that has already been formulated. Any other use is called $p$**-hacking**. <!-- check: as on the slide, but $p$-hacking usually means trying analyses until a significant $p$-value appears, which is narrower than "any other use" of $p$-values -->
+
+### Interaction effect example {#sec-l04-interaction}
+
+The second example tests the three hypotheses of the case study in a single model. The variables are:
+
+- Outcome: $js\_score$ (from 0 to 10)
+- Predictor 1: $salary$ (from 0 to Inf.)
+- Predictor 2: $perf$ (from 0 to 10)
+
+The hypotheses are:
+
+- $H_{a_{1}}$: $js\_score$ increases when $salary$ increases (i.e., $b_1>0$)
+    - $H_{0_{1}}$: $js\_score$ stays the same when $salary$ increases (i.e., $b_1=0$)
+- $H_{a_{2}}$: $js\_score$ increases when $perf$ increases (i.e., $b_2>0$)
+    - $H_{0_{2}}$: $js\_score$ stays the same when $perf$ increases (i.e., $b_2=0$)
+- $H_{a_{3}}$: the effect of $salary$ on $js\_score$ increases when $perf$ increases (i.e., $b_3>0$)
+    - $H_{0_{3}}$: the effect of $salary$ on $js\_score$ is the same when $perf$ increases (i.e., $b_3=0$)
+
+The equation of the model is given in @eq-l04-int.
+
+$$js\_score = b_{0} + b_{1}\,salary + b_{2}\,perf + b_{3}\,salary*perf + e$$ {#eq-l04-int}
+
+The test of the interaction $b_{3}\,salary*perf$ corresponds to the test of a new variable for which the values of $salary$ and the values of $perf$ are multiplied. A meme about two-way interactions is shown in @fig-l04-meme-interaction.
+
+```{r}
+#| label: fig-l04-meme-interaction
+#| fig-cap: "A meme about two-way interactions."
+#| fig-alt: "Meme of a man resting his chin on his hand. The top text reads: Yeah, I see your two-way interaction. The bottom text reads: Let's make this interesting."
+#| out-width: "40%"
+include_img("meme_interaction_1.jpg")
+```
+
+To test this model in jamovi:
+
+1. Open your file.
+2. Set the variables as **continuous**.
+3. Go to **Analyses** > **Regression** > **Linear Regression**.
+4. Set $js\_score$ as the Dependent Variable (DV) and both $salary$ and $perf$ as Covariates.
+5. In the **Model Builder** option, select both $salary$ and $perf$ to bring them in the covariates at once and to obtain a third term called $salary*perf$.
+
+@fig-l04-int-jamovi shows the result. In the Model Builder, Block 1 lists the three terms: $salary$, $perf$ and their interaction (displayed as salary * perf). On the right, the Model Fit Measures table gives $R = 0.86$ and $R^2 = 0.74$, and the Model Coefficients table has four rows: the intercept, $salary$, $perf$ and the interaction $salary*perf$.
+
+```{r}
+#| label: fig-l04-int-jamovi
+#| fig-cap: "The linear regression with the interaction between salary and perf in jamovi: options (left) and default tables (right)."
+#| fig-alt: "Screenshot of jamovi. On the left, js_score is the Dependent Variable, salary and perf are the Covariates and the Model Builder lists a Block 1 with salary, perf and the interaction salary by perf. On the right, a Model Fit Measures table with R of 0.86 and R squared of 0.74, and a Model Coefficients table with the rows intercept, salary, perf and salary by perf, each with its estimate, standard error, t and p."
+#| out-width: "100%"
+include_img("jamovi_lm_int.png")
+```
+
+### Worked example: communicating the results of the interaction model {#sec-l04-communicate}
+
+Reading the two tables of @fig-l04-int-jamovi as in the previous worked examples gives one sentence for the overall model and one sentence for each hypothesis. In the Model Coefficients table, the $p$-values are .023 for $salary$, .847 for $perf$ and .861 for the interaction, and the sentences apply the 0.05 threshold to them.
+
+**Overall model.** The prediction provided by the model with all predictors is significantly better than a model without predictors (`r lm_2$full_result$modelfit$r2`).
+
+**Salary hypothesis.** The effect of $salary$ on $js\_score$ is statistically significant, therefore $H_{0_{1}}$ can be rejected (`r lm_2$full_result$salary`).
+
+**Perf hypothesis.** The effect of $perf$ on $js\_score$ is not statistically significant, therefore $H_{0_{2}}$ can't be rejected (`r lm_2$full_result$perf`). <!-- check: with raw predictors and a product term in the model, the estimates of salary and perf are their effects when the other predictor equals 0 (the estimate of perf, 0.91, is the slope of perf at a salary of 0, far outside the data, and perf is almost perfectly correlated with salary*perf, r = 0.997); with centred predictors the estimate of perf would be 0.07 (p = 0.567) and the effect of salary would have t = 6.63 (p < .001), with the same conclusions -->
+
+**Interaction hypothesis.** The interaction effect is not statistically significant, therefore $H_{0_{3}}$ can't be rejected (`r lm_2$full_result$salary_perf`).
+
+### Representing interaction effects
+
+To create a figure automatically in jamovi:
+
+- Go to Estimated Marginal Means.
+- Tick Marginal Means plot.
+- Select both predictors and bring them in the Marginal Means box at once.
+
+@fig-l04-int-plot shows these options on the left and the resulting figure on the right: $js\_score$ against $salary$, with one line for each of the three levels of $perf$ (-1SD, Mean and +1SD).
+
+```{r}
+#| label: fig-l04-int-plot
+#| fig-cap: "The Estimated Marginal Means options in jamovi (left) and the plot of the interaction between salary and perf (right)."
+#| fig-alt: "Screenshot of jamovi. On the left, the Estimated Marginal Means options with a term containing salary and perf and the Marginal means plots option ticked. On the right, a plot of js_score, from about 4 to 10, against salary, from about 28,500 to 31,500, with three almost parallel rising lines for perf at -1SD, Mean and +1SD."
+#| out-width: "100%"
+include_img("jamovi_lm_int_plot.png")
+```
+
+To plot the interaction between two continuous predictors, one of them has to be **transformed into a categorical ordinal variable** of three groups: **+1SD**, **Mean** and **-1SD**. In this case:
+
+- **+1SD** is the group of **high perf** (observations above avg. + 1SD)
+- **Mean** is the group of **average perf** (observations between avg. + 1SD and avg. - 1SD)
+- **-1SD** is the group of **low perf** (observations below avg. - 1SD)
+
+<!-- check: the slide describes the three lines as groups of observations; in the screenshot jamovi seems to plot the predictions at perf = mean - 1SD, mean and mean + 1SD -->
+
+Each line shows the effect of $salary$ on $js\_score$ for one level of $perf$. In our example, the three lines have almost the same slope, which is what $H_{0_{3}}$ states: the effect of $salary$ is the same whatever the level of $perf$ (see @sec-l04-communicate). <!-- check: this sentence is not on a slide. The three lines of the screenshot are exactly parallel: the gap between the +1SD and the -1SD lines is constant (about 0.3, which is 2 x SD of perf x the estimate of perf of a model without the interaction), so the plot seems to come from a model without the interaction. With the interaction model of this chapter the gap would go from 0.44 at a salary of 28,400 to 0.10 at a salary of 31,600 -->
+
+::: {.callout-important title="Warning"}
+When representing the results of the linear regression, **do not use the QQ-plot instead**. <!-- check: unclear which plot is meant; Lecture 6 uses the Q-Q plot to check the normality of the residuals, not to represent results -->
+:::
+
+::: {.callout-important title="Warning"}
+$salary*perf$ is a **two-way interaction**, but interactions can be three-way, four-way or n-way, such as $salary*perf*gender$ or $salary*perf*gender*age$. However, the more complex the interaction, the more difficult it is to interpret its effect.
+:::
+
+::: {.callout-tip title="Your turn: reproduce and extend the models"}
+Open the file `organisation_beta.csv` in jamovi and:
+
+1. Reproduce the results obtained by testing the following models (see @sec-l04-main-jamovi and @sec-l04-interaction):
+    - $js\_score = b_{0} + b_{1}\,salary + e$
+    - $js\_score = b_{0} + b_{1}\,salary + b_{2}\,perf + b_{3}\,salary*perf + e$
+2. Test the following models (`gender` and `location` are categorical predictors, which jamovi expects in the Factors box):
+    - $js\_score = b_{0} + b_{1}\,gender + b_{2}\,perf + b_{3}\,gender*perf + e$
+    - $js\_score = b_{0} + b_{1}\,location + b_{2}\,perf + b_{3}\,location*perf + e$
+
+Suggested time: 10 minutes.
+:::
+
+::: {.callout-tip title="Your turn: test your own hypotheses"}
+With the simulated data which uses the variables of your reference paper, **test the model and the hypotheses that you have formulated in the previous homework exercises**.
+
+Communicate the results and send them to me **before the next lecture**.
+:::
+
+::: {.callout-note title="Key points"}
+- The General Linear Model (linear regression) tests all the hypotheses at once, and common tests such as the t-test or ANOVA are special cases of it.
+- The best line is the one with the smallest residuals (the lowest $MSE$ or $RMSE$), and the slope $b$ of a predictor is the change in the outcome when the predictor increases by 1 unit.
+- The null hypothesis states that the slope is 0 (a horizontal line). It is rejected when the $p$-value, the probability of the data given the null hypothesis, is lower than 0.05.
+- jamovi gives two tables: report $R^2$, $F(df1, df2)$ and $p$ from the Model Fit Measures table, and $b$, its 95% CI, $t(df_2)$ and $p$ from the Model Coefficients table.
+- An interaction such as $salary*perf$ is tested like a new variable (the product of the two predictors) and represented with a marginal means plot at -1SD, the mean and +1SD.
+- Test with $p$-values only the hypotheses that were formulated beforehand: testing hypotheses with correlation tables is $p$-hacking.
+:::

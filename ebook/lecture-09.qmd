@@ -1,0 +1,77 @@
+# Hypothesis Testing in Practice {#sec-lecture-09}
+
+```{r}
+#| label: setup
+#| include: false
+source("R/setup.R")
+```
+
+This chapter is a practical session. Using the data and the list of variables you received by email, you go through a complete analysis, from the formulation of the hypotheses to the inclusion of the results in a Quarto template (@sec-l09-plan). The chapter then gives the details of the assignment of STA1005: the requirements of the research paper to submit and the criteria used to assess it (@sec-l09-assignment).
+
+## Planning of the session {#sec-l09-plan}
+
+<!-- check: on the slides this section is titled "Previously in STA1005", but it holds the plan of the session, not a recap -->
+
+You have received by email some data generated from the paper you have selected (or random data if you haven't selected any paper). In addition to these data, you have received a list of variables as well as their role and the type of effect expected.
+
+Each task below uses skills taught in the previous chapters, and the relevant chapters are given in brackets.
+
+::: {.callout-tip title="Your turn: analyse the data you received by email"}
+Your tasks will be to:
+
+1. Formulate the corresponding hypotheses (see @sec-lecture-01)
+2. Represent the model that includes these hypotheses (see @sec-lecture-02)
+3. Convert this model into an equation (see @sec-lecture-02)
+4. Test this equation with jamovi (see @sec-lecture-04 and @sec-lecture-05)
+5. Report the analysis of the assumptions for a General Linear Model (GLM) with jamovi (see @sec-lecture-06)
+6. Conclude on each hypothesis (see @sec-lecture-04 and @sec-lecture-05)
+7. Test this equation and report the analysis of the assumptions for a GLM with R (see @sec-lecture-07)
+8. Include the results of the analysis in a Quarto template (see @sec-lecture-08)
+
+Suggested time: 5 minutes per task.
+:::
+
+## Assignment {#sec-l09-assignment}
+
+### The research paper to submit
+
+In the coming days, you will receive an email containing data and instructions for the assignment of STA1005.
+
+I will ask you to **submit on Loop a research paper using these data by Wednesday, June 21st at 1 pm**. <!-- check: dated deadline -->
+<!-- check: Lecture 1 gives the deadline as "June 21st, 2026", which is a Sunday, whereas this slide says "Wednesday, June 21st" (21 June was a Wednesday in 2023); lecture_1_ai.qmd has a PROPOSED note to update the deadline for the 2026-2027 cohort; "In the coming days" also depends on the date of the lecture -->
+
+The submitted research paper has to meet the following requirements:
+
+- It will have the **formatting style of a published PDF paper** (see examples here: <https://pkgs.rstudio.com/rticles/articles/examples.html>).
+- It will be **no longer than 6 pages** all included (references included, appendices included). Any page after the 6th page will be discarded.
+- The analysis has to include **at least 3 main effects hypotheses** and **at least 1 interaction effect hypothesis** that are tested **with only 1 model**.
+
+This research paper should include:
+
+- a **short introduction** presenting your variables and research question
+- a **short literature review** with no more than 5 references to support your hypotheses clearly formulated at the end of this section (this literature review can be a short reformulation of the one published in the paper where the data have been taken from)
+- a **method section** with a representation of your model and its corresponding equation
+- a **results section** checking the conditions of application for your linear model as well as presenting descriptive and inferential statistics
+- a **discussion/conclusion** interpreting the results obtained with regard to the formulated hypotheses
+
+There is no requirement to use specific statistical software to perform your analyses.
+
+### Assessment criteria
+
+Obtaining statistically significant results (i.e., *p* < 0.05), rather than not significant results, will not lead to a higher mark.
+
+The only assessment criteria are the following:
+
+- Accuracy of variables, hypotheses, model, and equation description
+- Conformity of statistical analyses and results' interpretations
+- Relevance of Tables and/or Figures
+- Overall presentation style
+
+::: {.callout-note title="Key points"}
+- The practical session has eight tasks, from formulating the hypotheses to including the results in a Quarto template, based on the data and the list of variables received by email.
+- The equation is tested twice, with jamovi and then with R, and the assumptions of the General Linear Model are reported each time.
+- The research paper is submitted on Loop. It has the formatting style of a published PDF paper and is no longer than 6 pages, references and appendices included.
+- The analysis includes at least 3 main effects hypotheses and at least 1 interaction effect hypothesis, all tested with only 1 model.
+- The paper has a short introduction, a short literature review with no more than 5 references, a method section with the model and its equation, a results section and a discussion/conclusion.
+- Obtaining significant results does not lead to a higher mark. The assessment looks at the accuracy of the description of variables, hypotheses, model and equation, the conformity of the analyses and interpretations, the relevance of tables and figures, and the presentation style.
+:::

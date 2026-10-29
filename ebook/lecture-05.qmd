@@ -1,0 +1,832 @@
+# Categories in the General Linear Model {#sec-lecture-05}
+
+```{r}
+#| label: setup
+#| include: false
+source("R/setup.R")
+library(broom)
+library(papaja)
+```
+
+```{r}
+#| label: data
+#| include: false
+set.seed(123)
+
+organisation_beta <- readr::read_csv(here::here("data/organisation_beta.csv"))
+
+m_js_high <- mean(organisation_beta$js_score[organisation_beta$salary_c == "high"])
+m_js_low <- mean(organisation_beta$js_score[organisation_beta$salary_c == "low"])
+lm_c <- lm(js_score ~ salary_c, data = organisation_beta) |> apa_print()
+lm_c2 <- lm(js_score ~ salary_c, data = mutate(organisation_beta, salary_c = if_else(salary_c == "low", 1, 2))
+) |> apa_print()
+lm_c3 <- lm(js_score ~ location, data = organisation_beta) |> aov() |> apa_print()
+```
+
+This chapter explains how categorical predictors are handled in the General Linear Model. It starts with predictors that have only two categories, first for a main effect and then for an interaction effect, and shows that the way the categories are coded changes how the estimates are interpreted. It then turns to predictors that have three or more categories, which need an overall test (ANOVA), and finally to contrasts, which make it possible to test more precise hypotheses. The examples use the `organisation_beta.csv` file, with the steps to follow in jamovi and the corresponding outputs from R.
+
+**Recap.** In @sec-lecture-04, "linear model", "linear regression", "multiple regression" or simply "regression" were all presented as the same model: the **General Linear Model**. It contains one continuous outcome (dependent variable) and one or more categorical or continuous predictors (independent variables), made of main and/or interaction effects:
+
+$$Y = b_{0} + b_{1}\,Predictor\,1 + b_{2}\,Predictor\,2+ ... + b_{n}\,Predictor\,n + e$$
+
+A linear regression is used **to test all the hypotheses at once** and to calculate the predictors' estimates. Specific tests such as the $t$-test or ANOVA are available for certain types of hypothesis, but as they are special cases of linear regressions, their importance is limited (see [Jonas Kristoffer Lindeløv's blog post: Common statistical tests are linear models](https://lindeloev.github.io/tests-as-linear/)).
+
+Once the best line is found, software calculates each estimate. The intercept $b_0$ has no interest for hypothesis testing. Each of $b_1, ..., b_n$ is the slope of the best line between a predictor and the outcome and is used to test one hypothesis: it indicates **how many units the outcome variable increases, decreases or changes when the predictor increases by 1 unit**. If an estimate is 0, the regression line is horizontal, the outcome does not change when the predictor increases and the null hypothesis is not rejected. <!-- check: the recap slide reads "the null alternative hypothesis" -->If an estimate is above or below 0, the regression line is positive or negative, the outcome increases or decreases by $b$ and the null hypothesis is rejected, so the alternative hypothesis is considered plausible. <!-- check: as on the slide, but the next paragraph says that an estimate different from 0 is not enough to reject the null hypothesis (an estimate of 0.35 can be non significant), so the two paragraphs contradict each other -->
+
+The statistical significance of an estimate depends on the **strength of the relationship** and on the **sample size**: an estimate of $b_1 = 0.02$ can be very small but still significantly different from 0, whereas an estimate of $b_1 = 0.35$ can be stronger but in fact not significantly different from 0. The significance is the probability of obtaining your results with your sample in the null hypothesis scenario, also called the $p$-value, which is between 0% and 100% (a value between 0.0 and 1.0). **If the $p$-value is lower than 5% or 0.05, the probability of obtaining your results in the null hypothesis scenario is low enough to say that the null hypothesis is rejected and that there must be a link between the variables.** Remember that the $p$-value is the probability of the data given the null hypothesis: $P(data|H_0)$.
+
+## Hypotheses with categorical predictors having two categories {#sec-l05-two-categories}
+
+This section goes in depth into the processing of categorical predictor variables with linear regressions. Two questions come up:
+
+- How to analyse a predictor with **only two categories**?
+- How to analyse a predictor with **more than two categories**?
+
+The first question is addressed in this section and in the next two, the second in the sections that follow.
+
+### Coding a categorical variable
+
+Imagine we sample male and female employees to see whether the difference between their job satisfaction averages is due **to sampling luck or is reflecting a real difference in the population**. That is, **is the difference between male and female employees statistically significant?** @tbl-l05-employees shows the data, which come from the `organisation_beta.csv` file.
+
+```{r}
+#| label: tbl-l05-employees
+#| tbl-cap: "Gender and job satisfaction score (js_score) of each employee."
+organisation_beta |>
+  dplyr::select(employee, gender, js_score) |>
+  kable()
+```
+
+Using a categorical variable having two categories, **for example comparing female and male employees**, is the same as **comparing female employees coded 1 and male employees coded 2** (@fig-l05-gender-codes). In both panels, the black points are the employees and the blue points are the averages of each category.
+
+```{r}
+#| label: fig-l05-gender-codes
+#| fig-cap: "Job satisfaction of female and male employees, with the two categories shown as words and as codes."
+#| fig-subcap:
+#|   - "Female and male as categories."
+#|   - "Female coded 1 and male coded 2."
+#| fig-alt:
+#|   - "Dot plot of job satisfaction for the categories female and male. Black dots are the employees and a blue dot marks the average of each category."
+#|   - "The same dot plot with the categories replaced by the codes 1 for female and 2 for male on a numeric axis."
+#| layout-ncol: 2
+#| fig-width: 3.3
+#| fig-height: 3.6
+organisation_beta |>
+  ggplot(aes(x = gender, y = js_score)) +
+  geom_point(color = "black", size = 5) +
+  stat_summary(fun = "mean", colour = "blue", size = 6, geom = "point")
+
+organisation_beta |>
+  mutate(gender_c = case_when(
+    gender == "female" ~ 1,
+    gender == "male" ~ 2
+  )) |>
+  ggplot(aes(x = gender_c, y = js_score)) +
+  geom_point(color = "black", size = 5) +
+  stat_summary(fun = "mean", colour = "blue", size = 6, geom = "point") +
+  scale_x_continuous(breaks = c(1, 2), limits = c(0.5, 2.5))
+```
+
+By default, categorical variables **are coded using the alphabetical order** (here female first, then male) with 1, 2, 3 and so on. However, you can recode the variable yourself, with your own order, by creating a new variable with an IF statement (for example `IF(gender == "female", 2, 1)` in jamovi). <!-- check: as on the slide, but jamovi and R do not code the categories 1, 2, 3 by default: they use dummy coding, where the alphabetical order only decides which category is the reference level (coded 0). The jamovi screenshots of this chapter show it: the intercept of 7.75 is marked "reference level" and is the average of the high salary group, whereas the default coding "high = 1, low = 2" would give an intercept of 9.63. The same applies to the two other places where the default coding is described (the next subsection and the report of the main effect) -->
+
+### Default and manual coding in a linear regression
+
+A linear regression of $js\_score$ on the coded gender (a variable called `gender_c`) can be run with either coding. With the **default** coding, female is coded 1 and male is coded 2 (@fig-l05-gender-default and @tbl-l05-gender-default).
+
+```{r}
+#| label: fig-l05-gender-default
+#| fig-cap: "Job satisfaction by gender with female coded 1 and male coded 2 (default coding)."
+#| fig-alt: "Dot plot of job satisfaction against the codes 1 for female and 2 for male. Black dots are the employees and a blue dot marks the average at each code."
+#| fig-width: 4.5
+#| fig-height: 3.5
+#| out-width: "70%"
+organisation_beta <- organisation_beta |>
+  mutate(gender_c = case_when(
+    gender == "female" ~ 1,
+    gender == "male" ~ 2
+  ))
+
+organisation_beta |>
+  ggplot(aes(x = gender_c, y = js_score)) +
+  geom_point(color = "black", size = 5) +
+  stat_summary(fun = "mean", colour = "blue", size = 6, geom = "point") +
+  scale_x_continuous(breaks = c(1, 2), limits = c(0.5, 2.5))
+```
+
+```{r}
+#| label: tbl-l05-gender-default
+#| tbl-cap: "Linear regression of js_score on gender_c, with female coded 1 and male coded 2."
+lm(formula = js_score ~ gender_c, data = organisation_beta) |>
+  tidy() |>
+  mutate(p.value = format.pval(round(p.value, 3), eps = 0.001)) |>
+  kable(digits = 2)
+```
+
+With the **manual** coding, male is coded 1 and female is coded 2 (@fig-l05-gender-manual and @tbl-l05-gender-manual).
+
+```{r}
+#| label: fig-l05-gender-manual
+#| fig-cap: "Job satisfaction by gender with male coded 1 and female coded 2 (manual coding)."
+#| fig-alt: "Dot plot of job satisfaction against the codes 1 for male and 2 for female. Black dots are the employees and a blue dot marks the average at each code."
+#| fig-width: 4.5
+#| fig-height: 3.5
+#| out-width: "70%"
+organisation_beta <- organisation_beta |>
+  mutate(gender_c = case_when(
+    gender == "female" ~ 2,
+    gender == "male" ~ 1
+  ))
+
+organisation_beta |>
+  ggplot(aes(x = gender_c, y = js_score)) +
+  geom_point(color = "black", size = 5) +
+  stat_summary(fun = "mean", colour = "blue", size = 6, geom = "point") +
+  scale_x_continuous(breaks = c(1, 2), limits = c(0.5, 2.5))
+```
+
+```{r}
+#| label: tbl-l05-gender-manual
+#| tbl-cap: "Linear regression of js_score on gender_c, with male coded 1 and female coded 2."
+lm(data = organisation_beta, formula = js_score ~ gender_c) |>
+  tidy() |>
+  mutate(p.value = format.pval(round(p.value, 3), eps = 0.001)) |>
+  kable(digits = 2)
+```
+
+Between the two tables, the estimate of `gender_c` and its $t$ value change sign whereas the $p$-value stays the same.
+
+### A categorical predictor with two categories {#sec-l05-salary}
+
+Let us use another example with the `organisation_beta.csv` file.
+
+**Variable transformation.** Instead of using $salary$ as a **continuous variable**, let us convert it into $salary\_c$, which is a **categorical variable**:
+
+- everything higher than or equal to the salary average is labelled "**high**" salary
+- everything lower than the salary average is labelled "**low**" salary
+
+**Hypothesis.** The $js\_score$ of employees having a **high** $salary\_c$ is different than the $js\_score$ of employees having a **low** $salary\_c$. In mathematical terms:
+
+$$H_a: \mu(js\_score)_{high\,salary} \neq \mu(js\_score)_{low\,salary}$$
+$$H_0: \mu(js\_score)_{high\,salary} = \mu(js\_score)_{low\,salary}$$
+
+A hypothesis of differences between two groups is easily tested with a linear regression:
+
+- if $\mu_{1} \neq \mu_{2}$, the slope of the line between these averages is not null (i.e., $b_{1} \neq 0$)
+- if $\mu_{1} = \mu_{2}$, the slope of the line between these averages is null (i.e., $b_{1} = 0$)
+
+Comparing the difference between two averages is the same as comparing the slope of the line crossing these two averages: if the two averages are **not equal**, then **the slope of the line crossing them is not 0**, and if they are **equal**, then **the slope of the line crossing them is 0**. @fig-l05-slope shows the line crossing the two averages of $js\_score$.
+
+```{r}
+#| label: fig-l05-slope
+#| fig-cap: "Job satisfaction of employees with a high or low salary: the blue bars are the two averages, the red line crosses them and the dashed line marks the value halfway between them."
+#| fig-alt: "Points of job satisfaction for the salary categories high and low, spread slightly sideways. Blue horizontal bars mark the average of each category, a red line joins the two averages and slopes downwards from high to low, and a dashed horizontal line marks the value halfway between the two averages. The plot caption reads: high coded 1 and low coded 2 (default)."
+#| fig-width: 4
+#| fig-height: 4
+#| out-width: "60%"
+organisation_beta |>
+  ggplot(aes(x = salary_c, y = js_score)) +
+  geom_jitter(width = 0.1) +
+  geom_segment(x = 1, xend = 2, y = m_js_high, yend = m_js_low, lwd = 2, color = "red") +
+  geom_hline(yintercept = (m_js_high + m_js_low)/2, linetype = "dashed") +
+  stat_summary(fun = mean, geom = "errorbar", aes(ymax = ..y.., ymin = ..y..), lwd = 2, color = "blue") +
+  theme(
+    legend.position = "none"
+  ) +
+  labs(caption = "high coded 1 and low coded 2 (default)")
+```
+
+::: {.callout-important title="Warning"}
+jamovi and other software **automatically code categorical variables following the alphabetical order** but sometimes you need to change these codes.
+:::
+
+For example, here **low coded with the value 1** and **high coded with the value 2** would make more sense (@fig-l05-slope-recoded). The way categorical variables are coded influences the sign of the estimate (positive vs. negative), but **it does not change the value of the statistical test** nor the $p$-value obtained. <!-- check: as on the slide, but the $t$ value changes sign with the coding (-2.88 or 2.88 here): only its size and the $p$-value stay the same -->
+
+```{r}
+#| label: fig-l05-slope-recoded
+#| fig-cap: "The same plot with low coded 1 and high coded 2."
+#| fig-alt: "Points of job satisfaction for the salary categories low and high, spread slightly sideways. Blue horizontal bars mark the average of each category, a red line joins the two averages and now slopes upwards from low to high, and a dashed horizontal line marks the value halfway between the two averages."
+#| fig-width: 4
+#| fig-height: 4
+#| out-width: "60%"
+organisation_beta |>
+  mutate(salary_c = factor(salary_c, levels = c("low", "high"))) |>
+  ggplot(aes(x = salary_c, y = js_score)) +
+  geom_jitter(width = 0.1) +
+  geom_segment(x = 1, xend = 2, yend = m_js_high, y = m_js_low, lwd = 2, color = "red") +
+  geom_hline(yintercept = (m_js_high + m_js_low)/2, linetype = "dashed") +
+  stat_summary(fun = mean, geom = "errorbar", aes(ymax = ..y.., ymin = ..y..), lwd = 2, color = "blue") +
+  theme(
+    legend.position = "none"
+    )
+```
+
+**To test the influence of a categorical predictor** variable, either nominal or ordinal, **having two categories** (e.g., high vs. low, male vs. female, France vs. Ireland), it is possible to **test whether the $b$ associated with this predictor is significantly higher, lower, or different from 0**:
+
+$$js\_score = b_{0} + b_{1}\,salary\_c + e$$
+
+The template to report the results is exactly the same as for continuous predictors (@sec-lecture-04):
+
+> The predictions provided by the alternative model are significantly better than those provided by the null model (`r lm_c2$full_result$modelfit$r2`).
+
+> The effect of $salary\_c$ on $js\_score$ is statistically significant, therefore $H_0$ can be rejected (`r lm_c2$full_result$salary_c`).
+
+## Testing main effects with categorical predictors {#sec-l05-main}
+
+### Testing a categorical predictor in jamovi
+
+To test a categorical predictor in jamovi:
+
+1. Open your file
+2. Set the variables in their **correct type**
+3. Go to **Analyses > Regression > Linear Regression**
+4. Set $js\_score$ as DV (dependent variable) and $salary\_c$ as Factors (i.e., categorical predictor)
+
+@fig-l05-jamovi-main shows the result. The Model Coefficients table has one row for the intercept, marked as the reference level, and one row for $salary\_c$, which compares "low" with "high".
+
+```{r}
+#| label: fig-l05-jamovi-main
+#| fig-cap: "Linear regression of js_score on the categorical predictor salary_c in jamovi."
+#| fig-alt: "Screenshot of the jamovi Linear Regression window. The variable js_score is in the Dependent Variable box and salary_c is in the Factors box. The results show the Model Fit Measures, with R of 0.56 and R squared of 0.31, and the Model Coefficients for js_score: an intercept of 7.75 (p below .001, marked as the reference level) and a salary_c row for low minus high with an estimate of minus 1.87, a standard error of 0.65, a t value of minus 2.88 and a p value of 0.010."
+#| out-width: "100%"
+include_img("jamovi_lm_main_c2.png")
+```
+
+The model is communicated as follows:
+
+> The prediction provided by the model with all predictors is significantly better than a model without predictors (`r lm_c$full_result$modelfit$r2`).
+
+The hypothesis is communicated as follows, first with the default coding (high = 1 vs. low = 2): <!-- check: see the comment on the default coding above (jamovi and R use dummy coding) -->
+
+> The effect of $salary\_c$ on $js\_score$ is statistically significant, therefore $H_{0}$ can be rejected (`r lm_c$full_result$salary_c`).
+
+and then with the manual coding (low = 1 vs. high = 2):
+
+> The effect of $salary\_c$ on $js\_score$ is statistically significant, therefore $H_{0}$ can be rejected (`r lm_c2$full_result$salary_c`).
+
+### Coding of categorical predictors {#sec-l05-coding-categories}
+
+Choosing 1 and 2 as codes is **just arbitrary**: any other possibility will produce the same $p$-value. However, choosing codes separated by 1 is handy because it is easily interpretable: **the estimate corresponds to the change from one category to another**:
+
+> The $js\_score$ of "high" $salary\_c$ employees is `r round(m_js_high - m_js_low, 2)` higher than the $js\_score$ of "low" $salary\_c$ employees (when "low" is coded 1 and "high" coded 2).
+
+Two special cases are worth knowing: dummy coding and deviation coding.
+
+### Dummy coding {#sec-l05-dummy}
+
+**Dummy coding** is the special case where one category is coded 0 and the other is coded 1. Then the intercept, the value of $js\_score$ when the predictor is 0, <!-- check: the slide reads "when salary is 0" -->corresponds to the category coded 0, and the test of the intercept is the test of the average of the category coded 0 against an average of 0. This is called a **simple effect**. Dummy coding is useful because one of the categories becomes the intercept and is tested against 0.
+
+For example, in jamovi, recode female as 0 and male as 1 with `IF(gender == "female", 0, 1)`. @fig-l05-gender-dummy and @tbl-l05-gender-dummy show the result.
+
+```{r}
+#| label: fig-l05-gender-dummy
+#| fig-cap: "Job satisfaction by gender with female coded 0 and male coded 1 (dummy coding)."
+#| fig-alt: "Dot plot of job satisfaction against the codes 0 for female and 1 for male. Black dots are the employees and a blue dot marks the average at each code."
+#| fig-width: 4.5
+#| fig-height: 3.5
+#| out-width: "70%"
+organisation_beta <- organisation_beta |>
+  mutate(gender_c = case_when(
+    gender == "female" ~ 0,
+    gender == "male" ~ 1
+  ))
+
+organisation_beta |>
+  ggplot(aes(x = gender_c, y = js_score)) +
+  geom_point(color = "black", size = 5) +
+  stat_summary(fun = "mean", colour = "blue", size = 6, geom = "point") +
+  scale_x_continuous(breaks = c(0, 1), limits = c(-0.5, 1.5))
+```
+
+```{r}
+#| label: tbl-l05-gender-dummy
+#| tbl-cap: "Linear regression of js_score on gender_c, with female coded 0 and male coded 1."
+lm(data = organisation_beta, formula = js_score ~ gender_c) |>
+  broom::tidy() |>
+  dplyr::mutate(p.value = format.pval(round(p.value, 3), eps = 0.001)) |>
+  kable(digits = 2)
+```
+
+### Deviation coding {#sec-l05-deviation}
+
+**Deviation coding** is the special case where the intercept is situated between the codes of the categories, for example when one category is coded 1 and the other -1. Then the intercept corresponds to the average between the two categories and the test of the intercept is the test of the average for the variable. <!-- check: with groups of different sizes this intercept is the average of the two group averages (6.85 here, with 8 women and 12 men), not the average of all the employees (6.81) --> Deviation coding is useful because **the average of the categories becomes the intercept** and is tested against 0.
+
+For example, in jamovi, recode female as -1 and male as 1 with `IF(gender == "female", -1, 1)`.
+
+However, with a deviation coding using -1 vs. +1, **the distance between the categories is 2**, not 1. Therefore, even if the test of the slope is exactly the same, the value of the slope (the estimate) is half as large and so not as easy to interpret. Consequently, it is possible to use **a deviation coding with -0.5 vs. +0.5 to keep the distance of 1** between the categories. For example, in jamovi, recode female as -0.5 and male as 0.5 with `IF(gender == "female", -0.5, 0.5)`.
+
+@fig-l05-gender-deviation-1 and @tbl-l05-gender-deviation-1 show the result with female = -1 and male = 1.
+
+```{r}
+#| label: fig-l05-gender-deviation-1
+#| fig-cap: "Job satisfaction by gender with female coded -1 and male coded 1 (deviation coding)."
+#| fig-alt: "Dot plot of job satisfaction against the codes -1 for female and 1 for male. Black dots are the employees and a blue dot marks the average at each code."
+#| fig-width: 4.5
+#| fig-height: 3.5
+#| out-width: "70%"
+organisation_beta <- organisation_beta |>
+  mutate(gender_c = case_when(
+    gender == "female" ~ -1,
+    gender == "male" ~ 1
+  ))
+
+organisation_beta |>
+  ggplot(aes(x = gender_c, y = js_score)) +
+  geom_point(color = "black", size = 5) +
+  stat_summary(fun = "mean", colour = "blue", size = 6, geom = "point") +
+  scale_x_continuous(breaks = c(-1, 1), limits = c(-1.5, 1.5))
+```
+
+```{r}
+#| label: tbl-l05-gender-deviation-1
+#| tbl-cap: "Linear regression of js_score on gender_c, with female coded -1 and male coded 1."
+lm(data = organisation_beta, formula = js_score ~ gender_c) |>
+  broom::tidy() |>
+  dplyr::mutate(p.value = format.pval(round(p.value, 3), eps = 0.001)) |>
+  kable(digits = 2)
+```
+
+@fig-l05-gender-deviation-05 and @tbl-l05-gender-deviation-05 show the result with female = -0.5 and male = 0.5.
+
+```{r}
+#| label: fig-l05-gender-deviation-05
+#| fig-cap: "Job satisfaction by gender with female coded -0.5 and male coded 0.5 (deviation coding)."
+#| fig-alt: "Dot plot of job satisfaction against the codes -0.5 for female and 0.5 for male. Black dots are the employees and a blue dot marks the average at each code."
+#| fig-width: 4.5
+#| fig-height: 3.5
+#| out-width: "70%"
+organisation_beta <- organisation_beta |>
+  mutate(gender_c = case_when(
+    gender == "female" ~ -0.5,
+    gender == "male" ~ 0.5
+  ))
+
+organisation_beta |>
+  ggplot(aes(x = gender_c, y = js_score)) +
+  geom_point(color = "black", size = 5) +
+  stat_summary(fun = "mean", colour = "blue", size = 6, geom = "point") +
+  scale_x_continuous(breaks = c(-0.5, 0.5), limits = c(-1, 1))
+```
+
+```{r}
+#| label: tbl-l05-gender-deviation-05
+#| tbl-cap: "Linear regression of js_score on gender_c, with female coded -0.5 and male coded 0.5."
+lm(data = organisation_beta, formula = js_score ~ gender_c) |>
+  broom::tidy() |>
+  dplyr::mutate(p.value = format.pval(round(p.value, 3), eps = 0.001)) |>
+  kable(digits = 2)
+```
+
+## Testing interaction effects with categorical predictors {#sec-l05-interaction}
+
+To test an interaction between categorical predictors in jamovi:
+
+1. Open your file
+2. Set the variables according to their type
+3. Go to **Analyses > Regression > Linear Regression**
+4. Set $js\_score$ as DV and both $salary\_c$ and $gender$ as Factors
+5. In the **Model Builder** option, select both $salary\_c$ and $gender$ to bring them in the Factors at once <!-- check: the screenshot shows the two predictors moved to Block 1 of the Model Builder, not to Factors -->
+
+The model tested is:
+
+$$js\_score = b_{0} + b_{1}\,salary\_c + b_{2}\,gender + b_{3}\,salary\_c*gender + e$$
+
+Note that the test of the interaction effect corresponds to the test of a variable resulting from the multiplication between the codes of $salary\_c$ and the codes of $gender$. @fig-l05-jamovi-interaction shows the result in jamovi. In the Model Builder, Block 1 contains $salary\_c$, $gender$ and their interaction, and the Model Coefficients table has one row for the intercept, one row for each of $salary\_c$ and $gender$, and one row for the interaction.
+
+```{r}
+#| label: fig-l05-jamovi-interaction
+#| fig-cap: "Linear regression of js_score on salary_c, gender and their interaction in jamovi."
+#| fig-alt: "Screenshot of the jamovi Linear Regression window. The variable js_score is the dependent variable and salary_c and gender are in the Factors box. In the Model Builder, Block 1 contains salary_c, gender and salary_c times gender. The results show Model Fit Measures with R of 0.57 and R squared of 0.32, and Model Coefficients with an intercept of 7.93 and rows for salary_c (low minus high, estimate minus 1.82, p of 0.113), gender (male minus female, estimate minus 0.29, p of 0.771) and the interaction (estimate minus 0.09, p of 0.947)."
+#| out-width: "100%"
+include_img("jamovi_lm_main_cint.png")
+```
+
+::: {.callout-note title="Live demonstration"}
+In the lecture, a model with an interaction between categorical predictors is run live in jamovi before the exercise below.
+:::
+
+::: {.callout-tip title="Your turn: test two interaction models"}
+With the `organisation_beta.csv` data, test the following models and conclude on each effect:
+
+Model 1: $js\_score = b_{0} + b_{1}\,perf + b_{2}\,gender + b_{3}\,perf*gender + e$
+
+Model 2: $js\_score = b_{0} + b_{1}\,perf + b_{2}\,location + b_{3}\,perf*location+ e$
+
+Suggested time: 10 minutes.
+:::
+
+## Hypotheses with a categorical predictor having three or more categories {#sec-l05-three-categories}
+
+### Predictors with three or more categories {#sec-l05-three-coding}
+
+I would like to test the effect of the variable $location$, which has three categories: "Ireland", "France" and "Australia". @fig-l05-jamovi-three shows the result in jamovi.
+
+```{r}
+#| label: fig-l05-jamovi-three
+#| fig-cap: "Linear regression of js_score on the three-category predictor location in jamovi."
+#| fig-alt: "Screenshot of the jamovi Linear Regression window. The variable js_score is the dependent variable and location is in the Factors box. The results show Model Fit Measures with R of 0.53 and R squared of 0.28, and Model Coefficients with an intercept of 6.21 and two rows for location: France minus Australia, with an estimate of 0.06 and a p value of 0.948, and Ireland minus Australia, with an estimate of 1.95 and a p value of 0.031."
+#| out-width: "100%"
+include_img("jamovi_lm_main_c31.png")
+```
+
+In the Model Coefficients table, to test the estimate of $location$, there is not one result for $location$ but two! They are:
+
+- the comparison of "Australia" vs. "France"
+- the comparison of "Australia" vs. "Ireland"
+
+**Why are multiple $p$-values provided for the same predictor?**
+
+To understand why, take the following variables:
+
+- Outcome = $js\_score$ (from 0 to 10)
+- Predictor = $location$ (three categories: *Australia*, *France* and *Ireland*)
+
+@tbl-l05-location-data and @fig-l05-location show the data.
+
+```{r}
+#| label: tbl-l05-location-data
+#| tbl-cap: "Location and job satisfaction score (js_score) of each employee."
+organisation_beta |>
+  select(employee, location, js_score) |>
+  kable()
+```
+
+```{r}
+#| label: fig-l05-location
+#| fig-cap: "Job satisfaction of the employees working in Australia, France and Ireland."
+#| fig-alt: "Dot plot of job satisfaction for the locations Australia, France and Ireland. Black dots are the employees and a blue dot marks the average of each location."
+#| fig-width: 4.5
+#| fig-height: 3.5
+#| out-width: "70%"
+organisation_beta |>
+  ggplot(aes(location, js_score)) +
+  geom_point(color = "black", size = 5) +
+  stat_summary(fun = "mean", colour = "blue", size = 6, geom = "point") +
+  scale_x_discrete("location")
+```
+
+A $t$-test can only compare two categories. Because linear regression models are (kind of) $t$-tests, the categories are compared two by two, with one category as the reference to compare all the others. For example, a linear regression of $location$ on $js\_score$ <!-- check: as on the slide, but the model has js_score as the outcome and location as the predictor (js_score ~ location), so "of js_score on location" would be exact --> displays not one effect for $location$ but the effects of the two-by-two comparisons, using a reference group chosen by alphabetical order (@tbl-l05-location-lm). In this table, `locationFrance` is the comparison of France with the reference group and `locationIreland` the comparison of Ireland with the reference group.
+
+```{r}
+#| label: tbl-l05-location-lm
+#| tbl-cap: "Linear regression of js_score on location, with Australia as the reference group."
+lm(data = organisation_beta, formula = js_score ~ location) |>
+  tidy() |>
+  mutate(p.value = format.pval(round(p.value, 3), eps = 0.001)) |>
+  kable(digits = 2)
+```
+
+In our case the reference is the group "Australia" (first letter).
+
+Here is our problem: **how to test the overall effect of a variable with three or more categories?**
+
+### ANOVA for overall effects {#sec-l05-anova}
+
+Besides linear regression and the $t$-test, researchers use ANOVA a lot. ANOVA stands for Analysis of Variance and is also a subcategory of linear regression models. ANOVA is used to calculate the overall effect of a categorical variable having more than two categories, as the $t$-test cannot cope. In the case of testing one categorical variable, a "one-way" ANOVA is performed.
+
+**How does ANOVA work?** In real words:
+
+- $H_a$: at least one group is different from the others
+- $H_0$: all the groups are the same
+
+In mathematical terms:
+
+- $H_a$: it is **not true** that $\mu_{1} = \mu_{2} = \mu_{3}$
+- $H_0$: it is **true** that $\mu_{1} = \mu_{2} = \mu_{3}$
+
+I will not go too much into the details but, to check whether at least one group is different from the others, the distance of each value to the overall mean (between-group variation) is compared to the distance of each value to their group mean (within-group variation). <!-- check: the slide defines between-group variation as the distance of each value to the overall mean, whereas the figure defines it as the differences among group means; the distance of each value to the overall mean is the total variation (here the sums of squares are 15.60 between groups, 40.24 within groups and 55.84 in total) -->**If the between-group variation is the same as the within-group variation, all the groups are the same.** <!-- check: as on the slide, but an $F$ value close to 1 only gives no evidence of a difference between the groups; it does not show that the groups are the same --> @fig-l05-anova-basics illustrates both: in panel A, the between-group variation is the difference among the group means, and in panel B, the within-group variation is the variability within each group.
+
+```{r}
+#| label: fig-l05-anova-basics
+#| fig-cap: "The two sources of variation compared by a one-way ANOVA: between-group variation (A) and within-group variation (B)."
+#| fig-alt: "Two panels showing three bell-shaped distributions in blue, yellow and grey, centred on the values 5, 8 and 11 of a variable called Value. In panel A, titled between-group variation (the differences among group means), double-headed arrows link the three group means. In panel B, titled within-group variation (the variability within each group), a double-headed arrow spans the width of each distribution."
+#| out-width: "80%"
+include_img("one_way_anova_basics.png")
+```
+
+### ANOVA in our example {#sec-l05-anova-example}
+
+A hypothesis for a categorical predictor with three or more categories predicts that **at least one group among the three groups will have an average significantly different from the other averages**. The hypothesis is formulated as follows:
+
+> The $js\_score$ of employees working in at least one specific $location$ will be significantly different than the $js\_score$ of employees working in the other $location$.
+
+In mathematical terms:
+
+- $H_0$: it is true that
+
+  $$\mu(js\_score)_{Ireland} = \mu(js\_score)_{France} = \mu(js\_score)_{Australia}$$
+
+- $H_a$: it is **not** true that
+
+  $$\mu(js\_score)_{Ireland} = \mu(js\_score)_{France} = \mu(js\_score)_{Australia}$$
+
+This analysis is usually performed using a one-way ANOVA but, as ANOVA is a special case of the General Linear Model, let us keep this approach. @fig-l05-anova-data shows the three group averages and the overall average.
+
+```{r}
+#| label: fig-l05-anova-data
+#| fig-cap: "Job satisfaction by location: the blue bars are the group averages and the dashed line is the overall average."
+#| fig-alt: "Points of job satisfaction for Australia, France and Ireland, spread slightly sideways. A blue horizontal bar marks the average of each location and a dashed horizontal line marks the average of all the employees."
+#| fig-width: 4.5
+#| fig-height: 3.5
+#| out-width: "70%"
+organisation_beta |>
+  ggplot(aes(x = location, y =  js_score)) +
+  geom_jitter(width = 0.1) +
+  geom_hline(yintercept = mean(organisation_beta$js_score), linetype = "dashed") +
+  stat_summary(fun = mean, geom = "errorbar", aes(ymax = ..y.., ymin = ..y..), lwd = 2, color = "blue") +
+  theme(
+    legend.position = "none"
+  )
+```
+
+To run it in jamovi:
+
+1. Open your file
+2. Set the variables according to their type
+3. Go to Analyses > Regression > Linear Regression
+4. Set $js\_score$ as DV and $location$ as Factors
+5. In the **Model Coefficients** option, select **Omnibus Test ANOVA test**
+
+@fig-l05-jamovi-anova shows the result. The Omnibus ANOVA Test table gives a single test for $location$, whereas the Model Coefficients table still lists the two comparisons with Australia.
+
+```{r}
+#| label: fig-l05-jamovi-anova
+#| fig-cap: "Linear regression of js_score on location with the Omnibus ANOVA test in jamovi."
+#| fig-alt: "Screenshot of the jamovi Linear Regression window with js_score as the dependent variable and location in the Factors box. The results show Model Fit Measures with R of 0.53 and R squared of 0.28, an Omnibus ANOVA Test table with a location row (sum of squares 15.60, 2 degrees of freedom, mean square 7.80, F of 3.30, p of 0.062) and a Residuals row (sum of squares 40.24, 17 degrees of freedom, mean square 2.37), and the Model Coefficients table with France minus Australia and Ireland minus Australia."
+#| out-width: "100%"
+include_img("jamovi_lm_main_c32.png")
+```
+
+The result is communicated as follows:
+
+> There is no significant effect of employees' $location$ on their average $js\_score$ (`r lm_c3$statistic$location`).
+
+::: {.callout-note title="Live demonstration"}
+In the lecture, the analysis of a predictor with three categories is run live in jamovi before the exercise below.
+:::
+
+::: {.callout-tip title="Your turn: test models with salary, location and performance"}
+Using the `organisation_beta.csv` file, test the following models and conclude on the hypothesis related to each estimate:
+
+Model 1: $js\_score = b_{0} + b_{1}\,salary + b_{2}\,location + b_{3}\,perf + e$
+
+Model 2:
+
+$$js\_score = b_{0} + b_{1}\,salary + b_{2}\,location + b_{3}\,perf + b_{4}\,salary*location +$$
+$$b_{5}\,perf*location + b_{6}\,perf*salary + b_{7}\,salary*location*perf + e$$
+
+Suggested time: 5 minutes.
+:::
+
+## Manipulating contrasts with categorical predictors {#sec-l05-contrasts}
+
+### Post-hoc tests {#sec-l05-posthoc}
+
+Imagine you want to test the specific difference between France and Ireland: **how to obtain a test of specific categories when using a categorical variable with three or more categories?**
+
+The "post-hoc" test runs a separate $t$-test for every pairwise comparison of categories (@tbl-l05-posthoc). <!-- check: as on the slide, but the $p$-values of the table are Tukey-adjusted (ptukey: 1.00, 0.08 and 0.11), which jamovi does by default, whereas separate unadjusted $t$-tests would give 0.948, 0.031 and 0.048 -->
+
+```{r}
+#| label: tbl-l05-posthoc
+#| tbl-cap: "Post-hoc tests of the pairwise differences between locations (md: mean difference, ptukey: p-value with the Tukey correction)."
+res <- jmv::ANOVA(
+    formula = js_score ~ location,
+    data = organisation_beta,
+    postHoc = ~ location)
+
+res$postHoc[[1]] |>
+  kable(digits = 2)
+```
+
+Even if it looks useful, a "post-hoc" test can be considered as $p$-hacking because **there is no specific hypothesis testing, everything is compared**. Corrections for multiple tests are available (i.e., Tukey, Scheffe, Bonferroni or Holm) but they are not good practice. <!-- check: as on the slide, but the post-hoc table above already applies a Tukey correction, and a correction for multiple tests is what makes pairwise comparisons acceptable; the problem raised here is the absence of a specific hypothesis -->
+
+### Contrasts or factorial ANOVA {#sec-l05-contrast-rules}
+
+By using specific codes for the categories (also called **contrasts**), it is possible to test more precise hypotheses. Actually, you are mastering contrasts already: when a recoding is done on a variable with two categories (like dummy coding or deviation coding), a contrast is applied.
+
+When a recoding is used on more than two categories, three rules have to be applied:
+
+1. **Categories with the same code are tested together.** For example, coding Ireland 1, France 1 and Australia 2 compares Ireland and France versus Australia.
+2. **The number of contrasts possible is the number of categories minus 1.** For example, $location$ has three categories so two contrast comparisons can be performed.
+3. **The value 0 means the category is not taken into account.** For example, coding Ireland 1, France 0 and Australia 2 compares Ireland versus Australia. <!-- check: as on the slide, but with a single contrast variable coded Ireland 1, France 0 and Australia 2, France is not ignored (in the data the slope is -0.11, p = 0.817); a 0 only means "not taken into account" when the codes of the contrast sum to zero (for example 1, 0 and -1) and the complementary contrast is in the model -->
+
+### Sum to zero contrasts {#sec-l05-sum-zero}
+
+Also called "simple" contrasts, each contrast encodes the difference between one of the groups and a baseline category, which in this case corresponds to the first group. <!-- check: with these codes, the regression coefficients compare each category with the average of the group means rather than with a baseline category (see the worked example below) -->@tbl-l05-sum-zero-example gives the codes of the three categories of a predictor (placebo and two vaccines) and @fig-l05-sum-zero-outcome the outcome of each category.
+
+```{r}
+#| label: tbl-l05-sum-zero-example
+#| tbl-cap: "Sum to zero contrasts for a predictor with three categories."
+contrast_df <-
+  tribble(
+    ~`Predictor's categories`, ~Contrast1, ~Contrast2,
+    "Placebo",                 -1,         -1,
+    "Vaccine 1",                1,          0,
+    "Vaccine 2",                0,          1
+  )
+
+contrast_df |>
+  kable()
+```
+
+```{r}
+#| label: fig-l05-sum-zero-outcome
+#| fig-cap: "Outcome of each category of the predictor."
+#| fig-alt: "Bar chart of an outcome for the categories Placebo, Vaccine 1 and Vaccine 2, with bars of height 4, 5 and 9."
+#| fig-width: 4
+#| fig-height: 3
+#| out-width: "60%"
+contrast_df |>
+  mutate(Outcome = c(4, 5, 9)) |>
+  ggplot(aes(`Predictor's categories`, Outcome)) +
+  geom_col()
+```
+
+In this example:
+
+- Contrast 1 compares Placebo with Vaccine 1
+- Contrast 2 compares Placebo with Vaccine 2
+
+However, I will not be able to compare Vaccine 1 and Vaccine 2. <!-- check: as on the slide, but with these codes the regression coefficients of the outcomes 4, 5 and 9 would be an intercept of 6 (the average of the three outcomes), -1 for Contrast 1 (5 minus 6) and 3 for Contrast 2 (9 minus 6), not the differences with Placebo (1 and 5) -->
+
+### Polynomial contrasts {#sec-l05-polynomial}
+
+Polynomial contrasts are the most powerful of all the contrasts to test linear and non-linear effects: Contrast 1 is called Linear, Contrast 2 is Quadratic, Contrast 3 is Cubic, Contrast 4 is Quartic and so on. <!-- check: as on the slide, but nothing supports "the most powerful of all the contrasts", and the labels linear and quadratic only make sense for categories that are ordered, which is not the case of location (in the worked example below, poly_c2 compares Ireland with the two other locations) --> @tbl-l05-polynomial-example gives the codes of the three categories of a predictor (low, medium and high) and @fig-l05-polynomial-outcome the outcome of each category.
+
+```{r}
+#| label: tbl-l05-polynomial-example
+#| tbl-cap: "Polynomial contrasts for a predictor with three categories."
+contrast_df <-
+  tribble(
+    ~`Predictor's categories`, ~Contrast_1, ~Contrast_2,
+    "Low",                     -1,           1,
+    "Medium",                   0,          -2,
+    "High",                     1,           1
+  )
+
+contrast_df |>
+  kable()
+```
+
+```{r}
+#| label: fig-l05-polynomial-outcome
+#| fig-cap: "Outcome of each category of the predictor."
+#| fig-alt: "Bar chart of an outcome for the categories Low, Medium and High, with bars of height 4, 5 and 9."
+#| fig-width: 4
+#| fig-height: 3
+#| out-width: "60%"
+contrast_df |>
+  mutate(
+    Outcome = c(4, 5, 9),
+    `Predictor's categories` = factor(`Predictor's categories`, levels = c("Low", "Medium", "High"))
+  ) |>
+  ggplot(aes(`Predictor's categories`, Outcome)) +
+  geom_col()
+```
+
+In this example:
+
+- Contrast 1 checks the linear increase between **Low**, **Medium** and **High**
+- Contrast 2 checks the quadratic change between **Low**, **Medium** and **High**
+
+If the hypothesis specified a linear increase, we would expect Contrast 1 to be significant but Contrast 2 to be non-significant.
+
+### Worked example: comparing the results of different contrasts {#sec-l05-compare}
+
+In the lecture, this example is demonstrated live. It shows what happens with different contrasts when comparing the average $js\_score$ according to the employee's $location$: **France**, **Ireland** and **Australia**. The contrast variables are first added to the data.
+
+<!-- check: the slide code also creates treatment_c1 and treatment_c2, which are never shown or used -->
+
+```{r}
+#| label: contrast-variables
+organisation_beta <- organisation_beta |>
+  dplyr::mutate(
+    treatment_c1 = case_when(
+      location == "Ireland" ~ 1,
+      location == "France" ~ 0,
+      location == "Australia" ~ 0
+    ),
+    treatment_c2 = case_when(
+      location == "Ireland" ~ 0,
+      location == "France" ~ 0,
+      location == "Australia" ~ 1
+    ),
+    sum_c1 = case_when(
+      location == "Ireland" ~ 1,
+      location == "France" ~ -1,
+      location == "Australia" ~ 0
+    ),
+    sum_c2 = case_when(
+      location == "Ireland" ~ 0,
+      location == "France" ~ -1,
+      location == "Australia" ~ 1
+    ),
+    poly_c1 = case_when(
+      location == "Ireland" ~ 0,
+      location == "France" ~ -1,
+      location == "Australia" ~ 1
+    ),
+    poly_c2 = case_when(
+      location == "Ireland" ~ -2,
+      location == "France" ~ 1,
+      location == "Australia" ~ 1
+    )
+  )
+```
+
+**Sum to zero contrasts.** @tbl-l05-sum-zero-codes gives the codes and @tbl-l05-sum-zero-lm the result of the linear regression of $js\_score$ on the two contrast variables.
+
+```{r}
+#| label: tbl-l05-sum-zero-codes
+#| tbl-cap: "Sum to zero contrast codes for the three locations."
+tribble(
+  ~category, ~sum_c1, ~sum_c2,
+  "France",  -1,  -1,
+  "Ireland",  1,   0,
+  "Australia",    0,   1
+) |>
+  kable()
+```
+
+```{r}
+#| label: tbl-l05-sum-zero-lm
+#| tbl-cap: "Linear regression of js_score on the two sum to zero contrasts."
+lm(data = organisation_beta, formula = js_score ~ sum_c1 + sum_c2) |>
+  tidy() |>
+  mutate(p.value = format.pval(round(p.value, 3), eps = 0.001)) |>
+  kable(digits = 2)
+```
+
+**Polynomial contrasts.** @tbl-l05-poly-codes gives the codes and @tbl-l05-poly-lm the result of the linear regression of $js\_score$ on the two contrast variables.
+
+```{r}
+#| label: tbl-l05-poly-codes
+#| tbl-cap: "Polynomial contrast codes for the three locations."
+tribble(
+  ~category, ~poly_c1, ~poly_c2,
+  "France",  -1,   1,
+  "Ireland",  0,  -2,
+  "Australia",    1,   1
+) |>
+  kable()
+```
+
+```{r}
+#| label: tbl-l05-poly-lm
+#| tbl-cap: "Linear regression of js_score on the two polynomial contrasts."
+lm(data = organisation_beta, formula = js_score ~ poly_c1 + poly_c2) |>
+  tidy() |>
+  mutate(p.value = format.pval(round(p.value, 3), eps = 0.001)) |>
+  kable(digits = 2)
+```
+
+::: {.callout-tip title="Your turn: create the sum to zero contrasts"}
+1. Using the `organisation_beta.csv` file, create contrast variables to reproduce the results obtained with sum to zero contrasts.
+2. When it is done, make explicit the hypotheses tested, the representation of the models and their corresponding equation.
+
+Suggested time: 10 minutes.
+:::
+
+::: {.callout-note title="Solution" collapse="true"}
+**Variables**
+
+- Outcome = $js\_score$ (from 0 to 10)
+- Predictor 1 = $sum\_c1$ (Ireland vs. France)
+- Predictor 2 = $sum\_c2$ (Australia vs. France)
+
+**Hypotheses** <!-- check: with sum to zero codes, sum_c1 and sum_c2 test Ireland and Australia against the average of the three group means, not against France (here the sum_c1 estimate is 1.28, whereas the Ireland minus France difference is 1.90) -->
+
+- $H_{a_1}$: The average $js\_score$ of Irish employees is different than the average $js\_score$ of French employees
+    - $H_{0_1}$: The average $js\_score$ of Irish employees is the same as the average $js\_score$ of French employees
+- $H_{a_2}$: The average $js\_score$ of Australian employees is different than the average $js\_score$ of French employees
+    - $H_{0_2}$: The average $js\_score$ of Australian employees is the same as the average $js\_score$ of French employees
+
+**Model.** @fig-l05-sum-zero-model represents the model, and its equation follows.
+
+```{dot}
+//| label: fig-l05-sum-zero-model
+//| fig-cap: "The model with the two sum to zero contrasts as predictors of js_score."
+//| fig-alt: "Diagram with two square boxes labelled sum_c1 and sum_c2, each with an arrow to a circle labelled js_score. The arrows are labelled b1 and b2."
+//| fig-height: 2
+//| fig-width: 5
+
+digraph {
+  graph [rankdir = LR]
+  node [shape = circle]
+  js_score
+  node [shape = square]
+  sum_c1, sum_c2
+
+  sum_c1 -> js_score [label= b1]
+  sum_c2 -> js_score [label= b2]
+}
+```
+
+$$js\_score = b_{0} + b_{1}\,sum\_c1 + b_{2}\,sum\_c2 + e$$
+:::
+
+::: {.callout-note title="Key points"}
+- A categorical predictor with two categories is tested through the slope of the line between the two averages: if the averages are equal the slope is 0. The coding of the categories (by default in alphabetical order) changes the sign of the estimate but not the $p$-value.
+- With dummy coding (0 and 1) the category coded 0 becomes the intercept, and with deviation coding (-1 and 1, or -0.5 and 0.5) the average of the categories becomes the intercept, the codes -0.5 and 0.5 keeping a distance of 1 between the categories.
+- The test of an interaction between two categorical predictors corresponds to the test of a variable resulting from the multiplication between their codes.
+- A predictor with three or more categories gets one comparison per category against a reference group (the first in alphabetical order), so its overall effect is tested with a one-way ANOVA (omnibus test).
+- Post-hoc tests compare everything and can be considered as $p$-hacking, whereas contrasts test more precise hypotheses and follow three rules: categories with the same code are tested together, the number of contrasts is the number of categories minus 1, and the value 0 means the category is not taken into account.
+:::

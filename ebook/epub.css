@@ -1,0 +1,7 @@
+/* Diagrams drawn from DOT or Mermaid code carry a fixed width and height.
+   On a narrow screen the width shrinks to fit but the height stays, which
+   stretches the picture. Letting the height follow the width fixes this. */
+img {
+  max-width: 100%;
+  height: auto !important;
+}
