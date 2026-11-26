@@ -49,7 +49,7 @@ This lecture focuses on a new way to teach statistics:
 
 2. **Using open source coding language** (R)
 
-3. **Applying these knowledge and skills to research papers writing**
+3. **Applying this knowledge and these skills to research paper writing**
 
 In the end, I want you to become a Data Scientist with enough knowledge and skills to:
 
@@ -75,13 +75,13 @@ Based on your research topic, I will provide real data in April. Your task is to
 
 - A concise **introduction** and **literature review** with a few references leading to your hypotheses
 - A **method section** describing the variables, a representation of the model, and the equation testing the hypotheses
-- A **results section** of publication quality, including hypothesis testing and conditions of applications 
+- A **results section** of publication quality, including hypothesis testing and conditions of application 
 - A brief **discussion and conclusion**
 
 ## Details on the Assignment
 
 ::: {layout-ncol="2"}
-- This paper will have **a maximum of 6 pages** and **a publication ready design**.
+- This paper will have **a maximum of 6 pages** and **a publication-ready design**.
 - **The deadline is June 21st, 2027.**
 
 ![](https://achonaonline.com/wp-content/uploads/2015/02/59369457.jpg){fig-align="center"}
@@ -109,7 +109,7 @@ The file also contains an `employee` number (1 to 20), `salary_c` and `perf_c` (
 
 If you haven't done it already, can you look for the **quantitative academic journal paper which is the closest to your Ph.D**. 
 
-You need to download the PDF version of this paper and to send it to my email before next lecture: [damien.dupre@dcu.ie](mailto:damien.dupre@dcu.ie). 
+You need to download the PDF version of this paper and to send it to my email before the next lecture: [damien.dupre@dcu.ie](mailto:damien.dupre@dcu.ie). 
 
 ::: {.callout-caution}
 ## Warning
@@ -127,7 +127,7 @@ The shape of the contents of the research paper resembles an hourglass:
 ::: {layout-ncol="2"}
 ![](https://explorable.com/sites/default/files/images/steps-of-the-scientific-method.jpg){fig-align="center"}
 
-**Starts wide** (introduction),**then narrows** (hypotheses, method and results) and **finally opens** (discussion and conclusion).
+**Starts wide** (introduction), **then narrows** (hypotheses, method and results) and **finally opens** (discussion and conclusion).
 :::
 
 ## A Closer Look at Papers
@@ -417,7 +417,7 @@ Jamovi, our first statistical software, illustrates them with recognisable icons
 ::: {.callout-important}
 ## Warning
 
-Variables can be converted to either Categorical and Continuous but it is always better to keep them in their correct scale.
+Variables can be converted to either Categorical or Continuous but it is always better to keep them in their correct scale.
 :::
 
 # Role of Variables {background="#43464B"}
@@ -454,7 +454,7 @@ One predictor is simple to handle, but using more than one requires more underst
 
 - If 1 guest eats all the cake: 1 predictor explains all the outcome.
 - If 1 guest eats a slice of the cake: 1 predictor explains only part of the outcome.
-- If more than 1 guests, they will all eat a slice of different size: each predictor will explain their own part of the outcome
+- If more than 1 guest, they will all eat a slice of different size: each predictor will explain their own part of the outcome
 :::
 
 ## Predictors, Outcomes and Controls
@@ -471,14 +471,14 @@ digraph {
 }
 ```
 
-This arrow does not suggest causation but indicate correlation between $Predictor$ and $Outcome$, there is no assumption of one causing the other. **An "effect" is reciprocal and does not involves causality**.
+This arrow does not suggest causation but indicate correlation between $Predictor$ and $Outcome$, there is no assumption of one causing the other. **An "effect" is reciprocal and does not involve causality**.
 
 ## Predictors, Outcomes and Controls
 
 ::: {.callout-important}
 ## Warning
 
-Causality analysis is an other kind of test that involves:
+Causality analysis is another kind of test that involves:
 
 - To be sure that 2 variables are correlated
 - That one variable is the antecedent of the other
@@ -494,7 +494,7 @@ This shows a significant relationship.
 ::: {.callout-note}
 ## Outcome's variability is a birthday cake
 
-A significant effect means the slice eat by the predictor is large enough.
+A significant effect means the slice eaten by the predictor is large enough.
 :::
 
 ## Predictors, Outcomes and Controls
@@ -539,7 +539,7 @@ Indicate their Type and Role by using the following table:
 |...          |...          |...          |
 |var n        |type         |role         |
 
-Then, and only then: upload the pdf to an AI assistant and ask for the same table. Where do you and the AI disagree? Who is right?
+Then, and only then: upload the PDF to an AI assistant and ask for the same table. Where do you and the AI disagree? Who is right?
 
 Send me both tables by email at damien.dupre@dcu.ie **before the next lecture.**
 
@@ -565,14 +565,14 @@ Hypotheses include:
 ::: {.callout-important}
 ## Warning
 
-Hypothesis cannot test equality between groups or modalities, they can only test differences or effects
+Hypotheses cannot test equality between groups or modalities, they can only test differences or effects
 :::
 
 ## Alternative *vs.* Null Hypotheses
 
-- Every hypothesis has to state a change (between groups or according values) also called $H_a$ (for alternative hypothesis) or $H_1$
+- Every hypothesis has to state a change (between groups or according to values) also called $H_a$ (for alternative hypothesis) or $H_1$
 
-- Every alternative hypothesis has a null hypothesis counterpart (no difference between groups or according values) also called $H_0$ (pronounce H naught or H zero)
+- Every alternative hypothesis has a null hypothesis counterpart (no difference between groups or according to values) also called $H_0$ (pronounce H naught or H zero)
 
 - $H_a$ is viewed as a “challenger” to the null hypothesis $H_0$.
 
@@ -628,7 +628,7 @@ In the following formulation templates, **replace the variable names with yours*
 
 The {**outcome**} of {**predictor category 1**} is {*higher/lower/different*} than the {**outcome**} of {**predictor category 2**}
 
-> The **Job satisfaction** of **EU employees** is *higher* than the **job satisfaction** of **non EU employees**
+> The **Job satisfaction** of **EU employees** is *higher* than the **job satisfaction** of **non-EU employees**
 
 ## Main Effect Hypothesis Templates
 
@@ -900,7 +900,7 @@ digraph {
 
 Interaction Effect Hypothesis: 
 
-- $H_a$: The effect of **sleep deprivation** on **exam results** is *higher* for **Males students** than it is for **Females students**
+- $H_a$: The effect of **sleep deprivation** on **exam results** is *higher* for **Male students** than it is for **Female students**
 
 ::: {.callout-important}
 ## Warning
@@ -1001,9 +1001,9 @@ If the AI rewrites your hypotheses, you learn nothing and they stop being yours.
 
 ## Special Case: Mediation Hypothesis
 
-Remember the birthday cake metaphor: it symbolise the variability of the outcome variable to be explained by the predictors.
+Remember the birthday cake metaphor: it symbolises the variability of the outcome variable to be explained by the predictors.
 
-Now, imagine one guest take a slice, but the birthday person arrives and take the slice from the guest to eat it.
+Now, imagine one guest takes a slice, but the birthday person arrives and takes the slice from the guest to eat it.
 
 ## Special Case: Mediation Hypothesis
 
@@ -1077,7 +1077,7 @@ Mediation Effect Hypothesis:
 
 - $H_a$: The effect of **grades** on **happiness** is explained by **self-esteem**
 
-# 🛠️ Your Turn ! Find the variables in these hypotheses {background="#43464B"}
+# 🛠️ Your Turn! Find the variables in these hypotheses {background="#43464B"}
 
 ## Find the variables {background="#43464B"}
 
@@ -1112,12 +1112,12 @@ Hypothesis 3:
 - Outcome = Suffering lice
 - Predictor = Trout type (rainbow *vs* other)
 
-Hypothesis 3:
+Hypothesis 4:
 
 - Outcome = Rapport with graduate students
-- Predictor = Teaching method (student-centreed *vs* teacher-centreed)
+- Predictor = Teaching method (student-centred *vs* teacher-centred)
 
-# 🛠️ Your Turn ! Make your own Hypothesis {background="#43464B"}
+# 🛠️ Your Turn! Make your own Hypothesis {background="#43464B"}
 
 ## Make your own Hypothesis {background="#43464B" .smaller}
 

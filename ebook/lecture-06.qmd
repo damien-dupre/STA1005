@@ -12,7 +12,69 @@ iqsize <- read.table(here("data/iqsize.txt"), header = TRUE)
 organisation_beta <- readr::read_csv(here("data/organisation_beta.csv"))
 ```
 
-This chapter covers six topics: the assumptions of the General Linear Model and how to check them, more assumptions (uncorrelated predictors and anomalous data), model selection, power analysis for sample size and effect size estimations, reasonable statistics, and agentic AI for statistical analysis.
+```{r}
+#| label: l06-models
+#| include: false
+# The figures of edition 1 draw their random numbers from set.seed(123) above.
+# with_seed() runs a simulation with its own seed and then puts the random number
+# generator back where it was, so that a new simulation does not change the random
+# numbers drawn by the other chunks of the chapter.
+with_seed <- function(seed, code) {
+  seed_was_set <- exists(".Random.seed", envir = globalenv())
+  if (seed_was_set) {
+    saved_seed <- get(".Random.seed", envir = globalenv())
+    on.exit(assign(".Random.seed", saved_seed, envir = globalenv()))
+  }
+  set.seed(seed)
+  code
+}
+
+# Models of the Organisation Beta data used in the figures, boxes and exercises.
+model_salary <- lm(js_score ~ salary, data = organisation_beta)
+model_perf <- lm(js_score ~ perf, data = organisation_beta)
+model_additive <- lm(js_score ~ salary + perf, data = organisation_beta)
+model_interaction <- lm(js_score ~ salary * perf, data = organisation_beta)
+
+anomalous_salary <- tibble(
+  employee = organisation_beta$employee,
+  cook = cooks.distance(model_salary),
+  studentised = rstudent(model_salary)
+)
+```
+
+::: {.callout-note .box-goals title="In this chapter"}
+After this chapter, you can:
+
+- check the four assumptions of a linear regression (LINE) with a Q-Q plot and residual plots
+- detect collinearity with the VIF and influential observations with Cook's distance
+- compare a full model with a simple model with the $AIC$ and the $p$-value of the comparison
+- estimate the sample size of a study with a prospective power analysis
+- recognise $p$-hacking and $p$-HARKing, and check the work of an AI assistant
+
+You need the file `organisation_beta.csv`, jamovi and G\*Power (or R for the power analyses).
+:::
+
+This chapter covers six topics. It starts with the assumptions of the General Linear Model and how to check them, and continues with more assumptions (uncorrelated predictors and anomalous data). It then presents model selection and power analysis for sample size and effect size estimations. It ends with reasonable statistics and with agentic AI for statistical analysis.
+
+@fig-l06-roadmap shows the six topics in the order of the chapter.
+
+```{r}
+#| label: fig-l06-roadmap
+#| fig-cap: "The six topics of this chapter."
+#| fig-alt: "Six boxes in a row joined by arrows. Assumptions: the four LINE checks. More assumptions: collinearity and outliers. Model selection: compare models with the AIC. Power analysis: sample size and effect size. Reasonable statistics: p-hacking and HARKing. Agentic AI: supervise and check."
+#| fig-height: 1.5
+roadmap <- tribble(
+  ~step,                   ~detail,
+  "Assumptions",           "the four\nLINE checks",
+  "More\nassumptions",     "collinearity,\noutliers",
+  "Model\nselection",      "compare\nmodels, AIC",
+  "Power\nanalysis",       "sample size,\neffect size",
+  "Reasonable\nstatistics", "p-hacking,\nHARKing",
+  "Agentic AI",            "supervise\nand check"
+)
+
+flow_chart(roadmap)
+```
 
 ## Assumptions of general linear models {#sec-l06-assumptions}
 
@@ -89,7 +151,7 @@ loess_plot <- df |>
 raw_plot + linear_plot + loess_plot
 ```
 
-If the shape of the data is non linear then even the best linear model will have very big residuals and therefore very high $MSE$ or $RMSE$.
+If the shape of the data is non-linear then even the best linear model will have very big residuals and therefore very high $MSE$ or $RMSE$.
 
 ### Assumption 2: independence {#sec-l06-independence}
 
@@ -100,6 +162,10 @@ In general, this is really **just a "catch all" assumption**, to the effect that
 ### Assumption 3: normality {#sec-l06-normality}
 
 Like many of the models in statistics, the General Linear Model **assumes that the residuals are normally distributed**. Note that **it's actually okay if the predictor and the outcome variables are non-normal**, as long as the residuals $e$ are normal.
+
+::: {.callout-warning .box-mistake title="Common mistake: checking the normality of the variables"}
+A histogram of $js\_score$ or of $salary$ does not check assumption 3. The assumption is about the residuals $e_i$, what the model does not explain. Check the normality of the residuals, with the Q-Q plot of residuals of the model.
+:::
 
 There are three kinds of residuals:
 
@@ -142,6 +208,43 @@ distribution_plot/qq_plot
 
 If the residuals are normally distributed, then the line formed by the dots follows the diagonal line (plot 1 and 4). If the residuals are skewed right or left, then the line formed by the dots deviates from the diagonal (plot 2 and 3). <!-- check: in the code, fat_tails is the normal sample multiplied by 2.5, that is a wider normal distribution rather than a heavy-tailed one, which is why plot 4 follows the diagonal -->
 
+::: {.callout-note .box-definition title="Definition: Q-Q plot"}
+A **Q-Q plot** (quantile-quantile plot) sorts the residuals from the smallest to the largest and plots each one against the value expected at the same rank if the residuals were normally distributed. When the residuals are normal, the points lie close to the diagonal line.
+:::
+
+@fig-l06-qq-reading shows how to read a Q-Q plot of residuals, with two sets of 100 simulated residuals. On the left, the residuals are normal and the points stay on the line. On the right, the residuals are skewed to the right: the points form a curve and leave the line at both ends.
+
+```{r}
+#| label: fig-l06-qq-reading
+#| fig-cap: "Reading a Q-Q plot of residuals, with 100 simulated residuals. Normal residuals stay on the line (left); skewed residuals form a curve that leaves the line at both ends (right)."
+#| fig-alt: "Two Q-Q plots side by side, with the theoretical quantiles on the horizontal axis, the residuals on the vertical axis and a blue diagonal line. Left, titled assumption met: the 100 points follow the line closely. Right, titled assumption not met: the points form a curve, above the line at both ends and below it in the middle."
+#| fig-height: 3.6
+qq_examples <- with_seed(606, tibble(
+  normal = rnorm(100),
+  skewed = rexp(100) - 1
+)) |>
+  pivot_longer(everything(), names_to = "residuals", values_to = "value") |>
+  mutate(
+    residuals = factor(
+      residuals,
+      levels = c("normal", "skewed"),
+      labels = c("Normal residuals: assumption met", "Skewed residuals: assumption not met")
+    )
+  )
+
+qq_labels <- tibble(
+  residuals = factor(levels(qq_examples$residuals), levels = levels(qq_examples$residuals)),
+  label = c("the points stay\non the line", "the points leave\nthe line at both ends")
+)
+
+ggplot(qq_examples, aes(sample = value)) +
+  stat_qq_line(colour = book_col("blue"), linewidth = 0.9) +
+  stat_qq(size = 1.8) +
+  geom_text(data = qq_labels, aes(x = -2.5, y = 3, label = label), hjust = 0, vjust = 1, size = 3.6, lineheight = 0.95, inherit.aes = FALSE) +
+  facet_wrap(~residuals) +
+  labs(x = "Theoretical quantiles (expected if normal)", y = "Residuals")
+```
+
 ### Assumption 4: equal variance {#sec-l06-equalvar}
 
 Also called homogeneity or homoscedasticity, the General Linear Regression Model assumes that each residual $e_i$ is generated from a normal distribution: **the standard deviation of the residual should be the same for all values of the predictor**.
@@ -156,6 +259,30 @@ In jamovi, use the **Residual plots** option, which provides a scatterplot of th
 include_img("lm_jamovi_residual.png")
 ```
 
+@fig-l06-equal-variance compares two residual plots drawn from simulated data. On the left, the spread of the residuals is the same for all fitted values: the assumption is met. On the right, the residuals spread out more and more as the fitted values increase, a funnel shape: the assumption is not met.
+
+```{r}
+#| label: fig-l06-equal-variance
+#| fig-cap: "Residuals against fitted values for two simulated models of 120 observations. A cloud of points means equal variance (left); a funnel means unequal variance (right)."
+#| fig-alt: "Two scatterplots of the residuals against the fitted values, from 2 to 10, with a grey dashed line at 0. Left, titled equal variance: the points form a band of the same height everywhere. Right, titled unequal variance: the points are close to 0 for small fitted values and spread from about minus 4 to plus 5 for large fitted values, a funnel shape."
+#| fig-height: 3.4
+residual_patterns <- with_seed(6062, {
+  fitted_equal <- runif(120, min = 2, max = 10)
+  fitted_funnel <- runif(120, min = 2, max = 10)
+  bind_rows(
+    tibble(pattern = "Equal variance: a cloud of points", fitted = fitted_equal, residual = rnorm(120, mean = 0, sd = 1)),
+    tibble(pattern = "Unequal variance: a funnel", fitted = fitted_funnel, residual = rnorm(120, mean = 0, sd = 0.15 * fitted_funnel^1.2))
+  )
+}) |>
+  mutate(pattern = factor(pattern, levels = unique(pattern)))
+
+ggplot(residual_patterns, aes(fitted, residual)) +
+  geom_hline(yintercept = 0, colour = book_col("grey"), linetype = "dashed") +
+  geom_point(size = 2, alpha = 0.8) +
+  facet_wrap(~pattern) +
+  labs(x = "Fitted values", y = "Residuals")
+```
+
 ### The assumptions in the equation {#sec-l06-explicit}
 
 Three of these assumptions are actually included in the ideal reporting of an equation such as:
@@ -166,11 +293,15 @@ $$e_{i} \overset{iid}{\sim} \mathcal{N}(0, \sigma^2_{i})$$
 
 where for each observation $i$, $\mathcal{N}$ indicates that residuals are Normally distributed and $iid$ indicates that these residuals are independent and identically distributed (equal variance). <!-- check: the slide writes the variance as sigma squared with the subscript i, although the text says the variance is equal for all observations -->
 
-::: {.callout-note title="Live demonstration"}
+::: {.callout-note .box-definition title="Definition: equal variance (homoscedasticity)"}
+The residuals have **equal variance** when their variance $\sigma^2$ is the same for all values of the predictor. The variance is then the same for every observation $i$, which is written without a subscript: $e_{i} \overset{iid}{\sim} \mathcal{N}(0, \sigma^2)$.
+:::
+
+::: {.callout-note .box-demo title="Live demonstration"}
 In the lecture, the assumptions are checked live in jamovi before the exercise below. <!-- check: the slide is a bare "Live Demo" divider; what is shown is inferred from the exercise that follows -->
 :::
 
-::: {.callout-tip title="Your turn: test the assumptions of a regression"}
+::: {.callout-tip .box-yourturn title="Your turn: test the assumptions of a regression"}
 Test the assumptions of the following linear regression: <!-- check: the slide does not say which data file to use; the examples of this lecture use organisation_beta -->
 
 $$js\_score = b_{0} + b_{1}\,perf + e$$
@@ -187,7 +318,7 @@ Suggested time: 5 minutes.
 
 ### Uncorrelated predictors {#sec-l06-collinearity}
 
-In a multiple General Linear Regression Model, you don't want your predictors to be too strongly correlated with each other. This isn't technically an assumption of the General Linear Regression Model, but in practice it's required: predictors that are too strongly correlated with each other (referred to as **collinearity**) can cause problems when evaluating the model. To check it in jamovi, use Regression > Correlation Matrix > Plot Correlation Matrix.
+In a multiple General Linear Regression Model, you don't want your predictors to be too strongly correlated with each other. This isn't technically an assumption of the General Linear Regression Model, but in practice it's required. Predictors that are too strongly correlated with each other (referred to as **collinearity**) can cause problems when evaluating the model. To check it in jamovi, use Regression > Correlation Matrix > Plot Correlation Matrix.
 
 Imagine American scientists trying to predict an individual's IQ by using their height, weight and the size of their brain as follows:
 
@@ -212,6 +343,24 @@ iqsize |>
   )
 ```
 
+@fig-l06-collinearity shows what a strong correlation between two predictors looks like. Height and Weight move together: taller people tend to be heavier. Height and PIQ do not.
+
+```{r}
+#| label: fig-l06-collinearity
+#| fig-cap: "Two pairs of variables of the iqsize data. Height and Weight move together (left); Height and PIQ do not (right)."
+#| fig-alt: "Two scatterplots of the 38 people of the iqsize data, with Height on the horizontal axis. Left, Weight against Height: the points rise from the lower left to the upper right, with r = 0.70 in the title. Right, PIQ against Height: the points form a cloud with no trend, with r = -0.09 in the title."
+#| fig-height: 3.4
+plot_height_weight <- ggplot(iqsize, aes(Height, Weight)) +
+  geom_point(size = 2.2) +
+  labs(title = paste0("Height and Weight: r = ", format_number(cor(iqsize$Height, iqsize$Weight))))
+
+plot_height_piq <- ggplot(iqsize, aes(Height, PIQ)) +
+  geom_point(size = 2.2) +
+  labs(title = paste0("Height and PIQ: r = ", format_number(cor(iqsize$Height, iqsize$PIQ))))
+
+plot_height_weight + plot_height_piq
+```
+
 **Variance inflation factors** (VIFs) are a very good measure of the extent to which a variable is correlated with all the other variables in the model. **A cut-off value of 5 is commonly used**. To check it in jamovi, tick "Collinearity statistics" in Regression > Linear Regression > Assumption Checks. @tbl-l06-vif gives the VIF and the tolerance (tol) of the three predictors. All three VIFs are below the cut-off value of 5.
 
 ```{r}
@@ -232,6 +381,21 @@ res <- jmv::linReg(
 res$models[[1]]$assump$collin$asDF |>
   kable(digits = 2)
 ```
+
+::: {.callout-note .box-definition title="Definition: variance inflation factor (VIF)"}
+The **VIF** of a predictor is $1 / (1 - R^2_j)$, where $R^2_j$ is the $R^2$ of a regression of this predictor on all the other predictors of the model. A VIF of 1 means that the predictor is not correlated with the others, and a VIF of 5 means that 80% of its variance is explained by them. The tolerance is $1 / VIF$.
+:::
+
+```{r}
+#| label: l06-vif-height
+#| include: false
+height_on_others <- lm(Height ~ Brain + Weight, data = iqsize)
+r2_height <- summary(height_on_others)$r.squared
+```
+
+::: {.callout-tip .box-example title="Example: the VIF of Height"}
+A regression of Height on Brain and Weight gives $R^2_j = `r format_number(r2_height, 3)`$: the two other predictors explain `r scales::percent(r2_height, accuracy = 1)` of the variance of Height. The VIF of Height is $1 / (1 - `r format_number(r2_height, 3)`) = `r format_number(1 / (1 - r2_height))`$ and its tolerance is $1 - `r format_number(r2_height, 3)` = `r format_number(1 - r2_height)`$, as in @tbl-l06-vif.
+:::
 
 ### No anomalous data {#sec-l06-anomalous}
 
@@ -284,7 +448,7 @@ legend(
 
 #### High leverage observations
 
-The second way in which an observation can be unusual is if it has high leverage, which happens when the observation is **very different from all the other observations and influences the slope of the linear regression**. This doesn't necessarily have to correspond to a large residual. If the observation happens to be unusual on all variables in precisely the same way, it can actually lie very close to the regression line. High leverage points are also worth looking at in more detail, but they're much less likely to be a cause for concern. @fig-l06-leverage shows the regression line fitted with and without a high leverage observation.
+The second way in which an observation can be unusual is if it has high leverage, which happens when the observation is **very different from all the other observations and influences the slope of the linear regression**. This doesn't necessarily have to correspond to a large residual. If the observation happens to be unusual on all variables in precisely the same way, it can actually lie very close to the regression line. High leverage points are also worth looking at in more detail, but they're much less likely to be a cause for concern. @fig-l06-leverage shows the regression line fitted with and without a high leverage observation. <!-- check: in the code of the slides, the unusual point of this figure and of the next one is the ninth of ten points (x = 9), inside the range of the other points, so both figures show an outlier that moves the line rather than an observation far from the others on the x-axis. The three-panel figure added below (fig-l06-anomalous) draws the three cases with an unusual point outside the range -->
 
 ```{r}
 #| label: fig-l06-leverage
@@ -336,11 +500,129 @@ legend(
   )
 ```
 
-::: {.callout-note title="Live demonstration"}
+@fig-l06-anomalous puts the three kinds of anomalous data side by side, with the same eight points and one unusual point (orange) in each panel. The outlier is far from the line but moves it little. The high leverage point is far from the others on the x-axis but lies on the line, so the line does not move. Only the high influence point, far on the x-axis and far from the line, changes the slope, and its Cook's distance is far above 1.
+
+```{r}
+#| label: fig-l06-anomalous
+#| fig-cap: "An outlier, a high leverage observation and a high influence observation (orange), with the regression line fitted without the unusual point (dashed) and with it (solid). The points are drawn for the illustration and do not come from the data."
+#| fig-alt: "Three scatterplots with the same eight points rising along a line, plus one orange point and two blue lines. Left, Outlier: the orange point is in the middle of the x range and far above the line; the solid line is only a little higher than the dashed line; Cook's distance 0.43. Centre, High leverage: the orange point is far to the right but on the dashed line; the two lines are the same; Cook's distance 0.01. Right, High influence: the orange point is far to the right and far below the line; the solid line is much flatter than the dashed line; Cook's distance 11.32."
+#| fig-height: 3.5
+eight_points <- tribble(
+  ~x, ~y,
+  1,  1.6,
+  2,  2.1,
+  3,  3.4,
+  4,  3.9,
+  5,  5.3,
+  6,  5.8,
+  7,  7.2,
+  8,  7.7
+)
+
+unusual_points <- tribble(
+  ~kind,            ~x,  ~y,
+  "Outlier",        4.5, 10.0,
+  "High leverage",  16,  15.1,
+  "High influence", 16,  4.0
+) |>
+  mutate(kind = factor(kind, levels = kind))
+
+model_without <- lm(y ~ x, data = eight_points)
+
+fits_with <- unusual_points |>
+  rowwise() |>
+  mutate(
+    model_with = list(lm(y ~ x, data = bind_rows(eight_points, tibble(x = x, y = y)))),
+    intercept = coef(model_with)[[1]],
+    slope = coef(model_with)[[2]],
+    cook = cooks.distance(model_with)[[9]]
+  ) |>
+  ungroup()
+
+fitted_lines <- bind_rows(
+  tibble(kind = unusual_points$kind, fit = "without the unusual point", intercept = coef(model_without)[[1]], slope = coef(model_without)[[2]]),
+  fits_with |> transmute(kind, fit = "with the unusual point", intercept, slope)
+)
+
+ggplot(tidyr::crossing(kind = unusual_points$kind, eight_points), aes(x, y)) +
+  geom_abline(data = fitted_lines, aes(intercept = intercept, slope = slope, linetype = fit), colour = book_col("blue"), linewidth = 0.9) +
+  geom_point(size = 2.2) +
+  geom_point(data = unusual_points, colour = book_col("orange"), size = 3.2) +
+  geom_text(data = fits_with, aes(x = 0.3, y = 17.6, label = paste0("Cook's distance = ", format_number(cook))), hjust = 0, size = 3.4) +
+  facet_wrap(~kind) +
+  scale_linetype_manual(values = c("without the unusual point" = "dashed", "with the unusual point" = "solid")) +
+  coord_cartesian(xlim = c(0, 17), ylim = c(0, 18)) +
+  labs(linetype = NULL)
+```
+
+::: {.callout-note .box-definition title="Definition: leverage"}
+The **leverage** of an observation measures how far its predictor values are from those of the other observations. A high leverage observation can pull the regression line towards itself, and it does so when it also lies far from the line.
+:::
+
+::: {.callout-note .box-definition title="Definition: Cook's distance"}
+The **Cook's distance** of an observation measures how much the predictions of the model change when this observation is removed and the model is estimated again. It is large when the observation is both far from the line (a large residual) and far from the other observations (a high leverage).
+:::
+
+@fig-l06-cooks gives the Cook's distance of each employee of Organisation Beta, for the regression of $js\_score$ on $salary$ of the jamovi screenshots. All the values are far below 1.
+
+```{r}
+#| label: fig-l06-cooks
+#| fig-cap: "The Cook's distance of each of the 20 employees for the regression of js_score on salary. No employee comes close to 1, the value considered large."
+#| fig-alt: "Lollipop chart of the Cook's distance of employees 1 to 20, on a scale from 0 to 1.1. A grey dashed line at 1 is labelled a large Cook's distance. All the values are below 0.2. The largest one, employee 7 with 0.17, is highlighted in orange and labelled."
+#| fig-height: 3.2
+largest_cook <- anomalous_salary |>
+  slice_max(cook, n = 1)
+
+ggplot(anomalous_salary, aes(factor(employee), cook)) +
+  geom_hline(yintercept = 1, colour = book_col("grey"), linetype = "dashed", linewidth = 0.7) +
+  geom_segment(aes(xend = factor(employee), y = 0, yend = cook), colour = book_col("grey")) +
+  geom_point(size = 2.5) +
+  geom_point(data = largest_cook, colour = book_col("orange"), size = 3.2) +
+  annotate(
+    "text",
+    x = largest_cook$employee, y = largest_cook$cook + 0.09, size = 3.5,
+    label = paste0("employee ", largest_cook$employee, ": ", format_number(largest_cook$cook))
+  ) +
+  annotate("text", x = 20.4, y = 1.04, hjust = 1, vjust = 0, size = 3.5, label = "a large Cook's distance: 1") +
+  scale_y_continuous(limits = c(0, 1.15), breaks = seq(0, 1, 0.25)) +
+  labs(x = "Employee", y = "Cook's distance")
+```
+
+```{r}
+#| label: l06-employee-7
+#| include: false
+employee_7 <- anomalous_salary |>
+  filter(employee == 7)
+
+model_salary_without_7 <- lm(js_score ~ salary, data = filter(organisation_beta, employee != 7))
+slope_with_7 <- 1000 * coef(model_salary)[["salary"]]
+slope_without_7 <- 1000 * coef(model_salary_without_7)[["salary"]]
+```
+
+::: {.callout-tip .box-example title="Example: employee 7, an outlier without influence"}
+In the regression of $js\_score$ on $salary$, employee 7 has a studentised residual of `r format_number(employee_7$studentised)`, beyond -3: this employee is much less satisfied than the model predicts for the salary. But the Cook's distance of employee 7 is only `r format_number(employee_7$cook)`. The salary of employee 7 is close to the average, so the line hardly moves without this employee: the slope goes from `r format_number(slope_with_7)` to `r format_number(slope_without_7)` points of job satisfaction for 1,000 euro. Employee 7 is a harmless outlier.
+:::
+
+::: {.callout-warning .box-mistake title="Common mistake: deleting the outliers"}
+Removing every observation with a large studentised residual is not a check of the data: it changes the data until the model fits. An outlier is a cue to look more closely at the case. Remove it only if you find that it is junk data, for example a value recorded incorrectly, and say so in the paper.
+:::
+
+::: {.callout-note .box-further collapse="true" title="In R: Cook's distance and studentised residuals"}
+The function `cooks.distance()` gives the Cook's distance of each observation and `rstudent()` its studentised residual. `summary()` gives the same summary as jamovi (minimum, mean, maximum, and more).
+
+```{r}
+#| echo: true
+model_salary <- lm(js_score ~ salary, data = organisation_beta)
+summary(cooks.distance(model_salary))
+range(rstudent(model_salary))
+```
+:::
+
+::: {.callout-note .box-demo title="Live demonstration"}
 In the lecture, the anomalous data are checked live in jamovi before the exercise below. <!-- check: the slide is a bare "Live Demo" divider; what is shown is inferred from the exercise that follows -->
 :::
 
-::: {.callout-tip title="Your turn: look for anomalous data"}
+::: {.callout-tip .box-yourturn title="Your turn: look for anomalous data"}
 Check if the relationship between $js\_score$ and $perf$ has some:
 
 1. **Harmless outlier observations:** check the studentised residuals. Are there any observations with values beyond +3 or -3?
@@ -348,6 +630,14 @@ Check if the relationship between $js\_score$ and $perf$ has some:
 3. **High influence observations:** check the Cook's distance summary. Is the maximum Cook's distance greater than 1?
 
 Suggested time: 5 minutes.
+:::
+
+::: {.callout-note .box-report title="How to report: the checks of the assumptions"}
+Write one or two sentences on the checks before the results of the model. For the regression of $js\_score$ on $salary$, the sentence to include in the results section is:
+
+> The assumptions of the model were checked. The Q-Q plot of the residuals showed points close to the line, apart from the two most extreme residuals, and the plot of the residuals against the fitted values showed no pattern. One employee was an outlier (studentised residual = `r format_number(employee_7$studentised)`), but no observation had a high influence (maximum Cook's distance = `r format_number(max(anomalous_salary$cook))`, mean = `r format_number(mean(anomalous_salary$cook))`).
+
+With two or more predictors, add the largest VIF.
 :::
 
 ## Model selection {#sec-l06-selection}
@@ -409,7 +699,9 @@ To evaluate the goodness of fit of a model, the **Akaike Information Criterion**
 
 ### Model comparison in jamovi {#sec-l06-comparison-jamovi}
 
+::: {.callout-tip .box-howto title="In jamovi: a model comparison"}
 In Model Builder create Block 1 as your simple model and a New Block 2 with the additional predictor. Here Block 1 contains $salary$ and Block 2 adds $perf$ to predict $js\_score$.
+:::
 
 ```{r}
 #| label: l06-model-comparison
@@ -451,11 +743,23 @@ res$modelComp$asDF |>
 
 Here the difference between the two models is not statistically significant, therefore adding $perf$ in the full model doesn't help to increase the prediction (as indicated by the $AIC$). The $p$-value of the comparison is `r sprintf("%.3f", res$modelComp$asDF$p)`, and the $AIC$ is `r sprintf("%.3f", res$modelFit$asDF$aic[1])` for Model 1 and `r sprintf("%.3f", res$modelFit$asDF$aic[2])` for Model 2, so adding $perf$ does not lower it.
 
-::: {.callout-note title="Live demonstration"}
+::: {.callout-note .box-further collapse="true" title="In R: the same model comparison"}
+In R, `anova()` compares the simple model with the full model and `AIC()` gives the $AIC$ of each model. The $F$ test and its $p$-value are those of @tbl-l06-modelcomp.
+
+```{r}
+#| echo: true
+model_simple <- lm(js_score ~ salary, data = organisation_beta)
+model_full <- lm(js_score ~ salary + perf, data = organisation_beta)
+anova(model_simple, model_full)
+AIC(model_simple, model_full)
+```
+:::
+
+::: {.callout-note .box-demo title="Live demonstration"}
 In the lecture, a model comparison is run live in jamovi before the exercise below. <!-- check: the slide is a bare "Live Demo" divider; what is shown is inferred from the exercise that follows -->
 :::
 
-::: {.callout-tip title="Your turn: compare models with and without an interaction"}
+::: {.callout-tip .box-yourturn title="Your turn: compare models with and without an interaction"}
 Compare the following full model:
 
 $$js\_score = b_{0} + b_{1}\,salary + b_{2}\,perf + b_{3}\,salary*perf + e$$
@@ -486,7 +790,41 @@ This means that four possible situations can occur when we run hypothesis tests:
     - and in fact $H_a$ is false. This is a good outcome (True Negative)
     - but in fact $H_a$ is true. This is known as a **Type II error** (False Negative)
 
+@fig-l06-outcomes arranges the four situations in a table, with the decision of the test in rows and the truth in columns.
+
+```{r}
+#| label: fig-l06-outcomes
+#| fig-cap: "The four situations of a hypothesis test: two correct decisions (blue) and two errors (red), with the probability of each decision when the truth is the one of its column."
+#| fig-alt: "A table of four tiles. Columns: in fact, Ha is true; in fact, Ha is false. Rows: reject H0; fail to reject H0. Reject H0 when Ha is true: True Positive, probability equal to the power, blue. Reject H0 when Ha is false: Type I error, False Positive, probability alpha, red. Fail to reject H0 when Ha is true: Type II error, False Negative, probability 1 minus the power, red. Fail to reject H0 when Ha is false: True Negative, probability 1 minus alpha, blue."
+#| fig-height: 3.4
+test_outcomes <- tribble(
+  ~truth,                 ~decision,           ~name,           ~detail,            ~probability,                 ~decision_type,
+  "In fact, Ha is true",  "Reject H0",         "True Positive", "correct decision", "probability == power",       "correct decision",
+  "In fact, Ha is false", "Reject H0",         "Type I error",  "False Positive",   "probability == alpha",       "error",
+  "In fact, Ha is true",  "Fail to reject H0", "Type II error", "False Negative",   "probability == 1 - power",   "error",
+  "In fact, Ha is false", "Fail to reject H0", "True Negative", "correct decision", "probability == 1 - alpha",   "correct decision"
+) |>
+  mutate(
+    truth = factor(truth, levels = c("In fact, Ha is true", "In fact, Ha is false")),
+    decision = factor(decision, levels = c("Fail to reject H0", "Reject H0"))
+  )
+
+ggplot(test_outcomes, aes(truth, decision)) +
+  geom_tile(aes(fill = decision_type), colour = "white", linewidth = 2, alpha = 0.2) +
+  geom_text(aes(label = name), fontface = "bold", size = 4.2, nudge_y = 0.22) +
+  geom_text(aes(label = detail), size = 3.6, colour = "#43464b") +
+  geom_text(aes(label = probability), parse = TRUE, size = 3.6, nudge_y = -0.22) +
+  scale_fill_manual(values = c("correct decision" = book_col("blue"), "error" = book_col("red"))) +
+  scale_x_discrete(position = "top") +
+  labs(x = NULL, y = "Decision of the test", fill = NULL) +
+  theme(panel.grid.major = element_blank(), axis.text = element_text(size = 11, face = "bold"))
+```
+
 Statistical power refers to the fourth situation and is the probability that we are able to detect the effect that we are looking for. <!-- check: the fourth situation in this list is the Type II error; power is the probability of rejecting H0 when Ha is true (the first situation), that is one minus the Type II error rate -->
+
+::: {.callout-note .box-definition title="Definition: statistical power"}
+The **statistical power** of a test is the probability of rejecting $H_0$ when $H_a$ is true: the probability of a True Positive, the first situation of the list. It equals 1 minus the probability of a Type II error, the fourth situation. A power of 0.8 means a 20% risk of missing an effect of the expected size.
+:::
 
 ### Statistical power {#sec-l06-statpower}
 
@@ -568,11 +906,13 @@ G\*Power uses 3 characteristics to determine the type of power analysis:
 2. **Statistical test** (e.g., mean comparison, ANOVA, multiple linear regression)
 3. **Type of power analysis** (e.g., prospective, also called "a priori", or retrospective, also called "post hoc")
 
+::: {.callout-tip .box-howto title="In G*Power: a prospective power analysis"}
 Whatever your model is, for sample size estimation with prospective power analysis use:
 
 - **F-tests**
 - **ANOVA: Fixed effects, special, main effects and interactions**
 - **A priori: Compute required sample size - given $\alpha$, power, and effect size**
+:::
 
 #### Applied example 1: one predictor with two categories
 
@@ -600,7 +940,43 @@ The statistical power parameters are:
 
 This tells us that we need an absolute minimum of 128 individuals in our sample (64 male and 64 female employees) for an effect size of $d = 0.5$ to return a significant difference at an alpha of 0.05 with 80% probability.
 
-@fig-l06-gpower1 shows the G\*Power settings and results for this example: a t test of the difference between two independent means (two groups), with an a priori power analysis, a two-tailed test, an allocation ratio of 1 and the values above. The output gives a sample size of 64 in each group, so 128 in total.
+```{r}
+#| label: l06-power-numbers
+#| include: false
+effect_sizes_d <- c("small (d = 0.2)" = 0.2, "medium (d = 0.5)" = 0.5, "large (d = 0.8)" = 0.8)
+
+n_per_group_needed <- sapply(effect_sizes_d, function(effect) {
+  ceiling(power.t.test(delta = effect, sd = 1, sig.level = 0.05, power = 0.8)$n)
+})
+```
+
+@fig-l06-power-curves shows where this number comes from. For two groups of the same size, the power of the test grows with the number of participants per group, and it grows faster when the effect is larger. With $d = 0.5$, the curve reaches 0.8 at `r n_per_group_needed[["medium (d = 0.5)"]]` participants per group. A small effect ($d = 0.2$) needs `r n_per_group_needed[["small (d = 0.2)"]]` per group, and a large effect ($d = 0.8$) only `r n_per_group_needed[["large (d = 0.8)"]]`.
+
+```{r}
+#| label: fig-l06-power-curves
+#| fig-cap: "The power of a two-tailed test of the difference between two groups (alpha = 0.05), against the number of participants per group, for a small, a medium and a large effect. The power is calculated with the base R function power.t.test()."
+#| fig-alt: "Line chart of the statistical power, from 0 to 1, against the sample size per group, from 5 to 450, with a grey dashed line at a power of 0.8. Three rising curves in light, medium and dark blue for a small (d = 0.2), a medium (d = 0.5) and a large (d = 0.8) effect. The large effect curve crosses 0.8 first, at 26 per group; the medium effect curve crosses it at 64 per group, marked by an orange point labelled 64 per group (128 in total); the small effect curve crosses it only at 394 per group."
+#| fig-height: 3.6
+power_curves <- tidyr::crossing(n_per_group = 5:450, effect = names(effect_sizes_d)) |>
+  mutate(
+    effect = factor(effect, levels = names(effect_sizes_d)),
+    power = power.t.test(n = n_per_group, delta = effect_sizes_d[as.character(effect)], sd = 1, sig.level = 0.05)$power
+  )
+
+n_medium <- n_per_group_needed[["medium (d = 0.5)"]]
+
+ggplot(power_curves, aes(n_per_group, power, colour = effect)) +
+  geom_hline(yintercept = 0.8, colour = book_col("grey"), linetype = "dashed") +
+  geom_line(linewidth = 1) +
+  annotate("point", x = n_medium, y = 0.8, colour = book_col("orange"), size = 3.2) +
+  annotate("text", x = n_medium + 12, y = 0.73, hjust = 0, size = 3.5, label = paste0(n_medium, " per group (", 2 * n_medium, " in total)")) +
+  annotate("text", x = 300, y = 0.84, size = 3.4, label = "power = 0.8") +
+  scale_colour_manual(values = setNames(unname(book_blues), names(effect_sizes_d))) +
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.2)) +
+  labs(x = "Sample size per group", y = "Statistical power", colour = "Effect size")
+```
+
+@fig-l06-gpower1 shows the G\*Power settings and results for this example. The test is a t test of the difference between two independent means (two groups). The analysis is a priori and two-tailed, with an allocation ratio of 1 and the values above. The output gives a sample size of 64 in each group, so 128 in total.
 
 ```{r}
 #| label: fig-l06-gpower1
@@ -609,7 +985,7 @@ This tells us that we need an absolute minimum of 128 individuals in our sample 
 include_img("gpower_exemple_1.png")
 ```
 
-The same model can also be analysed with the F test settings recommended above (@fig-l06-gpower1-f). The effect size is then Cohen's $f$ of 0.25, the medium value for $f$ in @tbl-l06-effectsize, with 1 numerator df and 2 groups, and the total sample size is again 128.
+The same model can also be analysed with the F test settings recommended above (@fig-l06-gpower1-f). The effect size is then Cohen's $f$ of 0.25, the medium value for $f$ in @tbl-l06-effectsize. The settings are 1 numerator df and 2 groups, and the total sample size is again 128.
 
 ```{r}
 #| label: fig-l06-gpower1-f
@@ -618,6 +994,21 @@ The same model can also be analysed with the F test settings recommended above (
 #| out-width: "80%"
 include_img("gpower_exemple_1_bis.png")
 ```
+
+::: {.callout-note .box-report title="How to report: a prospective power analysis"}
+The power analysis goes in the Method section, before the description of the participants. For Example 1, the sentence is:
+
+> A prospective power analysis (G\*Power, two-tailed $t$ test of two independent means) indicated that `r 2 * n_medium` participants (`r n_medium` per group) were needed to detect a medium effect ($d = 0.5$) with $\alpha = .05$ and a power of .80.
+:::
+
+::: {.callout-note .box-further collapse="true" title="In R: the sample size of Example 1"}
+Base R has the function `power.t.test()` for a test of two groups. Give it the effect size (`delta`, with `sd = 1` so that `delta` is Cohen's $d$), alpha and the power, and it returns the sample size per group. Round it up.
+
+```{r}
+#| echo: true
+power.t.test(delta = 0.5, sd = 1, sig.level = 0.05, power = 0.8)
+```
+:::
 
 #### Applied example 2: one predictor with three categories
 
@@ -645,7 +1036,7 @@ The statistical power parameters are:
 
 This tells us that we need an absolute minimum of 158 individuals in our sample for an effect size of $f = 0.25$ to return a significant difference at an alpha of 0.05 with 80% probability.
 
-@fig-l06-gpower2 shows the G\*Power settings and results for this example: the F test settings recommended above, with an effect size $f$ of 0.25, 2 numerator df and 2 groups, which give a total sample size of 158. <!-- check: the screenshot has Number of groups = 2 for a predictor with 3 categories (the Note above says the number of groups is usually the same as Numerator df); the total sample size is also 158 with 3 groups (checked in R with the noncentral F distribution) -->
+@fig-l06-gpower2 shows the G\*Power settings and results for this example. The settings are the F test settings recommended above, with an effect size $f$ of 0.25, 2 numerator df and 2 groups. The total sample size is 158. <!-- check: the screenshot has Number of groups = 2 for a predictor with 3 categories (the Note above says the number of groups is usually the same as Numerator df); the total sample size is also 158 with 3 groups (checked in R with the noncentral F distribution) -->
 
 ```{r}
 #| label: fig-l06-gpower2
@@ -696,7 +1087,7 @@ The statistical power parameters are:
 
 This tells us that we need an absolute minimum of 211 individuals in our sample for an effect size of $f = 0.25$ to return a significant difference at an alpha of 0.05 with 80% probability.
 
-@fig-l06-gpower3 shows the G\*Power settings and results for this example: the same F test settings, with an effect size $f$ of 0.25, 5 numerator df (1 + 2 + 2, as calculated above for this model) and 3 groups, which give a total sample size of 211. <!-- check: the screenshot has Number of groups = 3, whereas the Note above says the number of groups is usually the same as Numerator df (5); the total sample size is also 211 with 5 or 6 groups (checked in R with the noncentral F distribution) -->
+@fig-l06-gpower3 shows the G\*Power settings and results for this example. The F test settings are the same, with an effect size $f$ of 0.25, 5 numerator df (1 + 2 + 2, as calculated above for this model) and 3 groups. The total sample size is 211. <!-- check: the screenshot has Number of groups = 3, whereas the Note above says the number of groups is usually the same as Numerator df (5); the total sample size is also 211 with 5 or 6 groups (checked in R with the noncentral F distribution) -->
 
 ```{r}
 #| label: fig-l06-gpower3
@@ -726,7 +1117,58 @@ However, you will see a lot of different metrics in research papers using differ
 
 **$p$-hacking.** Running statistical tests until finding a significant $p$-value is $p$-hacking. To avoid it, all the hypotheses should be tested with one unique test and not with one test by hypothesis. Ideally if another statistical test has to be run, it should be done on new data.
 
+Why does $p$-hacking work? Each test has a 5% risk of a false positive when $H_0$ is true. With several tests, the risk that at least one of them is significant by chance adds up: it is $1 - 0.95^k$ for $k$ independent tests. @fig-l06-false-positives shows that this risk passes 50% at `r min(which(1 - 0.95^(1:20) > 0.5))` tests.
+
+```{r}
+#| label: fig-l06-false-positives
+#| fig-cap: "The probability of at least one false positive, $1 - 0.95^k$, against the number $k$ of independent tests when every null hypothesis is true."
+#| fig-alt: "Line chart with points of the probability of at least one false positive, from 0% to 75%, against the number of tests, from 1 to 20. The red curve starts at 5% for one test, marked by a grey dashed line, and rises steadily. An orange point at 20 tests is labelled 64%."
+#| fig-height: 3.2
+false_positives <- tibble(tests = 1:20) |>
+  mutate(probability = 1 - 0.95^tests)
+
+twenty_tests <- false_positives |>
+  filter(tests == 20)
+
+ggplot(false_positives, aes(tests, probability)) +
+  geom_hline(yintercept = 0.05, colour = book_col("grey"), linetype = "dashed") +
+  geom_line(colour = book_col("red"), linewidth = 1) +
+  geom_point(size = 2.2) +
+  geom_point(data = twenty_tests, colour = book_col("orange"), size = 3.2) +
+  annotate("text", x = 19.6, y = twenty_tests$probability + 0.05, hjust = 1, size = 3.5, label = paste0("20 tests: ", scales::percent(twenty_tests$probability, accuracy = 1))) +
+  annotate("text", x = 20, y = 0.09, hjust = 1, size = 3.4, label = "5% for one test") +
+  scale_y_continuous(limits = c(0, 0.75), labels = scales::label_percent()) +
+  labs(x = "Number of tests", y = "Probability of at least\none false positive")
+```
+
 **$p$-HARKing.** $p$-HARKing (Hypothesising After the Results are Known) is defined as presenting a post hoc hypothesis (i.e., one based on or informed by one's results) in one's research report as if it were, in fact, an a priori hypothesis.
+
+@fig-l06-harking compares the order of the steps in honest research and in $p$-HARKing. Both end with a report of the hypothesis, but in $p$-HARKing the hypothesis is written after the results.
+
+```{r}
+#| label: fig-l06-harking
+#| fig-cap: "The order of the steps in honest research (top) and in HARKing (bottom)."
+#| fig-alt: "Two rows of four boxes joined by arrows. Honest research: Hypothesis, written before the data; Data, collected to test it; Test, one model for all hypotheses; Report, the hypothesis as planned. HARKing: Data, collected first; Tests, many models are tried; Hypothesis, written after the results; Report, presented as if written before."
+#| fig-height: 2.9
+honest_research <- tribble(
+  ~step,        ~detail,
+  "Hypothesis", "written\nbefore the data",
+  "Data",       "collected\nto test it",
+  "Test",       "one model\nfor all hypotheses",
+  "Report",     "the hypothesis\nas planned"
+)
+
+harking <- tribble(
+  ~step,        ~detail,
+  "Data",       "collected\nfirst",
+  "Tests",      "many models\nare tried",
+  "Hypothesis", "written after\nthe results",
+  "Report",     "presented as if\nwritten before"
+)
+
+(flow_chart(honest_research) + labs(title = "Honest research")) /
+  (flow_chart(harking) + labs(title = "HARKing"))
+```
 
 **Pre-registration and open science.** In order to avoid any kind of $p$-hacking or $p$-HARKing, research pre-registration is now possible with the open science framework (<https://osf.io/>). Some journals are also encouraging the publication of the data treatment code and all the data sources to replicate the results.
 
@@ -748,12 +1190,14 @@ For example, **Claude in Chrome** is a browser extension that allows Claude to c
 
 ### Claude in Chrome and jamovi Cloud {#sec-l06-claude-chrome}
 
+::: {.callout-tip .box-howto title="In jamovi Cloud: an analysis with Claude in Chrome"}
 Here is how it works:
 
 1. Install the **Claude in Chrome** extension from the Chrome Web Store
 2. Open **jamovi Cloud** at <https://cloud.jamovi.org> in a Chrome tab
 3. Open the Claude side panel and describe your analysis task
 4. Claude navigates jamovi's menus, sets options, and runs the analysis for you
+:::
 
 What you can ask Claude to do, for example:
 
@@ -770,7 +1214,7 @@ What you can ask Claude to do, for example:
 - **Never share sensitive data** without understanding the privacy implications of both jamovi Cloud and Claude in Chrome
 :::
 
-::: {.callout-note title="Live demonstration"}
+::: {.callout-note .box-demo title="Live demonstration"}
 In the lecture, Claude in Chrome is demonstrated live on jamovi Cloud. <!-- check: the slide is a bare "Live Demo" divider; what is shown is inferred from the Claude in Chrome and jamovi Cloud slide before it -->
 :::
 
@@ -778,11 +1222,346 @@ In the lecture, Claude in Chrome is demonstrated live on jamovi Cloud. <!-- chec
 For the next lecture (@sec-lecture-07), read Chapter 12 of "Learning Statistics with jamovi" from <https://www.learnstatswithjamovi.com/>.
 :::
 
-::: {.callout-note title="Key points"}
+::: {.callout-note .box-keypoints title="Key points"}
 - The General Linear Model has four requirements: linearity of the effects, independence of observations, and normality and equal variance of the residuals. They are never perfectly met, so we check that they are reasonable enough.
 - In jamovi, tick all the Assumption Checks: the Q-Q plot of residuals checks normality and the residual plots check equal variance. Independence is a matter of self-assessment, based on how the data were collected.
-- Predictors should not be too strongly correlated (a VIF cut-off of 5 is commonly used) and no observation should be too influential (a Cook's distance greater than 1 is large). An outlier is a cue to look more closely at a case, not a reason to throw it away.
-- A model comparison tests whether a variable is useful by comparing a full model with a simple model, using the $AIC$ (the smaller, the better) and the $p$-value of the comparison.
+- Predictors should not be too strongly correlated (a VIF cut-off of 5 is commonly used). No observation should be too influential (a Cook's distance greater than 1 is considered large). An outlier is a cue to look more closely at a case, not a reason to throw it away.
+- A model comparison tests whether a variable is useful by comparing a full model with a simple model. It uses the $AIC$ (the smaller, the better) and the $p$-value of the comparison.
 - A prospective power analysis gives the sample size needed for a given alpha, a power of at least 0.8 and an expected effect size. In the General Linear Model, the effect size of each estimate is the standardised estimate $\beta$.
 - To avoid $p$-hacking and $p$-HARKing, test all the hypotheses with one test, use new data for any other test, and pre-register the research.
+:::
+
+## Exercises {#sec-l06-exercises}
+
+These exercises use the Organisation Beta data (`organisation_beta.csv`) and the figures and tables of this chapter. Try each one before opening its solution. Exercises 6 and 7 need jamovi or R.
+
+::: {#exr-l06-vocabulary}
+## True or false?
+
+Say whether each statement is true or false, and correct the false ones.
+
+a. The initials of the four requirements of the General Linear Model spell LINE.
+b. The outcome variable of a linear regression must be normally distributed.
+c. The independence of observations is checked with a box of the Assumption Checks of jamovi.
+d. A VIF of 7 suggests that a predictor is too strongly correlated with the other predictors.
+e. An observation with a large studentised residual must be removed from the data.
+f. Statistical power is the probability of rejecting $H_0$ when $H_a$ is true.
+g. A Type I error is failing to reject $H_0$ when $H_a$ is true.
+h. When two models are compared, the model with the larger $AIC$ is the better one.
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+a. True: Linearity (of the effects), Independence (of observations), Normality (of the residuals) and Equal variance (of the residuals).
+b. False. The residuals must be normally distributed. The predictors and the outcome can be non-normal.
+c. False. Independence is a matter of self-assessment: you need to know how the data were collected. The Autocorrelation test of jamovi only checks whether observations that follow each other in the file are related, which is one kind of dependence among others.
+d. True. A cut-off value of 5 is commonly used.
+e. False. An outlier is a cue to look more closely at the case. It is removed only if it turns out to be junk data, for example a value recorded incorrectly.
+f. True. It is the probability of a True Positive, 1 minus the probability of a Type II error.
+g. False. This is a Type II error (False Negative). A Type I error is rejecting $H_0$ when, in fact, $H_a$ is false (False Positive).
+h. False. The smaller the $AIC$, the better the model.
+:::
+
+@fig-l06-exercise-plots shows four plots drawn from simulated data, as you could see them when you check the assumptions of four different models. It is used in @exr-l06-diagnostics.
+
+```{r}
+#| label: fig-l06-exercise-plots
+#| fig-cap: "Four plots to check the assumptions of four models fitted to simulated data, for @exr-l06-diagnostics."
+#| fig-alt: "Four plots labelled A to D. A: a scatterplot of an outcome against a predictor, with points that rise and then fall in an arch, and a straight blue regression line through them. B: a Q-Q plot of residuals whose points form a curve above the blue line at both ends. C: residuals against fitted values, close to 0 on the left and widely spread on the right. D: residuals against fitted values, a band of the same height everywhere."
+#| fig-height: 5.6
+exercise_data <- with_seed(6063, {
+  predictor_a <- runif(80, min = 0, max = 10)
+  fitted_c <- runif(80, min = 2, max = 10)
+  fitted_d <- runif(80, min = 2, max = 10)
+  list(
+    a = tibble(predictor = predictor_a, outcome = 2 + 1.6 * predictor_a - 0.17 * predictor_a^2 + rnorm(80, mean = 0, sd = 0.5)),
+    b = tibble(residual = rexp(80) - 1),
+    c = tibble(fitted = fitted_c, residual = rnorm(80, mean = 0, sd = 0.15 * fitted_c^1.2)),
+    d = tibble(fitted = fitted_d, residual = rnorm(80, mean = 0, sd = 1))
+  )
+})
+
+plot_a <- ggplot(exercise_data$a, aes(predictor, outcome)) +
+  geom_point(size = 2) +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE, linewidth = 0.9) +
+  labs(title = "A", x = "Predictor", y = "Outcome")
+
+plot_b <- ggplot(exercise_data$b, aes(sample = residual)) +
+  stat_qq_line(colour = book_col("blue"), linewidth = 0.9) +
+  stat_qq(size = 2) +
+  labs(title = "B", x = "Theoretical quantiles", y = "Residuals")
+
+plot_c <- ggplot(exercise_data$c, aes(fitted, residual)) +
+  geom_hline(yintercept = 0, colour = book_col("grey"), linetype = "dashed") +
+  geom_point(size = 2) +
+  labs(title = "C", x = "Fitted values", y = "Residuals")
+
+plot_d <- ggplot(exercise_data$d, aes(fitted, residual)) +
+  geom_hline(yintercept = 0, colour = book_col("grey"), linetype = "dashed") +
+  geom_point(size = 2) +
+  labs(title = "D", x = "Fitted values", y = "Residuals")
+
+(plot_a + plot_b) / (plot_c + plot_d)
+```
+
+::: {#exr-l06-diagnostics}
+## Reading the plots of the assumption checks
+
+Look at @fig-l06-exercise-plots.
+
+1. For each plot, A to D, name the assumption that it checks.
+2. For each plot, say whether the assumption is met.
+3. Which of the four assumptions cannot be checked with a plot? How do you check it?
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+Questions 1 and 2:
+
+- **A** checks the **linearity** of the effect. The points rise and then fall in an arch, and the straight line misses them at both ends and in the middle: the assumption is not met.
+- **B** is a Q-Q plot of residuals, which checks the **normality** of the residuals. The points form a curve and leave the line at both ends: the residuals are skewed, and the assumption is not met.
+- **C** is a residual plot, which checks the **equal variance** of the residuals. The spread of the residuals grows with the fitted values, a funnel shape: the assumption is not met.
+- **D** is also a residual plot. It shows only a cloud of points with the same spread everywhere: the equal variance assumption is met.
+
+Question 3: the **independence** of observations. It is checked by self-assessment: ask how the data were collected and whether two observations could be artificially related, for example two partners of the same couple.
+:::
+
+```{r}
+#| label: exercise-anomalous-data
+#| include: false
+# VIF of the two predictors of the model js_score ~ salary + perf, calculated by hand.
+r2_salary_on_perf <- summary(lm(salary ~ perf, data = organisation_beta))$r.squared
+vif_additive <- 1 / (1 - r2_salary_on_perf)
+
+cook_additive <- cooks.distance(model_additive)
+studentised_additive <- rstudent(model_additive)
+employee_largest_cook <- organisation_beta$employee[which.max(cook_additive)]
+employee_largest_studentised <- organisation_beta$employee[which.max(abs(studentised_additive))]
+
+# Tolerance of Height in the iqsize model (see the Example on the VIF of Height).
+tolerance_height <- 1 - r2_height
+```
+
+::: {#exr-l06-vif-cook}
+## Reading the VIF and Cook's distance
+
+The model $js\_score = b_{0} + b_{1}\,salary + b_{2}\,perf + e$ is tested on the 20 employees of Organisation Beta. The checks give the values below: the VIF and the tolerance of each predictor, a summary of the Cook's distances and the range of the studentised residuals.
+
+```{r}
+#| label: exercise-anomalous-table
+tibble(
+  Predictor = c("salary", "perf"),
+  VIF = format_number(c(vif_additive, vif_additive)),
+  Tolerance = format_number(c(1 / vif_additive, 1 / vif_additive))
+) |>
+  kable(align = "lcc")
+
+tibble(
+  Mean = format_number(mean(cook_additive)),
+  Median = format_number(median(cook_additive)),
+  SD = format_number(sd(cook_additive)),
+  Min = format_number(min(cook_additive)),
+  Max = format_number(max(cook_additive))
+) |>
+  kable(align = "c")
+
+tibble(
+  `Smallest studentised residual` = format_number(min(studentised_additive)),
+  `Largest studentised residual` = format_number(max(studentised_additive))
+) |>
+  kable(align = "c")
+```
+
+1. Is the correlation between $salary$ and $perf$ a problem for this model?
+2. Why do $salary$ and $perf$ have the same VIF?
+3. Does any employee have a high influence on the model?
+4. Is there any outlier, according to the rule of the "Your turn" box on anomalous data?
+5. In @tbl-l06-vif, the tolerance of Height is `r format_number(tolerance_height)`. What share of the variance of Height is explained by Brain and Weight?
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+1. No. The VIF is `r format_number(vif_additive)`, very close to 1 and far below the cut-off value of 5: the two predictors are almost uncorrelated ($r = `r format_number(cor(organisation_beta$salary, organisation_beta$perf))`$).
+2. With two predictors, the "other predictors" of each one are only the other one. Both VIFs come from the same $R^2_j$, the square of the correlation between $salary$ and $perf$: $VIF = 1 / (1 - `r format_number(r2_salary_on_perf, 4)`) = `r format_number(vif_additive)`$.
+3. No. The maximum Cook's distance is `r format_number(max(cook_additive))` (employee `r employee_largest_cook`), far below 1, and the mean is `r format_number(mean(cook_additive))`.
+4. No. The studentised residuals go from `r format_number(min(studentised_additive))` to `r format_number(max(studentised_additive))`, so none is beyond +3 or -3. Employee `r employee_largest_studentised`, at `r format_number(studentised_additive[which.max(abs(studentised_additive))])`, is close to the limit and worth a closer look.
+5. The tolerance is $1 - R^2_j$, so $R^2_j = 1 - `r format_number(tolerance_height)` = `r format_number(r2_height)`$: Brain and Weight explain `r scales::percent(r2_height, accuracy = 1)` of the variance of Height.
+:::
+
+```{r}
+#| label: exercise-power
+#| include: false
+power_20_per_group <- power.t.test(n = 20, delta = 0.5, sd = 1, sig.level = 0.05)$power
+```
+
+::: {#exr-l06-power}
+## Reading a power analysis
+
+Use @fig-l06-power-curves and the rules of @sec-l06-prospective.
+
+1. About how many participants per group are needed to detect a large effect ($d = 0.8$) with a power of 0.8? How many in total?
+2. A student plans to compare two groups of 20 participants and expects a medium effect ($d = 0.5$). Read the power of this study on the figure. What do you advise?
+3. What is the Numerator df of the model $js\_score = b_{0} + b_{1}\,gender + b_{2}\,location + b_{3}\,gender*location + e$?
+4. Why does a small effect need so many more participants than a large one?
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+1. The dark blue curve crosses the line of 0.8 at about 25 participants per group. The exact value is `r n_per_group_needed[["large (d = 0.8)"]]` per group, so `r 2 * n_per_group_needed[["large (d = 0.8)"]]` in total.
+2. With 20 participants per group, the medium blue curve is at about 0.3: the exact power is `r format_number(power_20_per_group)`. The study would miss an effect of this size `r round(100 * (1 - power_20_per_group))` times out of 100. Advise the student to recruit at least `r n_per_group_needed[["medium (d = 0.5)"]]` participants per group, or to change the design.
+3. $gender$ has 1 df (2 categories - 1), $location$ has 2 df (3 categories - 1) and the interaction has $1 \times 2 = 2$ df. The Numerator df is $1 + 2 + 2 = 5$.
+4. A small difference between two groups is hidden by the variability of the observations. Only a large sample makes the estimate precise enough to tell it apart from 0. As @sec-lecture-04 says, the significance of an estimate depends on the strength of the relationship and on the sample size.
+:::
+
+::: {#exr-l06-scenarios}
+## $p$-hacking, $p$-HARKing or fine?
+
+Say whether each practice is $p$-hacking, $p$-HARKing or fine, and why.
+
+a. A researcher tests the effect of $salary$ on $js\_score$. It is not significant, so she tests $perf$, then $gender$, then $location$, each in its own model, and reports only the significant one.
+b. A researcher finds by chance that $location$ predicts $js\_score$. In the paper, the introduction announces this effect as the hypothesis of the study.
+c. A researcher pre-registers three hypotheses on the open science framework, tests them in one model, and reports all the results, significant or not.
+d. A researcher builds a correlation table of 10 variables and reports every correlation with $p < .05$ as a finding.
+e. A researcher notices an unexpected effect, reports it as an exploratory result, and tests it again on new data.
+:::
+
+```{r}
+#| label: exercise-scenarios
+#| include: false
+correlations_10_variables <- choose(10, 2)
+risk_10_variables <- 1 - 0.95^correlations_10_variables
+```
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+a. **$p$-hacking.** The tests are run until a significant $p$-value appears, with one test by hypothesis instead of one unique test. With four tests, the risk of at least one false positive would already be `r scales::percent(1 - 0.95^4, accuracy = 1)` if the tests were independent (@fig-l06-false-positives).
+b. **$p$-HARKing.** A post hoc hypothesis, based on the results, is presented as if it were an a priori hypothesis.
+c. **Fine.** This is the good practice of the chapter: pre-registration, one model for all the hypotheses and a full report.
+d. **$p$-hacking.** A table of 10 variables holds `r correlations_10_variables` correlations. If none of them existed in the population, the risk of at least one false positive would be $1 - 0.95^{`r correlations_10_variables`} = `r format_number(risk_10_variables)`$, that is `r scales::percent(risk_10_variables, accuracy = 1)`, if the tests were independent. $p$-values are produced only to test hypotheses formulated beforehand (@sec-lecture-04).
+e. **Fine.** The result is presented for what it is, and the new test is done on new data.
+:::
+
+```{r}
+#| label: exercise-comparison
+#| include: false
+comparison_interaction <- anova(model_additive, model_interaction)
+aic_additive <- AIC(model_additive)
+aic_interaction <- AIC(model_interaction)
+```
+
+::: {#exr-l06-comparison}
+## Is the interaction useful?
+
+Open `organisation_beta.csv` in jamovi (or in R) and answer the "Your turn" question of @sec-l06-comparison-jamovi: compare the full model $js\_score = b_{0} + b_{1}\,salary + b_{2}\,perf + b_{3}\,salary*perf + e$ with the simple model $js\_score = b_{0} + b_{1}\,salary + b_{2}\,perf + e$.
+
+1. Which model has the smaller $AIC$?
+2. Is the difference between the two models statistically significant?
+3. Write one sentence for the results section.
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+In jamovi, set $js\_score$ as the Dependent Variable and $salary$ and $perf$ as Covariates. In the Model Builder, put $salary$ and $perf$ in Block 1. Add a New Block and bring the interaction $salary*perf$ into Block 2 (select both variables at once). Tick $AIC$ in the Model Fit options.
+
+```{r}
+#| echo: true
+#| eval: false
+#| code-fold: true
+#| code-summary: "R code"
+model_additive <- lm(js_score ~ salary + perf, data = organisation_beta)
+model_interaction <- lm(js_score ~ salary * perf, data = organisation_beta)
+anova(model_additive, model_interaction)
+AIC(model_additive, model_interaction)
+```
+
+1. The simple model: $AIC = `r format_number(aic_additive)`$ without the interaction and $AIC = `r format_number(aic_interaction)`$ with it.
+2. No. The comparison gives $F(`r comparison_interaction$Df[2]`, `r comparison_interaction$Res.Df[2]`) = `r format_number(comparison_interaction$F[2])`$, $`r format_p(comparison_interaction$"Pr(>F)"[2])`$. Adding the interaction does not improve the accuracy of the model.
+3. Adding the interaction between $salary$ and $perf$ did not significantly improve the predictions of the model ($F(`r comparison_interaction$Df[2]`, `r comparison_interaction$Res.Df[2]`) = `r format_number(comparison_interaction$F[2])`$, $`r format_p(comparison_interaction$"Pr(>F)"[2])`$), and it increased the $AIC$ from `r format_number(aic_additive)` to `r format_number(aic_interaction)`.
+:::
+
+```{r}
+#| label: exercise-assumptions-perf
+#| include: false
+cook_perf <- cooks.distance(model_perf)
+studentised_perf <- rstudent(model_perf)
+employee_largest_cook_perf <- organisation_beta$employee[which.max(cook_perf)]
+```
+
+::: {#exr-l06-assumptions}
+## Checking and reporting the assumptions
+
+Take the model of the first "Your turn" box of this chapter, $js\_score = b_{0} + b_{1}\,perf + e$.
+
+1. In jamovi (or in R), check the four assumptions and look for anomalous data.
+2. Write the sentences that report these checks in a results section.
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+In jamovi, run the Linear Regression with $js\_score$ as the Dependent Variable and $perf$ as a Covariate, open **Assumption Checks** and tick all the boxes. Plot $js\_score$ against $perf$ to check linearity.
+
+```{r}
+#| echo: true
+#| eval: false
+#| code-fold: true
+#| code-summary: "R code"
+model_perf <- lm(js_score ~ perf, data = organisation_beta)
+# Linearity: the outcome against the predictor
+plot(js_score ~ perf, data = organisation_beta)
+# Normality: the Q-Q plot of the residuals
+plot(model_perf, which = 2)
+# Equal variance: the residuals against the fitted values
+plot(model_perf, which = 1)
+# Anomalous data
+summary(cooks.distance(model_perf))
+range(rstudent(model_perf))
+```
+
+```{r}
+#| fig-alt: "Two plots for the model of js_score on perf. Left, a Q-Q plot of the standardised residuals: the 20 points lie close to the blue line. Right, the residuals against the fitted values: the fitted values only go from about 6.77 to 6.87 and the points form a cloud with no funnel and no curve."
+#| fig-height: 3
+perf_checks <- tibble(
+  fitted = fitted(model_perf),
+  residual = residuals(model_perf),
+  standardised = rstandard(model_perf)
+)
+
+plot_qq_perf <- ggplot(perf_checks, aes(sample = standardised)) +
+  stat_qq_line(colour = book_col("blue"), linewidth = 0.9) +
+  stat_qq(size = 2) +
+  labs(x = "Theoretical quantiles", y = "Standardised residuals")
+
+plot_residuals_perf <- ggplot(perf_checks, aes(fitted, residual)) +
+  geom_hline(yintercept = 0, colour = book_col("grey"), linetype = "dashed") +
+  geom_point(size = 2) +
+  labs(x = "Fitted values", y = "Residuals")
+
+plot_qq_perf + plot_residuals_perf
+```
+
+1. The four assumptions and the anomalous data:
+    - **Linearity.** The scatterplot of $js\_score$ against $perf$ shows no curve: the points are spread around an almost flat line.
+    - **Independence.** Each employee gives one observation, and the data were simulated independently for each employee (@sec-lecture-04). Nothing suggests that two observations are related.
+    - **Normality.** In the Q-Q plot, the points stay close to the line.
+    - **Equal variance.** The residual plot shows a cloud of points with no funnel. The fitted values vary very little, because $perf$ hardly predicts $js\_score$.
+    - **Anomalous data.** The studentised residuals go from `r format_number(min(studentised_perf))` to `r format_number(max(studentised_perf))`, none beyond +3 or -3. The maximum Cook's distance is `r format_number(max(cook_perf))` (employee `r employee_largest_cook_perf`) and the mean is `r format_number(mean(cook_perf))`, far below 1.
+2. A possible report: "The assumptions of the model were checked. The relationship between $perf$ and $js\_score$ showed no curve, the Q-Q plot of the residuals showed points close to the line, and the plot of the residuals against the fitted values showed no pattern. No observation was an outlier (all studentised residuals between -3 and 3) and none had a high influence (maximum Cook's distance = `r format_number(max(cook_perf))`, mean = `r format_number(mean(cook_perf))`)."
+:::
+
+```{r}
+#| label: exercise-agent
+#| include: false
+salary_p <- summary(model_salary)$coefficients["salary", "Pr(>|t|)"]
+perf_p <- summary(model_perf)$coefficients["perf", "Pr(>|t|)"]
+vif_reported <- vif_additive
+```
+
+::: {#exr-l06-agent}
+## Checking the work of an AI agent
+
+A student asks an AI agent to test two hypotheses on the Organisation Beta data in jamovi Cloud, $H_{a1}$ ($salary$ increases $js\_score$) and $H_{a2}$ ($perf$ increases $js\_score$). The agent returns this text. Find at least five problems.
+
+> I ran two regressions: one of $js\_score$ on $salary$ and one of $js\_score$ on $perf$. The variable $js\_score$ is normally distributed, so the normality assumption is met. The VIF is `r format_number(vif_reported)`, so there are no outliers. Employee 7 has a studentised residual of `r format_number(employee_7$studentised)`, so I removed this employee. The effect of $salary$ is significant ($`r format_p(salary_p)`$) and the effect of $perf$ is not ($`r format_p(perf_p)`$), so $H_{a2}$ is rejected.
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+- **Two models instead of one.** The hypotheses should be tested in one unique model, $js\_score = b_{0} + b_{1}\,salary + b_{2}\,perf + e$, not with one test by hypothesis (@sec-l06-badgood).
+- **Normality of the wrong variable.** The assumption is about the residuals, not about $js\_score$.
+- **The VIF says nothing about outliers.** It measures collinearity between predictors. Outliers are found with the studentised residuals, and influence with Cook's distance. Besides, a model with one predictor has no VIF: the value comes from the model with both predictors.
+- **An outlier removed without reason.** Employee 7 is an outlier, but the Cook's distance of this employee is `r format_number(employee_7$cook)`, far below 1. Removing it changes the data until the model fits. It must stay, unless the data of employee 7 turn out to be junk data.
+- **A wrong conclusion.** A non-significant effect does not reject $H_{a2}$: $H_{0_{2}}$ can't be rejected (@sec-lecture-04).
+- **An incomplete report.** The fit of the model ($R^2$, $F$, $p$) and, for each estimate, $b$, its 95% confidence interval and $t$ are missing. These are the checks that @sec-l06-whatai asks you to make on the work of an AI.
 :::

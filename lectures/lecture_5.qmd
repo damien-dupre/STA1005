@@ -72,7 +72,7 @@ A Linear Regression is used **to test all the hypotheses at once** and to calcul
 
 ## Vocabulary
 
-Specific tests are available for certain type of hypothesis such as T-test or ANOVA but as they are special cases of Linear Regressions, their importance is limited (see [Jonas Kristoffer Lindeløv's blog post: Common statistical tests are linear models](https://lindeloev.github.io/tests-as-linear/)).
+Specific tests are available for certain types of hypotheses such as T-test or ANOVA but as they are special cases of Linear Regressions, their importance is limited (see [Jonas Kristoffer Lindeløv's blog post: Common statistical tests are linear models](https://lindeloev.github.io/tests-as-linear/)).
 
 ```{r}
 include_graphics("https://psyteachr.github.io/msc-data-skills/images/memes/glm_meme.png")
@@ -86,19 +86,19 @@ Once the best line is found, each estimate of the tested equation is calculated 
 - $b_1, ..., b_n$:
   - are predictors' effect estimate and each of them is used to test an hypothesis
   - are the value of the slope of the best line between each predictor and the outcome
-  - indicates **how many units of the outcome variable increases/decreases/changes when the predictor increases by 1 unit**
+  - indicate **how many units of the outcome variable increases/decreases/changes when the predictor increases by 1 unit**
 
 ## Analysis of the Estimate
 
 - If $b_1, ..., b_n = 0$, then:
   - The regression line is horizontal (no slope)
   - When the Predictor increases by 1 unit, the Outcome variable does not change
-  - **The null alternative hypothesis is not rejected**
+  - **The null hypothesis is not rejected**
 
 - If $b_1, ..., b_n > 0$ or $< 0$, then:
   - The regression line is positive or negative
   - When the Predictor increases by 1 unit, the Outcome variable increases or decreases by $b$
-  - **The null alternative hypothesis is rejected and the alternative hypothesis considered as plausible**
+  - **The null hypothesis is rejected and the alternative hypothesis is considered as plausible**
 
 ## Significance of Effect's Estimate
 
@@ -114,7 +114,7 @@ The significance is the probability to obtain your results with your sample in t
 - Also called $p$-value
 - Is between 0% and 100% which corresponds to a value between 0.0 and 1.0
 
-**If the $p$-value is lower to 5% or 0.05, then the probability to obtain your results in the null hypothesis scenario is low enough to say that the null hypothesis scenario is rejected and there must be a link between the variables.**
+**If the $p$-value is lower than 5% or 0.05, then the probability to obtain your results in the null hypothesis scenario is low enough to say that the null hypothesis scenario is rejected and there must be a link between the variables.**
 
 Remember that the $p$-value is the probability of the data given the null hypothesis: $P(data|H_0)$.
 
@@ -153,7 +153,7 @@ organisation_beta |>
 
 :::: {layout="[1,1]"}
 ::: {#first-column}
-Using a Categorical variable having 2 category, **e.g., comparing female vs. male** ...
+Using a Categorical variable having 2 categories, **e.g., comparing female vs. male** ...
 
 ```{r fig.height=5}
 organisation_beta |> 
@@ -367,7 +367,7 @@ $$js\_score = b_{0} + b_{1}\,salary\_c + e$$
 
 Exactly the same template as for Continuous Predictors:
 
-> The predictions provided by the alternative model are significantly better than those provided by null model (`r lm_c2$full_result$modelfit$r2`).
+> The predictions provided by the alternative model are significantly better than those provided by the null model (`r lm_c2$full_result$modelfit$r2`).
 
 > The effect of $salary\_c$ on $js\_score$ is statistically significant, therefore $H_0$ can be rejected (`r lm_c2$full_result$salary_c`).
 
@@ -430,7 +430,7 @@ Dummy Coding is when a category is coded 0 and the other coded 1.
 
 For example, in JAMOVI recode female as 0 and male as 1 (Dummy Coding): `IF(gender == "female", 0, 1)`
 
-Dummy Coding is useful because one of the category becomes the intercept and is tested against 0.
+Dummy Coding is useful because one of the categories becomes the intercept and is tested against 0.
 
 :::: {layout="[1,1]"} 
 ::: {#first-column}
@@ -476,7 +476,7 @@ Deviation Coding is useful because **the average of the categories becomes the i
 
 ## Deviation Coding in Linear Regression
 
-However, in the Deviation Coding **using -1 vs. +1, the distance between the categories is 2** not 1. Therefore, even if the test of the slop is the exact same, the value of the slop (the estimate) is twice lower.
+However, in the Deviation Coding **using -1 vs. +1, the distance between the categories is 2** not 1. Therefore, even if the test of the slope is the exact same, the value of the slope (the estimate) is twice lower.
 
 Consequently it is possible to use **a Deviation Coding with -0.5 vs. +0.5 to keep the distance of 1** between the categories.
 
@@ -555,7 +555,7 @@ lm(data = organisation_beta, formula = js_score ~ gender_c) |>
 #### In JAMOVI
 
 1. Open your file
-2. Set variables according their type
+2. Set variables according to their type
 3. **Analyses > Regression > Linear Regression**
 4. Set $js\_score$ as DV and $salary\_c$ as well as $gender$ as Factors
 4. In the **Model Builder** option: 
@@ -604,7 +604,7 @@ In the Model Coefficient Table, to test the estimate of $location$, there is not
 - Comparison of "Australia" vs. "France"
 - Comparison of "Australia" vs. "Ireland"
 
-**Why multiple $p$-value are provided for the same predictor?**
+**Why multiple $p$-values are provided for the same predictor?**
 
 ## Coding Predictors with 3+ categories
 
@@ -659,9 +659,9 @@ Here is our problem: **How to test the overall effect of a variable with 3 or mo
 
 ## ANOVA Test for Overall Effects
 
-Beside Linear Regression and $t$-test, researchers are using ANOVA a lot. ANOVA, stands for Analysis of Variance and is also a sub category of Linear Regression Models.
+Besides Linear Regression and $t$-test, researchers are using ANOVA a lot. ANOVA stands for Analysis of Variance and is also a sub category of Linear Regression Models.
 
-ANOVA is used to calculate the overall effect of categorical variable having more that 2 categories as $t$-test cannot cope. In the case of testing 1 categorical variable, a "one-way" ANOVA is performed.
+ANOVA is used to calculate the overall effect of categorical variable having more than 2 categories as $t$-test cannot cope. In the case of testing 1 categorical variable, a "one-way" ANOVA is performed.
 
 **How ANOVA is working?**
 
@@ -702,7 +702,7 @@ An hypothesis for a categorical predictor with 3 or more categories predicts tha
 - $H_0$: it is true that $\mu(js\_score)_{Ireland} = \mu(js\_score)_{France} = \mu(js\_score)_{Australia}$
 - $H_a$: it is **not** true that $\mu(js\_score)_{Ireland} = \mu(js\_score)_{France} = \mu(js\_score)_{Australia}$
 
-This analysis is usually preformed using a one-way ANOVA but as ANOVA are special cases of the General Linear Model, let's keep this approach.
+This analysis is usually performed using a one-way ANOVA but as ANOVA are special cases of the General Linear Model, let's keep this approach.
 
 ## ANOVA in our Example
 
@@ -723,11 +723,11 @@ organisation_beta |>
 #### In JAMOVI
 
 1. Open your file
-2. Set variables according their type
+2. Set variables according to their type
 3. Analyses > Regression > Linear Regression
 4. Set $js\_score$ as DV and $location$ as Factors
 5. In the **Model Coefficients** option: 
-  - Select **Omnibus Test ANOVA test**
+  - Select **Omnibus ANOVA Test**
 
 ## ANOVA in our Example
 
@@ -853,7 +853,7 @@ However I won't be able to compare Vaccine 1 and Vaccine 2
 
 ## Polynomial Contrasts
 
-They are the most powerful of all the contrasts to test linear and non linear effects: Contrast 1 is called Linear, Contrast 2 is Quadratic, Contrast 3 is Cubic, Contrast 4 is Quartic ...
+They are the most powerful of all the contrasts to test linear and non-linear effects: Contrast 1 is called Linear, Contrast 2 is Quadratic, Contrast 3 is Cubic, Contrast 4 is Quartic ...
 
 :::: {layout="[1,1]"} 
 ::: {#first-column}
@@ -936,7 +936,7 @@ organisation_beta <- organisation_beta |>
   )
 ```
 
-What happens with different contrast to compare the average $js\_score$ according employee's $location$: **France**, **Ireland**, **Australia**?
+What happens with different contrast to compare the average $js\_score$ according to employee's $location$: **France**, **Ireland**, **Australia**?
 
 ## Comparison of Contrasts Results
 
@@ -1019,8 +1019,8 @@ Hypotheses:
 - $H_{a_1}$: The average $js\_score$ of Irish employees is different than the average $js\_score$ of French employees
   - $H_{0_1}$: The average $js\_score$ of Irish employees is the same as the average $js\_score$ of French employees
 
-- $H_{a_2}$: The average $js\_score$ of Australia employees is different than the average $js\_score$ of France employees
-  - $H_{0_2}$: The average $js\_score$ of Australia employees is the same as the average $js\_score$ of France employees
+- $H_{a_2}$: The average $js\_score$ of Australian employees is different than the average $js\_score$ of French employees
+  - $H_{0_2}$: The average $js\_score$ of Australian employees is the same as the average $js\_score$ of French employees
 
 ## Solution - Sum to Zero Contrasts
 

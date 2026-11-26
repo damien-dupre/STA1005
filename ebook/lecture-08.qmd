@@ -7,6 +7,24 @@ source("R/setup.R")
 organisation_beta <- read_csv(here("data/organisation_beta.csv"))
 ```
 
+```{r}
+#| label: setup-figures
+#| include: false
+library(patchwork)
+```
+
+::: {.callout-note .box-goals title="In this chapter"}
+After this chapter, you can:
+
+- create a Quarto document in Posit Cloud and render it to HTML
+- name the three parts of a Quarto file: the YAML, the Markdown text and the code chunks
+- write a YAML header, format text in Markdown and type an equation in LaTeX
+- write R code chunks and choose their options to show or hide the code and its results
+- start a paper from a Quarto journal template and publish a Quarto website on GitHub Pages
+
+You need a free Posit Cloud account and the file `organisation_beta.csv`. For the website, you need R, RStudio (or another editor) and Quarto on your own computer.
+:::
+
 With Posit Cloud, we will see how to create **Quarto** files (.qmd) to embed text and code output and generate professional outputs. Before starting, sign up for a free Posit Cloud account (<https://posit.cloud/>).
 
 The chapter first presents Quarto and the three parts of a Quarto file: the YAML, the Markdown text and the R code chunks. It then goes through each of them in turn, with exercises to try in Posit Cloud. It finishes with a gallery of what Quarto can produce, and with the Quarto journal templates and website templates.
@@ -49,7 +67,7 @@ More resources are available online:
 
 ### Creating the document
 
-::: {.callout-tip title="Your turn: create your first Quarto document"}
+::: {.callout-tip .box-yourturn title="Your turn: create your first Quarto document"}
 In your Posit Cloud:
 
 1. Create a new Quarto document: `File > New File > Quarto Document`
@@ -123,18 +141,132 @@ include_img("quarto_default_markdown.png")
 include_img("quarto_default_code.png")
 ```
 
+@fig-l08-anatomy puts the three parts together on one page. The file is the example of @sec-l08-figures-output, later in this chapter: the YAML comes first, then code chunks and Markdown text follow each other in the order in which they appear in the output.
+
+```{r}
+#| label: fig-l08-anatomy
+#| fig-cap: "The three parts of a Quarto file: the YAML at the top, then code chunks and Markdown text in any order. To fit the page, the path to the data is written on its own line and two blank lines are removed."
+#| fig-alt: "A schematic page of a Quarto file written in a monospace font, with each part shaded and labelled on the right. Lines 1 to 7 hold the YAML, between two lines of three dashes, with the title Untitled, the format html and the execute options echo false and warning false; its label reads YAML, metadata and options. The next block is a code chunk with the label setup and the option include false, which loads the tidyverse and reads organisation_beta.csv, the path being written on its own line; its label reads Code chunk, run when rendering. A block of Markdown text follows, with the heading My Section Title and the sentence My text followed by my figure; its label reads Markdown text, sections and paragraphs. The last block is a second code chunk that draws a ggplot of salary and js_score."
+#| fig-height: 5
+file_lines <- tribble(
+  ~code,                                       ~part,
+  "---",                                       "YAML",
+  "title: \"Untitled\"",                       "YAML",
+  "format: html",                              "YAML",
+  "execute:",                                  "YAML",
+  "  echo: false",                             "YAML",
+  "  warning: false",                          "YAML",
+  "---",                                       "YAML",
+  "",                                          NA,
+  "```{r}",                                    "First code chunk",
+  "#| label: setup",                           "First code chunk",
+  "#| include: false",                         "First code chunk",
+  "library(tidyverse)",                        "First code chunk",
+  "organisation_beta <- read_csv(",            "First code chunk",
+  "  \"/cloud/project/organisation_beta.csv\"", "First code chunk",
+  ")",                                         "First code chunk",
+  "```",                                       "First code chunk",
+  "",                                          NA,
+  "# My Section Title",                        "Markdown text",
+  "",                                          "Markdown text",
+  "My text followed by my figure.",            "Markdown text",
+  "",                                          NA,
+  "```{r}",                                    "Second code chunk",
+  "ggplot(organisation_beta) +",               "Second code chunk",
+  "  aes(salary, js_score) +",                 "Second code chunk",
+  "  geom_point()",                            "Second code chunk",
+  "```",                                       "Second code chunk"
+) |>
+  mutate(line = row_number())
+
+file_parts <- file_lines |>
+  filter(!is.na(part)) |>
+  group_by(part) |>
+  summarise(first_line = min(line), last_line = max(line)) |>
+  mutate(
+    type = if_else(str_ends(part, "code chunk"), "Code chunk", part),
+    label = case_when(
+      type == "YAML" ~ "YAML\nmetadata and options",
+      type == "Markdown text" ~ "Markdown text\nsections and paragraphs",
+      type == "Code chunk" ~ "Code chunk\nrun when rendering"
+    )
+  )
+
+part_colours <- c(
+  "YAML" = book_col("blue"),
+  "Markdown text" = book_col("red"),
+  "Code chunk" = book_col("green")
+)
+
+# The horizontal axis is in inches, the width of the figure.
+ggplot() +
+  geom_rect(
+    aes(xmin = 0.05, xmax = 4.1, ymin = 0.3, ymax = nrow(file_lines) + 0.7),
+    fill = "white", colour = book_col("grey"), linewidth = 0.5
+  ) +
+  geom_rect(
+    data = file_parts,
+    aes(xmin = 0.12, xmax = 4.03, ymin = first_line - 0.45, ymax = last_line + 0.45, fill = type),
+    alpha = 0.10
+  ) +
+  geom_text(data = file_lines, aes(x = 0.22, y = line, label = code), family = "mono", hjust = 0, size = 3.5) +
+  geom_segment(
+    data = file_parts,
+    aes(x = 4.3, xend = 4.3, y = first_line - 0.4, yend = last_line + 0.4, colour = type),
+    linewidth = 1
+  ) +
+  geom_text(
+    data = file_parts,
+    aes(x = 4.45, y = (first_line + last_line) / 2, label = label),
+    hjust = 0, size = 3.6, lineheight = 0.95
+  ) +
+  scale_y_reverse() +
+  scale_x_continuous(limits = c(0, 7), expand = expansion(0)) +
+  scale_fill_manual(values = part_colours, guide = "none") +
+  scale_colour_manual(values = part_colours, guide = "none") +
+  theme_void()
+```
+
 ### Rendering the output file
 
+::: {.callout-tip .box-howto title="In RStudio: render a Quarto document"}
 To generate the output file:
 
 1. Go to `File > Render Document` (a `Render` shortcut icon is also displayed in the menu bar)
-2. Give a name to your document, click `OK`, and voila!
+2. Give a name to your document, click `OK`, and voilà!
+:::
 
 The file can then be compared with its output: the editor side is shown in @fig-l08-editor and the output side in @fig-l08-output.
+
+@fig-l08-render shows what happens when you click `Render`. The R code chunks are run first, by the `knitr` engine presented in @sec-l08-yaml. The text and the results of the code are then converted to the output format by pandoc, the converter behind the "Pandoc flavoured Markdown" of Quarto.
+
+```{r}
+#| label: fig-l08-render
+#| fig-cap: "What Render does: the code of the .qmd file is run, then the text and the results are converted into the output file."
+#| fig-alt: "Four boxes in a row joined by arrows. The .qmd file: YAML, Markdown text and code. Run the code: knitr runs the R code chunks. Convert: pandoc converts the Markdown. Output file: HTML, PDF or Word."
+#| fig-height: 1.4
+render_steps <- tribble(
+  ~step,          ~detail,
+  ".qmd file",    "YAML, Markdown\ntext and code",
+  "Run the code", "knitr runs the\nR code chunks",
+  "Convert",      "pandoc converts\nthe Markdown",
+  "Output file",  "HTML, PDF\nor Word"
+)
+
+flow_chart(render_steps)
+```
+
+::: {.callout-note .box-definition title="Definition: rendering"}
+Rendering turns the Quarto file (.qmd) into its output file (HTML, PDF, Word and others). The code of the chunks is run, and its results are placed in the output document with the text.
+:::
 
 ## The YAML {#sec-l08-yaml}
 
 As seen above, the YAML is displayed between two series of `---` signs at the top of the file. This section shows how to write it to obtain an HTML output, and how to control the way code is executed.
+
+::: {.callout-note .box-definition title="Definition: YAML"}
+The YAML is the header of a Quarto file, written between two series of `---` signs. It holds the metadata shown in the header of the output file (title, author, date, ...) and the options of the document, such as the output `format:` and the `execute:` options.
+:::
 
 ### Output HTML
 
@@ -156,7 +288,7 @@ date: "1984-03-23"
 ---
 ```
 
-A more elaborated YAML adds a subtitle, an author, a theme for the HTML output and options for the execution of the code:
+A more elaborate YAML adds a subtitle, an author, a theme for the HTML output and options for the execution of the code:
 
 ```yaml
 ---
@@ -173,6 +305,10 @@ execute:
 
 ---
 ```
+
+::: {.callout-warning .box-mistake title="Common mistake: tabs and missing spaces in the YAML"}
+The YAML reads the spaces. Indent a sub-option with spaces, never with a tab: `html:` takes two spaces under `format:`, and `theme:` four. Leave a space after each colon: `title: "My report"`, not `title:"My report"`. Otherwise the render stops with an error about the YAML.
+:::
 
 ### Execute code
 
@@ -226,9 +362,17 @@ execute:
 ---
 ```
 
+::: {.callout-tip .box-example title="Example: a report without code"}
+With the YAML above, every chunk of the document is still run, but the output shows only the results: no code, no warnings and no messages. This book is written this way: its code is hidden, except where the code is part of the teaching.
+:::
+
 ## Markdown style {#sec-l08-markdown}
 
 The text of a Quarto file is written in Markdown style. For each feature below, the examples show what you type and what you get.
+
+::: {.callout-note .box-definition title="Definition: Markdown"}
+Markdown is the plain-text style in which the text of a Quarto file is written. Signs such as `*`, `-`, `#` and `$$` mark the formatting, and the formatting itself only appears in the output file.
+:::
 
 ### Emphasising text
 
@@ -352,7 +496,7 @@ $$y=ax+b$$
 
 <!-- note: the slide types $\LaTeX$ here, which shows the LaTeX logo in the slides; the \LaTeX command fails in inline maths in PDF and cannot be converted for EPUB, so the result is written as plain text in the book -->
 
-::: {.callout-tip title="Your turn: write a short Markdown document"}
+::: {.callout-tip .box-yourturn title="Your turn: write a short Markdown document"}
 In Posit Cloud, with the file that you have previously created:
 
 1. Remove all content except the YAML
@@ -394,6 +538,62 @@ To write a chunk:
 - place the engine (`r`) between curly braces `{r}`
 - place the options underneath, behind the `#|` (hashpipe): `#| option1: value`
 
+@fig-l08-chunk labels these parts on the chunk above.
+
+```{r}
+#| label: fig-l08-chunk
+#| fig-cap: "The anatomy of a code chunk: an opening fence with the engine, the options after the hashpipe, the code and a closing fence. The line of code is split in two to fit the page, as R allows."
+#| fig-alt: "The chunk organisation-beta-lm written in a monospace font in a grey box, with a label on the left of each part. The first line, three backticks followed by r between curly braces, is labelled opening fence: 3 backticks and the engine. The two lines label: organisation-beta-lm and echo: false, each starting with the hashpipe, are labelled options: one per line, after the hashpipe. The code model <- lm(formula = js_score ~ salary + perf, data = organisation_beta), written on two lines, is labelled code: run when the file is rendered. The last line, three backticks, is labelled closing fence."
+#| fig-height: 2.6
+chunk_lines <- tribble(
+  ~code,
+  "```{r}",
+  "#| label: organisation-beta-lm",
+  "#| echo: false",
+  "model <- lm(formula = js_score ~ salary + perf,",
+  "            data = organisation_beta)",
+  "```"
+) |>
+  mutate(line = row_number())
+
+chunk_parts <- tribble(
+  ~first_line, ~last_line, ~label,
+  1,           1,          "Opening fence: 3 backticks\nand the engine {r}",
+  2,           3,          "Options: one per line,\nafter the hashpipe #|",
+  4,           5,          "Code: run when the\nfile is rendered",
+  6,           6,          "Closing fence:\n3 backticks"
+)
+
+# The horizontal axis is in inches, the width of the figure.
+ggplot() +
+  geom_rect(
+    aes(xmin = 2.55, xmax = 6.95, ymin = 0.4, ymax = 6.6),
+    fill = scales::alpha(book_col("grey"), 0.1), colour = book_col("grey"), linewidth = 0.4
+  ) +
+  geom_text(data = chunk_lines, aes(x = 2.7, y = line, label = code), family = "mono", hjust = 0, size = 3.5) +
+  geom_segment(
+    data = chunk_parts,
+    aes(x = 2.4, xend = 2.4, y = first_line - 0.35, yend = last_line + 0.35),
+    colour = book_col("grey"), linewidth = 1
+  ) +
+  geom_text(
+    data = chunk_parts,
+    aes(x = 2.28, y = (first_line + last_line) / 2, label = label),
+    hjust = 1, size = 3.4, lineheight = 0.95
+  ) +
+  scale_y_reverse() +
+  scale_x_continuous(limits = c(0, 7), expand = expansion(0)) +
+  theme_void()
+```
+
+::: {.callout-note .box-definition title="Definition: code chunk"}
+A code chunk is a block of code in a Quarto file, opened and closed by three backticks, with the engine between curly braces (`{r}`). Its code is run when the file is rendered, and its results (printed output, tables, figures) are placed in the output document.
+:::
+
+::: {.callout-warning .box-mistake title="Common mistake: a chunk that is not closed"}
+If the three closing backticks are missing, the text that follows the chunk, down to the closing backticks of the next chunk, is read as R code. The render then stops with an R error that points to a line of text, sometimes far below the chunk. When an error points to a sentence, check that the chunk above it is closed.
+:::
+
 ### The first code chunk {#sec-l08-first-chunk}
 
 In the first code chunk, all the **actions that will be applied to the following chunks** will be added (e.g., code options, libraries used, data downloaded, ...).
@@ -411,11 +611,23 @@ organisation_beta <- read_csv("/cloud/project/organisation_beta.csv")
 ```
 ````
 
+::: {.callout-warning .box-mistake title="Common mistake: a short path to the data file"}
+The code of a Quarto document runs from the folder of the .qmd file. A short path such as `read_csv("organisation_beta.csv")` only finds the data if the file sits in the same folder as the .qmd file. The full path `/cloud/project/organisation_beta.csv` points to the file uploaded at the top of your Posit Cloud project, wherever the .qmd file is saved in that project.
+:::
+
 ### Code chunk options
 
 Chunk output can be customised with hashpipe options (i.e., arguments set after the `#|`). Above, we use 1 argument: <!-- check: the setup chunk above sets two hashpipe options (label and include); the slide counts one -->
 
 - `#| include: false` prevents code and results from appearing in the finished file. Quarto still runs the code in the chunk, and the results can be used by other chunks.
+
+::: {.callout-tip .box-example title="Example: the options of the setup chunk"}
+The setup chunk has two hashpipe lines. `#| label: setup` gives the chunk its name, and `#| include: false` is the option that changes the output: the packages are loaded and `organisation_beta` is created, but nothing of the chunk appears in the finished file.
+:::
+
+::: {.callout-note .box-definition title="Definition: chunk option"}
+A chunk option is a line at the top of a chunk, written after the hashpipe as `#| option: value`. It changes how this chunk is run or displayed. Options such as `echo`, `warning` and `message` can also be set once for every chunk, under `execute:` in the YAML.
+:::
 
 Additional options can be turned on only for one chunk:
 
@@ -423,7 +635,44 @@ Additional options can be turned on only for one chunk:
 
 See the **[Quarto Reference Guide](https://quarto.org/docs/reference/cells/cells-knitr.html)** for a complete list of chunk options.
 
-### Figures in the output document
+Two more options of this list are used in the exercises of this chapter. `#| eval: false` shows the code of a chunk without running it, and `#| warning: false` hides the warnings of one chunk, as `warning: false` under `execute:` does for every chunk. In Quarto, `warning: false` also hides the messages. @fig-l08-options sums up what the options of this chapter show and hide.
+
+```{r}
+#| label: fig-l08-options
+#| fig-cap: "What each chunk option shows in the output file, for a document with no execute options in its YAML. Each row is a chunk with one option; yes means that the element appears in the output, or that the code is run."
+#| fig-alt: "A grid of 6 rows and 5 columns filled with yes or no, yes in bold on a blue cell and no on a light grey cell. The columns are code shown, code run, results shown, warnings shown and messages shown. No option: yes everywhere. echo: false: code not shown, everything else yes. eval: false: code shown, and no for code run, results, warnings and messages. include: false: code run, and no for everything shown. warning: false: code shown and run, results shown, no warnings and no messages shown. message: false: no messages shown, everything else yes."
+#| fig-height: 3.2
+chunk_options <- tribble(
+  ~option,             ~`Code\nshown`, ~`Code\nrun`, ~`Results\nshown`, ~`Warnings\nshown`, ~`Messages\nshown`,
+  "no option",         "yes",          "yes",        "yes",             "yes",               "yes",
+  "#| echo: false",    "no",           "yes",        "yes",             "yes",               "yes",
+  "#| eval: false",    "yes",          "no",         "no",              "no",                "no",
+  "#| include: false", "no",           "yes",        "no",              "no",                "no",
+  "#| warning: false", "yes",          "yes",        "yes",             "no",                "no",
+  "#| message: false", "yes",          "yes",        "yes",             "yes",               "no"
+)
+
+options_grid <- chunk_options |>
+  pivot_longer(-option, names_to = "element", values_to = "shown") |>
+  mutate(
+    option = factor(option, levels = rev(chunk_options$option)),
+    element = factor(element, levels = names(chunk_options)[-1])
+  )
+
+ggplot(options_grid, aes(x = element, y = option)) +
+  geom_tile(aes(fill = shown), colour = "white", linewidth = 1.2) +
+  geom_text(aes(label = shown, fontface = if_else(shown == "yes", "bold", "plain")), size = 3.6) +
+  scale_fill_manual(values = c(yes = book_blues[["light"]], no = scales::alpha(book_col("grey"), 0.15)), guide = "none") +
+  scale_x_discrete(position = "top") +
+  labs(x = NULL, y = NULL) +
+  theme(
+    panel.grid.major = element_blank(),
+    axis.text.y = element_text(family = "mono", hjust = 0, size = 10.5),
+    axis.text.x = element_text(size = 10.5)
+  )
+```
+
+### Figures in the output document {#sec-l08-figures-output}
 
 As long as the package {tidyverse} is loaded and the data object created in the first setup chunk, then a **ggplot visualisation can be used in a separate chunk**:
 
@@ -455,6 +704,10 @@ ggplot(organisation_beta) +
   geom_point()
 ```
 ````
+
+::: {.callout-warning .box-mistake title="Common mistake: an object created in the console"}
+Rendering runs the document in a new R session, which does not see the objects of your Console. If `organisation_beta` was only created in the Console, the render stops with the error "object 'organisation_beta' not found". Create every object, and load every package, in a chunk of the document itself, usually the setup chunk.
+:::
 
 ### Working with code
 
@@ -531,11 +784,11 @@ ggplot(organisation_beta) +
   geom_point()
 ```
 
-::: {.callout-note title="Live demonstration"}
+::: {.callout-note .box-demo title="Live demonstration"}
 In the lecture, code chunks are demonstrated live before the exercise below.
 :::
 
-::: {.callout-tip title="Your turn: add code chunks to your report"}
+::: {.callout-tip .box-yourturn title="Your turn: add code chunks to your report"}
 In your **report.qmd** document:
 
 1. **Create a first code chunk** called `setup`. In this chunk, load the `{report}` packages and create your data object with the following code: <!-- check: this exercise uses read.csv() whereas the setup chunk example and the second exercise use read_csv(); and step 3 needs ggplot2 (library(tidyverse)), which is only added at step 4 of the second exercise -->
@@ -634,18 +887,22 @@ quarto use template quarto-journals/plos
 
 <!-- check: the list of journals above has seven entries but the commands include an eighth template, plos -->
 
-::: {.callout-note title="Live demonstration"}
+::: {.callout-note .box-definition title="Definition: journal template"}
+A journal template is a Quarto format prepared for one journal or publisher. `quarto use template` creates a new folder with this format and a default .qmd document that uses it: you keep its YAML and write your paper, with your code chunks, in place of the default content.
+:::
+
+::: {.callout-note .box-demo title="Live demonstration"}
 In the lecture, the creation of a document from a journal template is demonstrated live before the exercises below.
 :::
 
-::: {.callout-tip title="Your turn: create a document from a journal template"}
+::: {.callout-tip .box-yourturn title="Your turn: create a document from a journal template"}
 1. Create a new quarto-journals document using one of the templates listed above, from the Terminal. Choose `Y` when asked if you trust the authors of this template and choose a directory name.
 2. Render the default `.qmd` document obtained to observe it.
 
 Suggested time: 5 minutes.
 :::
 
-::: {.callout-tip title="Your turn: add your analysis to the template document"}
+::: {.callout-tip .box-yourturn title="Your turn: add your analysis to the template document"}
 In this new .qmd document:
 
 1. Remove everything except the YAML
@@ -697,8 +954,8 @@ Unfortunately, Quarto websites cannot be visualised on Posit Cloud, as it is not
 2. Install RStudio on your own computer from <https://posit.co/download/rstudio-desktop>
 3. Install Quarto on your own computer from <https://quarto.org/>
 
-::: {.callout-note}
-Among the Integrated Development Environments (IDEs), there are also VScode, Positron, and many more.
+::: {.callout-note title="Other editors"}
+Among the Integrated Development Environments (IDEs), there are also VS Code, Positron, and many more.
 :::
 
 ### Creating a website
@@ -763,12 +1020,13 @@ include_img("mysite_docs.png")
 
 <!-- check: the screenshot shows a file called nojekyll.txt, whereas the next step asks for a file called .nojekyll -->
 
-::: {.callout-note}
+::: {.callout-note title="The _site folder"}
 The old folder `_site` will not be used any more and is now useless.
 :::
 
 Next, add a `.nojekyll` file to the root of your repository that tells GitHub Pages not to do additional processing of your published site using Jekyll (the GitHub default site generation tool).
 
+::: {.callout-tip .box-howto title="In the Terminal: create the .nojekyll file"}
 You can create it from the terminal when the website folder is the current directory. In Bash or zsh:
 
 ```bash
@@ -786,6 +1044,95 @@ In PowerShell:
 ```bash
 ni .nojekyll
 ```
+:::
+
+@fig-l08-tree sums up the folder of the website: the 4 files created by `quarto create project website`, then the folders and the file added during the demonstration. The `docs` folder holds the `.html` files of the website, and it is the folder that GitHub Pages publishes.
+
+```{r}
+#| label: fig-l08-tree
+#| fig-cap: "The folder of the website after its creation (top) and at the end of the demonstration (bottom). Only the files named in this chapter are shown: Quarto also adds other files to the docs folder."
+#| fig-alt: "Two file trees. Top, titled quarto create project website mysite: the folder mysite holds _quarto.yml (overall style and navbar), index.qmd (homepage), about.qmd (another page) and styles.css (additional style). Bottom, titled quarto render mysite with output-dir docs: the folder mysite holds _quarto.yml (output-dir: docs), the folder _site (from quarto preview, now useless), about.qmd, the folder docs, marked by an orange dot and labelled the website published by GitHub Pages, which holds the .html files, then index.qmd, .nojekyll (no processing by Jekyll) and styles.css."
+#| fig-height: 5
+folder_created <- tribble(
+  ~depth, ~name,         ~note,
+  0,      "mysite/",     "",
+  1,      "_quarto.yml", "overall style and navbar",
+  1,      "index.qmd",   "homepage",
+  1,      "about.qmd",   "another page",
+  1,      "styles.css",  "additional style"
+)
+
+folder_published <- tribble(
+  ~depth, ~name,             ~note,
+  0,      "mysite/",         "",
+  1,      "_quarto.yml",     "output-dir: docs",
+  1,      "_site/",          "from quarto preview, now useless",
+  1,      "about.qmd",       "",
+  1,      "docs/",           "the website published by GitHub Pages",
+  2,      "the .html files", "",
+  1,      "index.qmd",       "",
+  1,      ".nojekyll",       "no processing by Jekyll",
+  1,      "styles.css",      ""
+)
+
+# Draws one folder as a tree: each file is joined to the folder above it.
+draw_folder <- function(folder, title, highlight = NULL) {
+  folder <- folder |>
+    mutate(
+      line = row_number(),
+      x = depth * 0.6,
+      highlighted = name %in% highlight
+    )
+  parent_line <- map_dbl(folder$line, function(current) {
+    if (folder$depth[current] == 0) {
+      return(NA)
+    }
+    max(folder$line[folder$depth == folder$depth[current] - 1 & folder$line < current])
+  })
+  links <- folder |>
+    mutate(parent_line = parent_line) |>
+    filter(!is.na(parent_line))
+
+  ggplot(folder) +
+    geom_segment(
+      data = links,
+      aes(x = x - 0.45, xend = x - 0.45, y = parent_line + 0.35, yend = line),
+      colour = book_col("grey"), linewidth = 0.4
+    ) +
+    geom_segment(
+      data = links,
+      aes(x = x - 0.45, xend = x - 0.08, y = line, yend = line),
+      colour = book_col("grey"), linewidth = 0.4
+    ) +
+    geom_text(
+      aes(x = x, y = line, label = name, fontface = if_else(str_ends(name, "/"), "bold", "plain")),
+      family = "mono", hjust = 0, size = 3.6
+    ) +
+    geom_text(
+      data = filter(folder, !highlighted),
+      aes(x = 3.2, y = line, label = note),
+      hjust = 0, size = 3.4, colour = "#43464b"
+    ) +
+    geom_text(
+      data = filter(folder, highlighted),
+      aes(x = 3.2, y = line, label = note),
+      hjust = 0, size = 3.4, fontface = "bold"
+    ) +
+    geom_point(data = filter(folder, highlighted), aes(x = 3.05, y = line), colour = book_col("orange"), size = 2.6) +
+    scale_y_reverse(limits = c(nrow(folder) + 0.6, 0.5)) +
+    scale_x_continuous(limits = c(0, 8.5), expand = expansion(0)) +
+    labs(title = title) +
+    theme_void() +
+    theme(
+      plot.title = element_text(face = "bold", size = 11.5, family = "mono", margin = margin(b = 6)),
+      plot.margin = margin(6, 4, 6, 4)
+    )
+}
+
+draw_folder(folder_created, "quarto create project website mysite") /
+  draw_folder(folder_published, "quarto render mysite (output-dir: docs)", highlight = "docs/") +
+  plot_layout(heights = c(nrow(folder_created), nrow(folder_published)))
+```
 
 In **GitHub**, just drag and drop all the files at once onto the upload page of your repository.
 
@@ -801,17 +1148,359 @@ include_img("github_drop_mysite.gif")
 ```
 :::
 
+::: {.callout-tip .box-howto title="In GitHub: publish the docs folder with GitHub Pages"}
 Finally, click **Settings** > **Pages** and choose:
 
 - `main` branch
 - `/docs` folder
 - and Save
+:::
 
-::: {.callout-note title="Key points"}
+::: {.callout-note .box-keypoints title="Key points"}
 - A Quarto file combines three parts: a YAML header, Markdown text and code chunks. Rendering the file produces the output document, for example in HTML, PDF or Word.
 - The YAML sits between two series of `---` signs and sets the output format and options such as `execute:`. R code is executed with the `knitr` engine by default.
 - Markdown marks up the text: `*` and `**` for italics and bold, `-` and numbers for lists, `#` for headings and `$$` for LaTeX equations.
 - An R code chunk has 3x backticks on each end, the engine between curly braces and its options after `#|`. Options such as `include`, `results`, `fig-cap`, `fig-height` and `fig-width` customise the output.
 - An object created in a chunk is not printed unless its name is included in the chunk.
 - Journal templates (`quarto use template`) and website projects (`quarto create project website`, `quarto preview`) extend Quarto to articles and to websites that can be published on GitHub Pages.
+:::
+
+## Exercises {#sec-l08-exercises}
+
+These exercises practise the three parts of a Quarto file. The first ones need only a pen. The last ones need Posit Cloud and the file `organisation_beta.csv`, uploaded at the top of your Posit Cloud project as in this chapter.
+
+```{r}
+#| label: exercise-models
+#| include: false
+# Model of the report built in the exercise "A short report on Organisation Beta".
+model_report <- lm(formula = js_score ~ salary + perf, data = organisation_beta)
+```
+
+::: {#exr-l08-vocabulary}
+## True or false?
+
+Say whether each statement is true or false, and correct the false ones.
+
+a. The YAML of a Quarto file is written between two series of `---` signs.
+b. In a Quarto file, the text is written with its formatting visible, as in Microsoft Word.
+c. `#| include: false` prevents the code of a chunk from running.
+d. When a chunk creates an object, the content of the object is printed in the output document.
+e. When R code is found first in a Quarto file, the code is executed with the `knitr` engine.
+f. `quarto use template` is typed in the R Console.
+g. `quarto preview mysite` converts the `.qmd` files of the website to `.html` files stored in a `_site` folder.
+h. The default unit of `fig-height` and `fig-width` is the centimetre.
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+a. True.
+b. False. The text is written in Markdown style, that is text without formatting. Signs such as `*`, `**` and `#` mark the formatting, which only appears in the output file.
+c. False. The code of the chunk is run, but neither the code nor its results appear in the finished file. The objects created in the chunk can be used by the other chunks.
+d. False. Creating an object prints nothing. To print the object, include its name in the chunk, on its own line.
+e. True. You can also force `knitr` with `engine: knitr` in the YAML.
+f. False. It is typed in the Terminal, not in the Console.
+g. True. The preview then opens in a web browser and is updated each time you save a file.
+h. False. The default unit is the inch.
+:::
+
+::: {#exr-l08-yaml}
+## Write the YAML
+
+Write the YAML of a document with the following features:
+
+1. the title "Job satisfaction at Organisation Beta" and the subtitle "A first report"
+2. your name as author and the date of the day
+3. an HTML output with the theme `united`
+4. no code and no warnings in the output, for every chunk of the document
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+The title, subtitle, author and date are metadata, one per line. The theme is a sub-option of `html`, itself a sub-option of `format`, so each level is indented by two more spaces. Points 1 to 3 follow the elaborate YAML of @sec-l08-yaml, and point 4 uses the `execute:` options.
+
+```yaml
+---
+title: "Job satisfaction at Organisation Beta"
+subtitle: "A first report"
+author: "Your Name"
+date: "2027-01-15"
+format:
+  html:
+    theme: united
+execute:
+  echo: false
+  warning: false
+---
+```
+
+Write your own name and the date of the day in place of `"Your Name"` and `"2027-01-15"`.
+:::
+
+::: {#exr-l08-markdown}
+## What will this Markdown look like?
+
+Describe the output of the following Markdown text, line by line, before you type it in a Quarto document and render it.
+
+````markdown
+## Method
+
+The data of **20 employees** were *simulated*, and ***nobody*** was harmed.
+
+- salary is the predictor
+- job satisfaction is the outcome
+
+1. open the data
+2. test the model
+
+$$
+JS_i = b_0 + b_1 Salary_i + e_i
+$$
+````
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+- `## Method` becomes a level 2 heading: the title of a section, in larger text, with "Method" only (the `#` signs disappear).
+- The sentence becomes a paragraph in which "20 employees" is in bold, "simulated" in italics and "nobody" in bold italics.
+- The two lines starting with `-` become an unnumbered list, and the two lines starting with `1.` and `2.` a numbered list.
+- The equation is displayed on its own line, centred:
+
+$$
+JS_i = b_0 + b_1 Salary_i + e_i
+$$
+
+The blank lines matter: they separate the heading, the paragraph, the lists and the equation.
+:::
+
+::: {#exr-l08-options}
+## Choose the chunk options
+
+For each need, write the hashpipe option (or options) to place at the top of the chunk.
+
+1. A chunk prints a linear regression, but the reader should not see its code.
+2. You want to show the line `install.packages("report")` to the reader, without installing the package each time the document is rendered.
+3. A chunk whose code is shown reads the data with `read_csv()`, and you do not want the messages that `read_csv()` prints about the columns.
+4. A chunk whose code is shown gives a warning that should not appear in the output.
+5. The setup chunk loads the packages and creates the data, and nothing of it should appear in the output.
+6. The text written by `report()` should be displayed as regular text.
+7. A figure needs the caption "Salary and job satisfaction", a height of 3 inches and a width of 8 inches.
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+@fig-l08-options gives the answers of questions 1 to 5.
+
+1. `#| echo: false`: the code is run and its result is shown, but the code is hidden.
+2. `#| eval: false`: the code is shown but not run.
+3. `#| message: false`
+4. `#| warning: false`
+5. `#| include: false`: the code is run, and the packages and the data can be used by the next chunks.
+6. `#| results: asis`
+7. One option per line:
+
+````markdown
+```{{r}}
+#| fig-cap: "Salary and job satisfaction"
+#| fig-height: 3
+#| fig-width: 8
+
+ggplot(organisation_beta) +
+  aes(salary, js_score) +
+  geom_point()
+```
+````
+
+For questions 1, 3 and 4, the options `echo`, `message` and `warning` can also be set under `execute:` in the YAML. They then apply to every chunk of the document.
+:::
+
+::: {#exr-l08-equation}
+## An equation in LaTeX
+
+In the style of the equations of @sec-l08-markdown, write in LaTeX:
+
+1. the equation of the model that explains job satisfaction ($JS_i$) by salary only
+2. the equation of the model that explains job satisfaction by salary, performance and the interaction between salary and performance (write the product with `\times`)
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+Each equation sits between two series of `$$` signs. The underscore `_` writes the index $i$ and the parameters $b_0$, $b_1$, ... below the line.
+
+````markdown
+$$
+JS_i = b_0 + b_1 Salary_i + e_i
+$$
+
+$$
+JS_i = b_0 + b_1 Salary_i + b_2 Perf_i + b_3 Salary_i \times Perf_i + e_i
+$$
+````
+
+The output reads:
+
+$$
+JS_i = b_0 + b_1 Salary_i + e_i
+$$
+
+$$
+JS_i = b_0 + b_1 Salary_i + b_2 Perf_i + b_3 Salary_i \times Perf_i + e_i
+$$
+:::
+
+::: {#exr-l08-mistakes}
+## Find the mistakes
+
+Sam wants a short HTML report that shows the model and the figure, without their code. Before clicking `Render`, Sam read the data in the Console with `read_csv()`. Find the five mistakes in Sam's file, and say what each one causes.
+
+````markdown
+---
+title:"Job satisfaction"
+format: html
+execute:
+  echo: false
+---
+
+```{{r}}
+#| label: setup
+#| include: false
+library(tidyverse)
+```
+
+##Results
+
+```{{r}}
+model <- lm(formula = js_score ~ salary + perf, data = organisation_beta)
+```
+
+```{{r}}
+#| include: false
+ggplot(organisation_beta) +
+  aes(salary, js_score) +
+  geom_point()
+```
+````
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+1. **`title:"Job satisfaction"` has no space after the colon.** The render stops with an error about the YAML. Write `title: "Job satisfaction"`.
+2. **The data are not read in the document.** Rendering runs the file in a new R session, which does not see the Console: the render stops with "object 'organisation_beta' not found". Read the data in the setup chunk.
+3. **`##Results` has no space after the `#` signs.** It is not a heading: the output shows the text "##Results". Write `## Results`.
+4. **The model is created but not printed.** The chunk shows nothing. Add the name of the object, `model`, on a new line of the chunk.
+5. **The figure chunk has `#| include: false`.** The figure is drawn but does not appear. Remove the option: `echo: false` in the YAML already hides the code.
+
+The corrected file:
+
+````markdown
+---
+title: "Job satisfaction"
+format: html
+execute:
+  echo: false
+---
+
+```{{r}}
+#| label: setup
+#| include: false
+library(tidyverse)
+
+organisation_beta <- read_csv("/cloud/project/organisation_beta.csv")
+```
+
+## Results
+
+```{{r}}
+model <- lm(formula = js_score ~ salary + perf, data = organisation_beta)
+
+model
+```
+
+```{{r}}
+ggplot(organisation_beta) +
+  aes(salary, js_score) +
+  geom_point()
+```
+````
+:::
+
+::: {#exr-l08-report}
+## A short report on Organisation Beta
+
+In Posit Cloud, create a new Quarto document called `report_beta.qmd` and render it to HTML. The document must have:
+
+1. a YAML with a title, and no code, no warnings and no messages in the output
+2. a setup chunk, invisible in the output, that loads the packages {tidyverse} and {report} and reads `organisation_beta.csv`
+3. a section "Model" with one sentence and a chunk that writes, as regular text, the `report()` of the model $js\_score = b_{0} + b_{1}\,salary + b_{2}\,perf + e$
+4. a section "Figure" with the scatterplot of the exercises of this chapter (points and regression line), with the caption "Job satisfaction and salary of the 20 employees of Organisation Beta."
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+If the package {report} is not installed in your Posit Cloud project, install it once in the Console with `install.packages("report")`, not in the document. The full source of `report_beta.qmd`:
+
+````markdown
+---
+title: "Job satisfaction at Organisation Beta"
+format: html
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{{r}}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+library(report)
+
+organisation_beta <- read_csv("/cloud/project/organisation_beta.csv")
+```
+
+## Model
+
+The model tests the effects of salary and performance on job satisfaction.
+
+```{{r}}
+#| results: asis
+
+lm_js <- lm(formula = js_score ~ salary + perf, data = organisation_beta)
+
+report(lm_js)
+```
+
+## Figure
+
+```{{r}}
+#| fig-cap: "Job satisfaction and salary of the 20 employees of Organisation Beta."
+
+ggplot(organisation_beta) +
+  aes(salary, js_score) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_bw() +
+  labs(
+    x = "Employee Salary (Eur)",
+    y = "Employee's Job Satisfaction"
+  )
+```
+````
+
+In the output, the section "Model" holds the text written by `report()`. It names the model, gives its fit (`r report_fit(model_report)`, in the format of `report()`) and then describes the effect of each predictor. The section "Figure" shows the scatterplot with its caption under it, and no code anywhere.
+:::
+
+::: {#exr-l08-own-paper}
+## Your own paper in a journal template
+
+Choose the journal template closest to the journal in which you would like to publish your research paper, and start your paper with it.
+
+1. Create the document from the Terminal with `quarto use template`.
+2. Replace the default content with the sections of your paper, and keep the YAML of the template.
+3. Add a setup chunk that reads the simulated data of your reference paper, a chunk that tests your model, and a figure with a caption.
+4. Write the equation of your model in LaTeX, and render the document.
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+There is no single answer: the result depends on your template and on your paper. Check your document against these points.
+
+- The document was created from the Terminal, with one of the commands of @sec-l08-journals, and you answered `Y` to trust the authors of the template.
+- The YAML of the template is kept. Change only its metadata (title, authors, abstract), with the same indentation.
+- The setup chunk has `#| include: false`, loads every package used in the document and reads the data with a path that works from the folder of the .qmd file.
+- The model is printed (the name of the object is in the chunk), or written as text with `report()` and `#| results: asis`.
+- The figure chunk has a `fig-cap`, and the equation sits between two series of `$$` signs.
+- The document renders without error. If it does not, read the error message: it usually names the line of the file, or the chunk, where the render stopped.
 :::

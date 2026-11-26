@@ -13,7 +13,7 @@ library(patchwork)
 organisation_beta <- read_csv(here("data/organisation_beta.csv"))
 ```
 
-This chapter introduces STA1005 and the way it links statistics to research papers. It opens with a five-minute experiment: a generative AI assistant writes a research paper from a small dataset, and we audit the result. It then gives the general information about the module, shows where statistics fit in the sections of a research paper, and covers the first two sections of a paper: the introduction, which presents the variables, and the literature review, which formulates the hypotheses.
+This chapter introduces STA1005 and the way it links statistics to research papers. It opens with a five-minute experiment: a generative AI assistant writes a research paper from a small dataset, and we audit the result. It then gives the general information about the module and shows where statistics fit in the sections of a research paper. The last two sections follow the paper itself: the introduction presents the variables and the literature review formulates the hypotheses.
 
 ## Your first paper in 5 minutes {#sec-l01-first-paper}
 
@@ -1328,10 +1328,10 @@ Send me your hypotheses and your two notes by email at damien.dupre@dcu.ie **bef
 :::
 
 ::: {.callout-note title="Key points"}
-- AI may propose, but only reproducible evidence decides: hypotheses exist before the data, numbers come from code you can run again, references are read by you, the method describes what happened and every use of AI is disclosed.
-- An AI paper can be fluent and every number can be right while the research design is wrong: when the 15 tests of the AI papers are run on pure noise, `r round(100 * share_with_false_finding)`% of the simulated organisations "discover" at least one effect that does not exist.
-- A research paper has the shape of an hourglass, and its sections are linked by variables, hypotheses, a model and an equation, and finally a statistical test.
-- A variable is defined by how it was measured, has a type (categorical nominal, categorical ordinal or continuous) and a role (outcome, predictor or control), and is best kept in its correct scale.
-- A hypothesis is a prediction written before the data, with predictors, an outcome and a direction. Templates exist for main effects, interactions and mediations, and an effect is a shared variability, not causation.
+- AI may propose, but only reproducible evidence decides. Hypotheses exist before the data, numbers come from code you can run again, references are read by you, the method describes what happened and every use of AI is disclosed.
+- An AI paper can be fluent and every number can be right while the research design is wrong. When the 15 tests of the AI papers are run on pure noise, `r round(100 * share_with_false_finding)`% of the simulated organisations "discover" at least one effect that does not exist.
+- A research paper has the shape of an hourglass. Its sections are linked by variables, hypotheses, a model and an equation, and finally a statistical test.
+- A variable is defined by how it was measured. It has a type (categorical nominal, categorical ordinal or continuous) and a role (outcome, predictor or control), and is best kept in its correct scale.
+- A hypothesis is a prediction written before the data, with predictors, an outcome and a direction. Templates exist for main effects, interactions and mediations. An effect is a shared variability, not causation.
 - Testing many hypotheses inflates false positives: if none of them is true, the chance of at least one $p < .05$ is 40% with 10 tests and 64% with 20 tests.
 :::

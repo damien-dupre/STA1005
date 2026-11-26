@@ -181,7 +181,7 @@ To generate the output file:
 include_graphics("https://quarto.org/docs/get-started/hello/images/rstudio-render.png")
 ```
 
-2. Give a name to your document, click `OK`, and voila!
+2. Give a name to your document, click `OK`, and voilà!
 :::
 
 ::: {#second-column}
@@ -857,7 +857,7 @@ If you want to give it a go:
 2. Install RStudio on your own computer from <https://posit.co/download/rstudio-desktop>
 
 :::{.callout-note}
-Among the Integrated Development Environment (IDE) there is also VScode, Positron, and many more.
+Among the Integrated Development Environment (IDE) there is also VS Code, Positron, and many more.
 :::
 
 3. Install Quarto on your own computer from <https://quarto.org/>

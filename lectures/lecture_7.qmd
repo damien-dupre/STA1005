@@ -183,7 +183,7 @@ include_graphics("https://www.statology.org/wp-content/uploads/2021/10/envir1.pn
 
 * The **Files** panel gives access to the file directory.
 
-* The **Plots** panel shows all your plots. There are buttons for opening the plot in a pop up and exporting as a pdf or jpeg.
+* The **Plots** panel shows all your plots. There are buttons for opening the plot in a pop up and exporting as a PDF or JPEG.
 
 * The **Packages** shows a list of all the R packages installed on the local or remote machine and indicates whether or not they are currently loaded.
 
@@ -245,7 +245,7 @@ paste("active", "code")
 ::: {#first-column}
 `.html` (web page, slides, books, and dashboards)
 
-`.pdf` (Academic LaTex papers and reports)
+`.pdf` (Academic LaTeX papers and reports)
 
 `.doc` (MS Word documents)
 :::
@@ -517,7 +517,7 @@ The main argument of these functions is `file` which corresponds to the path to 
 my_file_object <- read.csv(file = "C:/path/to/my/file.csv")
 my_file_object <- read.csv("C:/path/to/my/file.csv")
 
-# Macos
+# macOS
 my_file_object <- read.csv(file = "/Users/path/to/my/file.csv")
 my_file_object <- read.csv("/Users/path/to/my/file.csv")
 ```
@@ -575,7 +575,7 @@ write.csv(my_file_object, "my_file_name.csv")
 
 # Saved in the directory you prefer
 write.csv(my_file_object, "C:/path/to/my/my_file_name.csv") # Windows
-write.csv(my_file_object, "/Users/path/to/my/my_file_name.csv") # Macos
+write.csv(my_file_object, "/Users/path/to/my/my_file_name.csv") # macOS
 ```
 
 ## {{< fa screwdriver-wrench >}}️ Your Turn! {background="#43464B"}
@@ -845,7 +845,7 @@ To install {performance} use the usual `install.packages()` function:
 install.packages("performance")
 ```
 
-The package `{performance} `will print visualisations allowing to check the model's assumptions (see <https://easystats.github.io/performance/>).
+The package `{performance}` will print visualisations allowing to check the model's assumptions (see <https://easystats.github.io/performance/>).
 
 To print the performance diagnosis:
 
@@ -881,7 +881,7 @@ To print the statistical analyses:
 2. Create an object containing the output of the function `lm()`
 3. Use this object as input of the function `report()` from the {report} package
 
-**Note: If used in a quarto document, the chunk containing `report()` has to include the chunk option `results='asis'`**
+**Note: If used in a Quarto document, the chunk containing `report()` has to include the chunk option `results='asis'`**
 
 ## Automatic Results with {report} {.smaller}
 

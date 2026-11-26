@@ -10,6 +10,18 @@ library(ggrepel)
 library(patchwork)
 ```
 
+::: {.callout-note .box-goals title="In this chapter"}
+After this chapter, you can:
+
+- draw the model of a set of hypotheses, with the right shapes and arrows
+- count the hypotheses that a model tests, main effects and interaction effects
+- write the equation of a model and say which estimate $b$ tests which hypothesis
+- read the intercept, the estimate and the error on a prediction line
+- write a model in the DOT language and an equation in LaTeX
+
+You need nothing but a pen. For the last exercises, a DOT editor such as <http://viz-js.com/> and a LaTeX equation editor such as <https://latex.codecogs.com/eqneditor/editor.php> help.
+:::
+
 In research outputs, all the sections are linked (@fig-l02-sections).
 
 ```{mermaid}
@@ -39,6 +51,25 @@ flowchart LR
 ```
 
 The variables and the hypotheses are the subject of @sec-lecture-01. This chapter is about the next two concepts, the model and the equation. @sec-l02-models shows how to represent the model tested in a paper: the rules to follow, the types of model, what makes a good model and the tools to draw one. @sec-l02-equations explains the equation used to test the hypotheses: its coefficients, the role of the intercept and the ways to write an equation. The chapter ends with the steps to follow from the variables to the equation (@sec-l02-conclusion).
+
+@fig-l02-roadmap shows these steps as one path. Each step builds on the one before it, and the test of the estimates is the subject of @sec-lecture-04.
+
+```{r}
+#| label: fig-l02-roadmap
+#| fig-cap: "From the variables to the test: the steps of this chapter and of the next ones."
+#| fig-alt: "Five boxes in a row joined by arrows. Variables: role and type. Hypotheses: Ha and H0. Model: one arrow per hypothesis. Equation: one b per arrow. Test: of each b, Chapter 4."
+#| fig-height: 1.4
+roadmap <- tribble(
+  ~step,        ~detail,
+  "Variables",  "role and type",
+  "Hypotheses", "Ha and H0",
+  "Model",      "one arrow\nper hypothesis",
+  "Equation",   "one b\nper arrow",
+  "Test",       "of each b\n(Chapter 4)"
+)
+
+flow_chart(roadmap)
+```
 
 ## Model representation in the method section of an academic research paper {#sec-l02-models}
 
@@ -109,6 +140,10 @@ The two kinds of arrows of a model.
 
 The shapes also have a meaning. **Squares** are actual **measures** or **items**, whereas **circles** are **latent variables** related to measures or items. For example, $Salary$ is directly measured (in \$, € or £) so it is a square, whereas $Job\,Satisfaction$ is a latent variable with several questions so it is a circle. Items used for latent variables can be omitted in a model, because the variables are the most important.
 
+::: {.callout-note .box-definition title="Definition: latent variable"}
+A **latent variable** is a variable that is not measured directly but through several measures or items, such as the questions of a job satisfaction scale. In a model, a latent variable is drawn as a circle (or an oval) and a measure or item as a square.
+:::
+
 ### Main effects and interaction effects {#sec-l02-effects}
 
 The relationship between one predictor and one outcome variable is represented by a simple arrow (@fig-l02-main). The first model tests one main effect hypothesis. The second model, with two predictors and one outcome variable, tests two main effect hypotheses.
@@ -149,7 +184,7 @@ digraph {
 Models with main effects only.
 :::
 
-An **interaction** (also called **moderation**) means that the effect of Predictor 1 on the outcome variable will be different according to the possibilities of Predictor 2. It is represented by the crossing arrow of the effects representation in @fig-l02-interaction, which gives exactly the same results as the model where the interaction is a predictor of its own. This model tests three hypotheses: 2 main effects and 1 interaction effect.
+An **interaction** (also called **moderation**) means that the effect of Predictor 1 on the outcome variable will be different according to the possibilities of Predictor 2. It is represented by the crossing arrow in @fig-l02-interaction, which gives exactly the same results as the model where the interaction is a predictor of its own. This model tests three hypotheses: 2 main effects and 1 interaction effect.
 
 ::: {#fig-l02-interaction}
 
@@ -196,6 +231,33 @@ digraph {
 
 Two equivalent representations of an interaction effect.
 :::
+
+What does an interaction look like in the data? @fig-l02-interaction-lines draws the effect of Predictor 1 on the outcome for the two categories of Predictor 2. Without an interaction, the effect of Predictor 1 is the same in both categories and the lines are parallel. With an interaction, the effect of Predictor 1 is different according to the category of Predictor 2 and the lines are not parallel.
+
+```{r}
+#| label: fig-l02-interaction-lines
+#| fig-cap: "A sketch of the effect of Predictor 1 on the outcome for the two categories of Predictor 2, without an interaction (left) and with an interaction (right). The lines are drawn for the illustration and do not come from data."
+#| fig-alt: "Two panels with a blue and a red rising line, one for each category of Predictor 2. Left, titled No interaction: the two lines are parallel. Right, titled Interaction: the blue line is steep and the red line is almost flat, so the lines fan out."
+#| fig-height: 3.2
+interaction_sketch <- tribble(
+  ~panel,                                ~predictor_2,  ~intercept, ~slope,
+  "No interaction: parallel lines",      "category A",  3,          0.5,
+  "No interaction: parallel lines",      "category B",  1,          0.5,
+  "Interaction: the lines are not parallel", "category A", 2,       0.7,
+  "Interaction: the lines are not parallel", "category B", 2,       0.1
+) |>
+  mutate(panel = factor(panel, levels = unique(panel))) |>
+  tidyr::crossing(predictor_1 = c(0, 10)) |>
+  mutate(outcome = intercept + slope * predictor_1)
+
+ggplot(interaction_sketch, aes(predictor_1, outcome, colour = predictor_2)) +
+  geom_line(linewidth = 1) +
+  facet_wrap(~panel) +
+  scale_colour_manual(values = c("category A" = book_col("blue"), "category B" = book_col("red"))) +
+  scale_y_continuous(limits = c(0, 10)) +
+  labs(x = "Predictor 1", y = "Outcome", colour = "Predictor 2") +
+  theme(axis.text = element_blank())
+```
 
 ### Types of model {#sec-l02-types}
 
@@ -246,6 +308,10 @@ digraph {
 A **mediation model** (simple or moderated) has at least 2 predictors, one of them being called the **mediator**, and only one outcome. It is made of main effects only for a simple mediation, and of main and interaction effects for a moderated mediation.
 
 A mediation model is a complex path analysis between 3 variables, where one of them explains the relationship between the other two. It is usually used to identify cognitive processes in psychology. @fig-l02-mediation shows an example with Exam Results, Self-Esteem and Happiness. This model tests one hypothesis, 1 mediation effect, but it requires 2 main effects.
+
+::: {.callout-note .box-definition title="Definition: mediator"}
+In a mediation model, the **mediator** is the variable that explains the relationship between the two other variables. In @fig-l02-mediation, Self-Esteem is the mediator: it is predicted by Exam Results and it predicts Happiness.
+:::
 
 ```{dot}
 //| label: fig-l02-mediation
@@ -381,6 +447,10 @@ It is easy to start by following these rules:
 - Variable names must not include space between words <!-- check: the rule says that names must not include spaces, but the slide examples use quoted names with spaces such as "Predictor 1" -->
 - Arrows are represented by the characters `-` and `>`
 
+::: {.callout-warning .box-mistake title="Common mistake: a name with spaces and no quotes"}
+A name made of several words, such as Predictor 1, must be written between double quotes, as in all the examples below. Without quotes, DOT reads each word as a separate variable: `Predictor 1 -> Outcome` draws Predictor on its own and an arrow from 1 to Outcome.
+:::
+
 What you type:
 
 ```{.dot}
@@ -485,7 +555,7 @@ There are many more rules to make more complicated models, see for more details 
 
 **DotUML extension for Google Docs.** This DOT language can easily be implemented with the DotUML extension in Google Docs. DotUML is developed by a company called BML Solutions but as far as I know it is a free plug-in (at least free of money). See <https://dotuml.com> for more details. After installing the extension, use GraphViz and remove the code corresponding to the default example.
 
-::: {.callout-tip title="Your turn: draw the model(s) of your paper"}
+::: {.callout-tip .box-yourturn title="Your turn: draw the model(s) of your paper"}
 In the research paper you have selected, **draw the model(s) tested.**
 
 Remember, there is only 1 outcome variable per model and it is not possible to draw two models with the same outcome variable.
@@ -548,6 +618,46 @@ which is in our case:
 
 $$Outcome = 0 + 1 * Predictor + 0$$
 
+In real data, the observations are never all on the line. @fig-l02-error puts the perfect scenario next to simulated data in which the outcome is the predictor plus a random error. The red segments are the errors $e$: the distance between each observation and the prediction line.
+
+```{r}
+#| label: fig-l02-error
+#| fig-cap: "The perfect scenario (left) and a real scenario with simulated data (right). The red segments are the errors, the distance between each observation and the prediction line."
+#| fig-alt: "Two scatter plots of the outcome against the predictor from 0 to 10, each with a blue prediction line. Left, titled Perfect scenario: the 11 points are on the line and there is no error. Right, titled Real scenario: the 11 points are scattered around the line and red vertical segments join each point to the line."
+#| fig-height: 3.6
+set.seed(34)
+real_scenario <- tibble(
+  Predictor = 0:10,
+  Outcome = Predictor + rnorm(11, mean = 0, sd = 1.2)
+)
+
+real_model <- lm(Outcome ~ Predictor, data = real_scenario)
+real_scenario <- real_scenario |>
+  mutate(predicted = fitted(real_model))
+
+plot_perfect <- ggplot(df, aes(Predictor, Outcome)) +
+  geom_abline(intercept = 0, slope = 1, colour = book_col("blue"), linewidth = 0.9) +
+  geom_point(size = 2.5) +
+  coord_cartesian(xlim = c(0, 10), ylim = c(-1, 12)) +
+  labs(title = "Perfect scenario", subtitle = "b0 = 0, b1 = 1, e = 0 for every observation")
+
+plot_real <- ggplot(real_scenario, aes(Predictor, Outcome)) +
+  geom_segment(aes(xend = Predictor, yend = predicted), colour = book_col("red"), linewidth = 0.8) +
+  geom_abline(intercept = coef(real_model)[[1]], slope = coef(real_model)[[2]], colour = book_col("blue"), linewidth = 0.9) +
+  geom_point(size = 2.5) +
+  coord_cartesian(xlim = c(0, 10), ylim = c(-1, 12)) +
+  labs(
+    title = "Real scenario (simulated data)",
+    subtitle = paste0("b0 = ", format_number(coef(real_model)[[1]]), ", b1 = ", format_number(coef(real_model)[[2]]), ", e is not 0")
+  )
+
+plot_perfect + plot_real
+```
+
+::: {.callout-note .box-definition title="Definition: error"}
+The **error** $e$ is the part of the outcome that the predictors do not explain. For each observation, it is the difference between the actual value of the outcome and the value on the prediction line. It is 0 for every observation only in the perfect scenario.
+:::
+
 @eq-l02-basic is the same as the good old $y = ax + b$ (here ordered as $y = b + ax$) where $b_{0}$ is $b$ and $b_{1}$ is $a$. @fig-l02-b0-b1 shows the intercept and the estimate on the prediction line.
 
 <!-- check: in the code below seq(0:10) returns 1 to 11, so the axis breaks start at 1 and not at 0 (seq(0, 10) was probably intended), and the size argument of geom_hline() is deprecated since ggplot2 3.4.0 (linewidth is the current one); the plot is unchanged -->
@@ -564,12 +674,40 @@ data.frame(Predictor = 0:10, Outcome = 0:10) |>
   geom_smooth(method = "lm") +
   geom_hline(yintercept = 0, color = "black", size = 0.5, linetype = "dotted") +
   annotate("text", x = 5, y = 0.2, label = "Intercept b0") +
-  annotate("segment", x = 5, xend = 6, y = 5, yend = 5, color = "red") +
-  annotate("segment", x = 6, xend = 6, y = 5, yend = 6, color = "red") +
+  annotate("segment", x = 5, xend = 6, y = 5, yend = 5, color = book_col("red")) +
+  annotate("segment", x = 6, xend = 6, y = 5, yend = 6, color = book_col("red")) +
   annotate("text", x = 7.5, y = 5.5, label = "Estimate b1") +
   scale_x_continuous(breaks = seq(0:10)) +
   scale_y_continuous(breaks = seq(0:10)) +
   theme_bw()
+```
+
+In @fig-l02-b0-b1 the line goes through 0 because $b_0 = 0$. @fig-l02-read-line draws a line with another intercept and another estimate, $Outcome = 2 + 0.8\,Predictor$. The intercept is where the line crosses the vertical axis, at $Predictor = 0$. The estimate is how much the line goes up for a step of 1 unit to the right.
+
+```{r}
+#| label: fig-l02-read-line
+#| fig-cap: "Reading the intercept and the estimate on the line Outcome = 2 + 0.8 Predictor. The line is drawn for the illustration and does not come from data."
+#| fig-alt: "A rising blue line from an outcome of 2 at a predictor of 0 to an outcome of 10 at a predictor of 10. An orange point where the line crosses the vertical axis is labelled b0 = 2, the outcome when the predictor is 0. Between a predictor of 5 and 6, a black step goes 1 unit to the right and 0.8 up to the line, labelled +1 unit of Predictor and b1 = 0.8."
+#| fig-height: 3.6
+line_intercept <- 2
+line_slope <- 0.8
+step_from <- 5
+step_to <- step_from + 1
+outcome_from <- line_intercept + line_slope * step_from
+outcome_to <- line_intercept + line_slope * step_to
+
+ggplot() +
+  geom_abline(intercept = line_intercept, slope = line_slope, colour = book_col("blue"), linewidth = 1) +
+  annotate("segment", x = step_from, xend = step_to, y = outcome_from, yend = outcome_from, linewidth = 1, colour = book_col("ink")) +
+  annotate("segment", x = step_to, xend = step_to, y = outcome_from, yend = outcome_to, linewidth = 1, colour = book_col("ink")) +
+  annotate("text", x = step_from + 0.5, y = outcome_from - 0.9, label = "+1 unit of Predictor", size = 3.6) +
+  annotate("text", x = step_to + 0.2, y = (outcome_from + outcome_to) / 2, label = "b[1] == 0.8", parse = TRUE, hjust = 0, size = 3.8) +
+  annotate("point", x = 0, y = line_intercept, colour = book_col("orange"), size = 3.5) +
+  annotate("text", x = 0.35, y = line_intercept - 0.2, label = "b[0] == 2", parse = TRUE, hjust = 0, vjust = 1, size = 3.8) +
+  annotate("text", x = 0.35, y = line_intercept - 1.05, label = "the Outcome when Predictor = 0", hjust = 0, vjust = 1, size = 3.4) +
+  scale_x_continuous(limits = c(0, 10), breaks = 0:10, expand = expansion(add = c(0.3, 0.3))) +
+  scale_y_continuous(limits = c(0, 10.5), breaks = seq(0, 10, 2)) +
+  labs(x = "Predictor", y = "Outcome")
 ```
 
 It is very important to know that under **EVERY** statistical test, a similar equation is used (t-test, ANOVA, Chi-square are all linear regressions). <!-- check: the Chi-square test is usually described as a log-linear model rather than a linear regression -->
@@ -585,6 +723,42 @@ For example:
 The value of how much of the Outcome variable changes is called the **estimate** (also called the unstandardised estimate). It uses the letter $b$ in equations (e.g., $b_1$, $b_2$, $b_3$, ...). For example:
 
 > If Job Satisfaction increases by 0.1 on a scale from 0 to 5 when the Salary increases by €1, then *b* associated to Salary is 0.1
+
+::: {.callout-note .box-definition title="Definition: estimate"}
+The **estimate** $b$ of a predictor is the number of units by which the outcome changes when the predictor increases by 1 unit. It is positive when the outcome increases, negative when the outcome decreases, and 0 when the outcome stays the same.
+:::
+
+@fig-l02-b-signs shows the three cases. The middle one, $b_1 = 0$, is the null hypothesis: the outcome stays the same when the predictor increases.
+
+```{r}
+#| label: fig-l02-b-signs
+#| fig-cap: "The sign of the estimate gives the direction of the relationship. The red line is the null hypothesis, b1 = 0. The lines are drawn for the illustration and do not come from data."
+#| fig-alt: "Three panels with one line each, the outcome against the predictor. Left, titled b1 above 0, increases: a rising blue line. Middle, titled b1 = 0, stays the same: a flat red line. Right, titled b1 below 0, decreases: a falling blue line."
+#| fig-height: 2.8
+sign_panels <- c(
+  "b1 > 0: increases",
+  "b1 = 0: stays the same",
+  "b1 < 0: decreases"
+)
+
+estimate_signs <- tribble(
+  ~panel,         ~intercept, ~slope, ~line_role,
+  sign_panels[1], 2,          0.6,    "model",
+  sign_panels[2], 5,          0,      "null",
+  sign_panels[3], 8,          -0.6,   "model"
+) |>
+  mutate(panel = factor(panel, levels = sign_panels)) |>
+  tidyr::crossing(predictor = c(0, 10)) |>
+  mutate(outcome = intercept + slope * predictor)
+
+ggplot(estimate_signs, aes(predictor, outcome, colour = line_role)) +
+  geom_line(linewidth = 1) +
+  facet_wrap(~panel) +
+  scale_colour_manual(values = c("model" = book_col("blue"), "null" = book_col("red")), guide = "none") +
+  scale_y_continuous(limits = c(0, 10)) +
+  labs(x = "Predictor", y = "Outcome") +
+  theme(axis.text = element_blank())
+```
 
 To evaluate if the strength of the relationship $b$ between a predictor and an outcome variable is significant, an equation is statistically tested using all the predictors related to the same outcome. The basic equation of a statistical model is:
 
@@ -610,6 +784,65 @@ An interaction effect is represented by multiplying the 2 predictors involved:
 $$Job\,Satisfaction = b_{0} + b_{1}\,Salary + b_{2}\,Origin + b_{3}\,Salary*Origin + e$$
 
 In this equation, $Salary$ is continuous with a main effect on $Job\,Satisfaction$ ($b_{1}$), $Origin$ is categorical with a main effect on $Job\,Satisfaction$ ($b_{2}$), and $Salary$ with $Origin$ have an interaction effect on $Job\,Satisfaction$ ($b_{3}$).
+
+@fig-l02-terms puts the model of this equation next to its terms. Each arrow of the model is one term of the equation, and each estimate $b$ tests one hypothesis. The intercept $b_{0}$ and the error $e$ have no arrow, because they do not test a hypothesis.
+
+```{r}
+#| label: fig-l02-terms
+#| fig-cap: "Each arrow of the model is one term of the equation, and each estimate b tests one hypothesis."
+#| fig-alt: "On the left, a model in black and white: three boxes, Salary, Origin and Salary * Origin, with arrows labelled b1, b2 and b3 to a box Job Satisfaction. On the right, one row per arrow gives the term of the equation and the hypothesis it tests: b1 Salary, the main effect of Salary; b2 Origin, the main effect of Origin; b3 Salary * Origin, the interaction effect of Salary and Origin. Under them, the full equation."
+#| fig-height: 3.2
+model_boxes <- tribble(
+  ~label,             ~x,  ~y,  ~width,
+  "Salary",           1.0, 3.0, 1.7,
+  "Origin",           1.0, 2.0, 1.7,
+  "Salary * Origin",  1.0, 1.0, 1.7,
+  "Job\nSatisfaction", 4.0, 2.0, 1.4
+)
+
+model_arrows <- tribble(
+  ~y_from, ~y_to, ~estimate, ~term,                 ~hypothesis,
+  3.0,     2.2,   "b[1]",    "b[1]~Salary",          "main effect of Salary",
+  2.0,     2.0,   "b[2]",    "b[2]~Origin",          "main effect of Origin",
+  1.0,     1.8,   "b[3]",    "b[3]~Salary*'*'*Origin", "interaction effect of\nSalary and Origin"
+)
+
+column_titles <- tribble(
+  ~x,  ~label,
+  2.5, "Model",
+  6.1, "Term of the equation",
+  8.6, "Hypothesis tested"
+)
+
+ggplot() +
+  geom_tile(data = model_boxes, aes(x, y, width = width), height = 0.62, fill = "white", colour = book_col("ink"), linewidth = 0.5) +
+  geom_text(data = model_boxes, aes(x, y, label = label), size = 3.5, lineheight = 0.9) +
+  geom_segment(
+    data = model_arrows,
+    aes(x = 1.85, xend = 3.3, y = y_from, yend = y_to),
+    arrow = arrow(length = unit(0.16, "cm"), type = "closed"),
+    colour = book_col("ink"), linewidth = 0.5
+  ) +
+  geom_text(data = model_arrows, aes(x = 2.25, y = y_from + (y_to - y_from) * 0.28 + 0.24, label = estimate), parse = TRUE, size = 3.8) +
+  geom_text(data = model_arrows, aes(x = 5.3, y = y_from, label = term), parse = TRUE, hjust = 0, size = 3.8) +
+  geom_text(data = model_arrows, aes(x = 7.9, y = y_from, label = hypothesis), hjust = 0, size = 3.5, lineheight = 0.9) +
+  geom_text(data = column_titles, aes(x, y = 3.75, label = label), fontface = "bold", size = 3.6) +
+  annotate(
+    "text", x = 5.6, y = 0.15, size = 3.8, parse = TRUE,
+    label = "Job~Satisfaction == b[0] + b[1]~Salary + b[2]~Origin + b[3]~Salary*'*'*Origin + e"
+  ) +
+  scale_x_continuous(limits = c(0, 10.4)) +
+  scale_y_continuous(limits = c(-0.1, 3.95)) +
+  theme_void()
+```
+
+::: {.callout-tip .box-example title="Example: the equation of the simple model"}
+The simple model of @fig-l02-simple has four arrows: the main effects of Salary, Gender and Age, and the interaction effect of Salary and Gender. Its equation has one estimate per arrow: $Job\,Satisfaction = b_{0} + b_{1}\,Salary + b_{2}\,Gender + b_{3}\,Age + b_{4}\,Salary*Gender + e$. The four estimates $b_{1}$ to $b_{4}$ test the four hypotheses.
+:::
+
+::: {.callout-warning .box-mistake title="Common mistake: an interaction without its main effects"}
+An equation such as $Job\,Satisfaction = b_{0} + b_{3}\,Salary*Origin + e$ is incomplete. An interaction effect involves the main effect of each predictor involved, so the equation must also contain $b_{1}\,Salary$ and $b_{2}\,Origin$, and the hypotheses must include the two main effect hypotheses.
+:::
 
 ### The relevance of the intercept {#sec-l02-intercept}
 
@@ -665,6 +898,50 @@ p3 <- gapminder |>
 p1 / (p2 + p3)
 ```
 
+```{r}
+#| label: l02-intercept-models
+#| include: false
+countries_2007 <- gapminder |>
+  filter(year == 2007)
+
+model_without_intercept <- lm(lifeExp ~ gdpPercap + 0, data = countries_2007)
+model_with_intercept <- lm(lifeExp ~ gdpPercap, data = countries_2007)
+
+b1_without <- coef(model_without_intercept)[["gdpPercap"]]
+b0_with <- coef(model_with_intercept)[["(Intercept)"]]
+b1_with <- coef(model_with_intercept)[["gdpPercap"]]
+```
+
+::: {.callout-tip .box-example title="Example: the estimate of GDP per capita with and without the intercept"}
+Without the intercept, $b_{1} = `r format_number(b1_without, 5)`$: life expectancy increases by `r format_number(b1_without * 1000)` years when GDP per capita increases by 1,000 dollars. With the intercept, $b_{0} = `r format_number(b0_with)`$ and $b_{1} = `r format_number(b1_with, 5)`$, that is `r format_number(b1_with * 1000)` years for 1,000 dollars. Leaving out the intercept multiplies the estimate by `r format_number(b1_without / b1_with, 1)`.
+:::
+
+@fig-l02-intercept-errors shows where this estimation error comes from. Without the intercept, the line has to pass through 0 (a life expectancy of 0 for a GDP per capita of 0), so it is far below the poorest countries and far above the richest ones: the errors are large and they depend on GDP per capita. With the intercept, the errors are smaller and spread around 0.
+
+```{r}
+#| label: fig-l02-intercept-errors
+#| fig-cap: "The errors of the model without intercept (B) and of the model with intercept (C), for the countries of the world in 2007 (gapminder data)."
+#| fig-alt: "Two scatter plots of the error, in years of life expectancy, against GDP per capita, with a grey horizontal line at 0. Left, B, model without intercept: the red points are far above 0 for the poorest countries, up to about 67 years, and far below 0 for the richest ones, down to about -65 years. Right, C, model with intercept: the red points stay between about -23 and 13 years around 0."
+#| fig-height: 3.4
+intercept_errors <- bind_rows(
+  countries_2007 |>
+    mutate(model = "B: Model without intercept", error = residuals(model_without_intercept)),
+  countries_2007 |>
+    mutate(model = "C: Model with intercept", error = residuals(model_with_intercept))
+)
+
+ggplot(intercept_errors, aes(gdpPercap, error)) +
+  geom_hline(yintercept = 0, colour = book_col("grey"), linewidth = 0.7) +
+  geom_point(colour = book_col("red"), size = 2, alpha = 0.7) +
+  facet_wrap(~model) +
+  scale_x_continuous(labels = scales::label_comma(), breaks = c(0, 20000, 40000)) +
+  labs(x = "GDP per Capita ($)", y = "Error (years)")
+```
+
+::: {.callout-warning .box-mistake title="Common mistake: removing the intercept because no hypothesis is about it"}
+The intercept does not test a hypothesis, but it is not optional. Without it, the line is forced through 0 and the estimates of the predictors can be wrong, as for GDP per capita above. Keep $b_{0}$ in every equation and test the hypotheses with the estimates of the predictors.
+:::
+
 ### Notes on the notation of equations {#sec-l02-notation}
 
 Equations are not always written in the same way. Here are four notes on the notation.
@@ -693,6 +970,7 @@ The least sophisticated approach would be to type the equation in Microsoft Word
 
 Now there is a better way, which is also more complicated. LaTeX is used for entire manuscripts with all the specific design requirements imposed by the style of academic journals. LaTeX is hell and we will see a specific approach to avoid it, but the LaTeX style for equations is the best. <!-- check: "we will see a specific approach to avoid it" refers to a later lecture that the slide does not name -->
 
+::: {.callout-tip .box-howto title="In LaTeX: an equation"}
 Here are the most basic rules:
 
 - Start with `\begin{equation}` and end with `\end{equation}`
@@ -710,14 +988,17 @@ For example:
 Is translated as:
 
 $$Outcome = b_0 + b_1\,Predictor 1 + b_2\,Predictor 2 +e$$
+:::
 
+::: {.callout-tip .box-howto title="In Google Docs: an equation with Auto-LaTeX Equations"}
 **Auto-LaTeX Equations for Google Docs.** Another fantastic extension is available for Google Docs, called Auto-LaTeX Equations. Instead of using `\begin{equation}` and `\end{equation}`, use `$$` to open and close the equation. Then, click on "Render Equation", for the equation to be transformed in LaTeX style. Note that some websites can help to create the LaTeX code, see for example <https://latex.codecogs.com/eqneditor/editor.php>.
+:::
 
 **quiver.** quiver is a modern, graphical editor for commutative and pasting diagrams, capable of rendering high-quality diagrams for screen viewing, and exporting to LaTeX via tikz-cd or Typst via fletcher. See <https://q.uiver.app/>.
 
 ### Practice: from results to model and equation {#sec-l02-practice}
 
-::: {.callout-tip title="Your turn: from results to model and equation"}
+::: {.callout-tip .box-yourturn title="Your turn: from results to model and equation"}
 I will show you some results. Using these results:
 
 1. Identify the role of variables,
@@ -737,7 +1018,7 @@ df3 <- tibble(
 )
 ```
 
-::: {.callout-tip title="Your turn: Example 1"}
+::: {.callout-tip .box-yourturn title="Your turn: Example 1"}
 Using the results obtained, identify the role of variables, formulate the tested hypotheses, draw the corresponding model, and translate it in an equation. @tbl-l02-ex1 gives the data and @fig-l02-ex1 the visualisation.
 
 ```{r}
@@ -762,7 +1043,7 @@ df3 |>
 Suggested time: 5 minutes.
 :::
 
-::: {.callout-note title="Solution" collapse="true"}
+::: {.callout-note .box-solution title="Solution" collapse="true"}
 **Variables**
 
 - Outcome = Exam Results (from 0 to 100)
@@ -770,8 +1051,8 @@ Suggested time: 5 minutes.
 
 **Alternative hypothesis**
 
-- $H_a$: **Exam Results** *increases* when **Sleep Time** increases
-- ($H_0$: **Exam Results** *stays the same* when **Sleep Time** increases)
+- $H_a$: **Exam Results** *increase* when **Sleep Time** increases
+- ($H_0$: **Exam Results** *stay the same* when **Sleep Time** increases)
 
 **Model** (@fig-l02-ex1-model)
 
@@ -796,6 +1077,18 @@ $$Exam\,Results = b_{0} + b_{1}\,Sleep\,Time + e$$
 :::
 
 ```{r}
+#| label: l02-ex1-estimates
+#| include: false
+model_example_1 <- lm(`Exam Results` ~ `Sleep Time`, data = df3)
+example_1_b0 <- coef(model_example_1)[[1]]
+example_1_b1 <- coef(model_example_1)[[2]]
+```
+
+::: {.callout-tip .box-example title="Example: the estimates of Example 1"}
+With the six participants of Example 1, the equation is estimated as $Exam\,Results = `r format_number(example_1_b0)` + `r format_number(example_1_b1)`\,Sleep\,Time + e$. The estimate $b_{1} = `r format_number(example_1_b1)`$ means that the exam results increase by `r format_number(example_1_b1)` points when sleep time increases by 1 hour. @sec-lecture-04 shows how to obtain these values and how to test them.
+:::
+
+```{r}
 #| label: l02-ex2-data
 df4 <- tibble(
   Participant = c("ppt1", "ppt2", "ppt3", "ppt4", "ppt5", "ppt6"),
@@ -806,7 +1099,7 @@ df4 <- tibble(
 )
 ```
 
-::: {.callout-tip title="Your turn: Example 2"}
+::: {.callout-tip .box-yourturn title="Your turn: Example 2"}
 Using the results obtained, identify the role of variables, formulate the tested hypotheses, draw the corresponding model, and translate it in an equation. @tbl-l02-ex2 gives the data and @fig-l02-ex2 the visualisation.
 
 ```{r}
@@ -833,7 +1126,7 @@ df4 |>
 Suggested time: 5 minutes.
 :::
 
-::::: {.callout-note title="Solution" collapse="true"}
+::::: {.callout-note .box-solution title="Solution" collapse="true"}
 **Variables**
 
 - Outcome = Exam Results (from 0 to 100)
@@ -842,7 +1135,7 @@ Suggested time: 5 minutes.
 
 **Alternative hypotheses**
 
-- $H_{a_{1}}$: **Exam Results** *increases* when **Sleep Time** increases
+- $H_{a_{1}}$: **Exam Results** *increase* when **Sleep Time** increases
 - $H_{a_{2}}$: **Exam Results** of **experienced students** are *higher* than for **beginner students**
 - $H_{a_{3}}$: The effect of **Sleep Time** on **Exam Results** is *higher* for **experienced** than for **beginner students**
 
@@ -903,7 +1196,7 @@ The model of Example 2.
 $$Exam\,Results = b_{0} + b_{1}\,Sleep\,Time + b_{2}\,Age + b_{3}\,Sleep\,Time*Age + e$$
 :::::
 
-::: {.callout-tip title="Your turn: write the equation(s) of your paper"}
+::: {.callout-tip .box-yourturn title="Your turn: write the equation(s) of your paper"}
 In the research paper you have selected, **write the equation(s) corresponding to the model(s).**
 
 Send me your equation(s) by email at damien.dupre@dcu.ie **before the next lecture.**
@@ -926,11 +1219,393 @@ To summarise, follow these steps:
 4. **Equation**
     - Formulate your equation(s) in every paper that you want to submit (if reviewers want to remove it, they will tell you).
 
-::: {.callout-note title="Key points"}
-- A model gives an overview of the predicted relationships between variables: every arrow is a tested hypothesis, every tested hypothesis is an arrow, and each model has only one outcome variable (except SEM models).
+::: {.callout-note .box-keypoints title="Key points"}
+- A model gives an overview of the predicted relationships between variables. Every arrow is a tested hypothesis, every tested hypothesis is an arrow, and each model has only one outcome variable (except SEM models).
 - A simple arrow is a main effect and a crossing arrow is an interaction effect. Squares are measured items and circles are latent variables.
-- Prefer a simple model: it is the most powerful, easy to test and reliable. Including an interaction effect requires a significantly higher sample size.
+- Prefer a simple model: it is more powerful, easier to test and more reliable. Including an interaction effect requires a larger sample size.
 - Draw models in black and white with line arrows, using Word, PowerPoint, flowchart software or DOT code.
 - Under every statistical test a similar equation is used, $Outcome = b_{0} + b_{1}\,Predictor + e$, where $b_{0}$ is the intercept, $b_{1}$ is the estimate (the change of the outcome when the predictor increases by 1) and $e$ is the error.
-- The intercept is always included in the equation but is useless for hypothesis testing; leaving it out forces it to zero and can lead to estimation errors.
+- The intercept is always included in the equation, but the hypotheses are tested with the estimates of the predictors. Leaving the intercept out forces it to zero and can lead to estimation errors.
+:::
+
+## Exercises {#sec-l02-exercises}
+
+These exercises practise the steps of the chapter: from hypotheses to a model, from a model to an equation, and the code to write them. The first ones need only a pen. For the DOT and LaTeX exercises, use an editor such as <http://viz-js.com/> or <https://latex.codecogs.com/eqneditor/editor.php> to check your code.
+
+::: {#exr-l02-vocabulary}
+## True or false?
+
+Say whether each statement is true or false, and correct the false ones.
+
+a. Every arrow of a model corresponds to a hypothesis to be tested.
+b. A simple model can include two outcome variables if they are measured on the same participants.
+c. A latent variable, such as job satisfaction measured with several questions, is drawn as a square.
+d. A model with two predictors and their interaction effect tests three hypotheses.
+e. In $Outcome = b_{0} + b_{1}\,Predictor + e$, $b_{0}$ is how much the outcome increases when the predictor increases by 1.
+f. The hypotheses are tested with the estimates of the predictors, not with the intercept.
+g. In an equation, an interaction effect is written by adding the two predictors involved.
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+a. True. This is Rule 1, and Rule 2 says the reverse: every tested hypothesis has an arrow.
+b. False. Each model has only one outcome variable (Rule 4). Only a structural equation model can have several outcomes.
+c. False. A latent variable is drawn as a circle (or an oval). Squares are actual measures or items.
+d. True. It tests the main effect of each predictor and the interaction effect: 2 main effects and 1 interaction effect.
+e. False. $b_{0}$ is the intercept, the value of the outcome when the predictor is 0. How much the outcome increases when the predictor increases by 1 is the estimate $b_{1}$.
+f. True. The intercept is always included in the equation, but it does not test a hypothesis.
+g. False. An interaction effect is written by multiplying the two predictors, for example $b_{3}\,Salary*Origin$.
+:::
+
+@fig-l02-count shows three models used in the next exercises.
+
+::: {#fig-l02-count}
+
+```{dot}
+//| label: fig-l02-count-a
+//| fig-cap: "Model A."
+//| fig-alt: "Two boxes, Salary and Age, each with an arrow pointing to a circle labelled Job Satisfaction."
+//| fig-width: 2.6
+//| fig-height: 1.3
+
+digraph {
+  graph [rankdir = LR]
+  node [shape = box]
+  "Salary"; "Age"
+  node [shape = circle, width = 1.15, fixedsize = true]
+  "Job\nSatisfaction"
+
+  "Salary" -> "Job\nSatisfaction"
+  "Age" -> "Job\nSatisfaction"
+}
+```
+
+```{dot}
+//| label: fig-l02-count-b
+//| fig-cap: "Model B."
+//| fig-alt: "A box labelled Sleep Time and a box labelled Exam Results joined by a horizontal line with an arrowhead at Exam Results. A box labelled Breakfast has an arrow pointing down to the middle of that line."
+//| fig-width: 3.6
+//| fig-height: 0.94
+
+digraph {
+  graph [rankdir = LR]
+  node [shape = box]
+  "Sleep Time"; "Breakfast"; "Exam Results"
+  node [shape = point, width = 0, height = 0]
+  ""
+
+  "Breakfast" -> ""
+  "Sleep Time" -> "" [arrowhead = none]
+  "" -> "Exam Results"
+
+  subgraph {
+    rank = same; "Breakfast"; "";
+  }
+}
+```
+
+```{dot}
+//| label: fig-l02-count-c
+//| fig-cap: "Model C."
+//| fig-alt: "Four boxes, Salary, Gender, Age and Location, and a circle labelled Work Motivation. Age and Location each have an arrow to the circle. Salary and the circle are joined by a line with an arrowhead at the circle, and Gender has an arrow pointing down to the middle of that line."
+//| fig-width: 3.3
+//| fig-height: 1.9
+
+digraph {
+  graph [rankdir = LR]
+  node [shape = box]
+  "Salary"; "Gender"; "Age"; "Location"
+  node [shape = circle, width = 1.15, fixedsize = true]
+  "Work\nMotivation"
+  node [shape = point, width = 0, height = 0]
+  ""
+
+  "Age" -> "Work\nMotivation"
+  "Location" -> "Work\nMotivation"
+  "Gender" -> ""
+  "Salary" -> "" [arrowhead = none]
+  "" -> "Work\nMotivation"
+
+  subgraph {
+    rank = same; "Gender"; "";
+  }
+  subgraph {
+    rank = same; "Age"; "Location"; "Salary";
+  }
+}
+```
+
+Three models to read.
+:::
+
+::: {#exr-l02-count}
+## Counting the hypotheses of a model
+
+Look at the three models of @fig-l02-count.
+
+1. How many hypotheses does each model test? Say which ones are main effects and which ones are interaction effects.
+2. In each model, which variables are latent variables?
+3. How many estimates $b$, without counting the intercept $b_{0}$, will the equation of each model have?
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+1. Model A tests 2 hypotheses: the main effects of Salary and of Age. Model B tests 3 hypotheses: the main effects of Sleep Time and of Breakfast, and their interaction effect (the crossing arrow involves the main effects of both predictors). Model C tests 5 hypotheses: the main effects of Salary, Gender, Age and Location, and the interaction effect of Salary and Gender.
+2. Job Satisfaction in Model A and Work Motivation in Model C, because they are drawn as circles. All the other variables are measures (squares).
+3. One estimate per hypothesis: 2 in Model A, 3 in Model B and 5 in Model C.
+:::
+
+::: {#exr-l02-draw}
+## From hypotheses to a model
+
+The manager of a company formulates three hypotheses. Work motivation is measured with a scale of five questions, salary is measured in euro, and gender has two categories (female and male).
+
+- $H_{a_{1}}$: **Work motivation** *increases* when **salary** increases
+- $H_{a_{2}}$: The **work motivation** of **female employees** is *higher* than the **work motivation** of **male employees**
+- $H_{a_{3}}$: The effect of **salary** on **work motivation** is *higher* for **female employees** than it is for **male employees**
+
+1. Identify the role and the type of each variable.
+2. Draw the model, with the right shapes and the right arrows.
+3. Draw the same model with the interaction as a predictor of its own, and write on each arrow the estimate $b$ that tests it.
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+1. Outcome: Work Motivation, continuous and latent (five questions), so a circle. Predictor 1: Salary, continuous and measured, so a square. Predictor 2: Gender, categorical (female vs male) and measured, so a square.
+2. $H_{a_{1}}$ and $H_{a_{2}}$ are main effects and $H_{a_{3}}$ is an interaction effect, drawn with a crossing arrow from Gender to the arrow of Salary:
+
+```{dot}
+//| label: solution-draw-crossing-arrow
+//| fig-width: 3.4
+//| fig-height: 1.1
+
+digraph {
+  graph [rankdir = LR]
+  node [shape = box]
+  "Salary"; "Gender"
+  node [shape = circle, width = 1.15, fixedsize = true]
+  "Work\nMotivation"
+  node [shape = point, width = 0, height = 0]
+  ""
+
+  "Gender" -> ""
+  "Salary" -> "" [arrowhead = none]
+  "" -> "Work\nMotivation"
+
+  subgraph {
+    rank = same; "Gender"; "";
+  }
+}
+```
+
+3. With the interaction as a predictor of its own, there are three arrows, one per hypothesis:
+
+```{dot}
+//| label: solution-draw-three-arrows
+//| fig-width: 3.4
+//| fig-height: 1.8
+
+digraph {
+  graph [rankdir = LR]
+  node [shape = box]
+  "Salary"; "Gender"; "Salary * Gender"
+  node [shape = circle, width = 1.15, fixedsize = true]
+  "Work\nMotivation"
+
+  "Salary" -> "Work\nMotivation" [label = b1]
+  "Gender" -> "Work\nMotivation" [label = b2]
+  "Salary * Gender" -> "Work\nMotivation" [label = b3]
+}
+```
+:::
+
+::: {#exr-l02-equation}
+## From a model to an equation
+
+1. Write the equation of the model of @exr-l02-draw.
+2. Write the equations of Models A, B and C of @fig-l02-count.
+3. Write the equation of question 1 again with the Greek alphabet and the subscript $i$ (@sec-l02-notation).
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+1. One term per arrow, plus the intercept and the error:
+   $$Work\,Motivation = b_{0} + b_{1}\,Salary + b_{2}\,Gender + b_{3}\,Salary*Gender + e$$
+2. Model A: $Job\,Satisfaction = b_{0} + b_{1}\,Salary + b_{2}\,Age + e$
+
+   Model B: $Exam\,Results = b_{0} + b_{1}\,Sleep\,Time + b_{2}\,Breakfast + b_{3}\,Sleep\,Time*Breakfast + e$
+
+   Model C: $Work\,Motivation = b_{0} + b_{1}\,Salary + b_{2}\,Gender + b_{3}\,Age + b_{4}\,Location + b_{5}\,Salary*Gender + e$
+
+   The order of the terms does not matter, but the main effects usually come before the interaction effects.
+3. $b$ becomes $\beta$, $e$ becomes $\epsilon$, and the subscript $i$ (one value per observation) goes on the outcome, on the predictors and on the error:
+   $$Work\,Motivation_{i} = \beta_{0} + \beta_{1}\,Salary_{i} + \beta_{2}\,Gender_{i} + \beta_{3}\,Salary_{i}*Gender_{i} + \epsilon_{i}$$
+:::
+
+```{r}
+#| label: l02-exercise-by-hand
+#| include: false
+# The exercise done by hand uses the estimates of Example 1 rounded to one decimal, as a reader does.
+b0_rounded <- round(example_1_b0, 1)
+b1_rounded <- round(example_1_b1, 1)
+
+participant_4 <- df3 |>
+  filter(Participant == "ppt4")
+
+predicted_participant_4 <- b0_rounded + b1_rounded * participant_4$`Sleep Time`
+error_participant_4 <- participant_4$`Exam Results` - predicted_participant_4
+```
+
+::: {#exr-l02-by-hand}
+## Intercept, estimate and error by hand
+
+With the six participants of Example 1, the estimated equation, with its values rounded to one decimal, is $Exam\,Results = `r format_number(b0_rounded, 1)` + `r format_number(b1_rounded, 1)`\,Sleep\,Time + e$.
+
+1. By how much do the exam results change when sleep time increases by 1 hour? And by 2 hours?
+2. What exam result does the line predict for a sleep time of `r participant_4$"Sleep Time"` hours?
+3. Participant `r participant_4$Participant` slept `r participant_4$"Sleep Time"` hours and obtained `r participant_4$"Exam Results"`. What is the error $e$ of this participant? Is the participant above or below the prediction line?
+4. What does $b_{0}$ mean here, and why is it not used to test the hypothesis?
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+1. The estimate is the change for 1 unit: `r format_number(b1_rounded, 1)` points for 1 hour, and $2 \times `r format_number(b1_rounded, 1)` = `r format_number(2 * b1_rounded, 1)`$ points for 2 hours.
+2. Replace $Sleep\,Time$ by its value: $`r format_number(b0_rounded, 1)` + `r format_number(b1_rounded, 1)` \times `r participant_4$"Sleep Time"` = `r format_number(predicted_participant_4, 1)`$.
+3. The error is the actual value minus the value on the line: $e = `r participant_4$"Exam Results"` - `r format_number(predicted_participant_4, 1)` = `r format_number(error_participant_4, 1)`$. The error is positive, so the participant is above the line: a little better than the model predicts.
+4. $b_{0} = `r format_number(b0_rounded, 1)`$ is the exam result predicted for a sleep time of 0 hours. No participant sleeps 0 hours, and the hypothesis is about the effect of sleep time, which is tested with $b_{1}$. The intercept stays in the equation so that $b_{1}$ is estimated correctly.
+:::
+
+::: {#exr-l02-dot}
+## A model in the DOT language
+
+1. Write the DOT code of the model of @exr-l02-draw (question 2), with the crossing arrow, and check it in a DOT editor such as <http://viz-js.com/>.
+2. A classmate writes `Salary -> Work Motivation` without quotes. What does DOT draw?
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+1. Start from the DOT code of an interaction in @sec-l02-dot, replace the names, and give the outcome the shape of a circle because it is a latent variable:
+
+```{.dot}
+digraph {
+  graph [rankdir = LR]
+  node [shape = box]
+  "Salary"; "Gender"
+  node [shape = circle, width = 1.15, fixedsize = true]
+  "Work\nMotivation"
+  node [shape = point, width = 0, height = 0]
+  ""
+
+  "Gender" -> ""
+  "Salary" -> "" [arrowhead = none]
+  "" -> "Work\nMotivation"
+
+  subgraph {
+    rank = same; "Gender"; "";
+  }
+}
+```
+
+The `\n` breaks the name on two lines so that it fits in the circle. The code draws the model of the solution of @exr-l02-draw.
+
+2. Without quotes, DOT reads each word as a separate variable. It draws an arrow from Salary to Work, and Motivation on its own. The name must be written `"Work Motivation"`.
+:::
+
+::: {#exr-l02-latex}
+## An equation in LaTeX
+
+Write the LaTeX code of the equation of the model of @exr-l02-draw, following the rules of @sec-l02-repr-eq, and check it in a LaTeX equation editor.
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+Use `\,` for the space between the two words of the outcome and between each estimate and its predictor, and `_` for the subscripts:
+
+```{.latex}
+\begin{equation}
+  Work\,Motivation = b_0 + b_1\,Salary + b_2\,Gender + b_3\,Salary*Gender + e
+\end{equation}
+```
+
+It is translated as:
+
+$$Work\,Motivation = b_0 + b_1\,Salary + b_2\,Gender + b_3\,Salary*Gender + e$$
+:::
+
+@fig-l02-mistakes-model shows the model drawn by the student of the next exercise.
+
+```{dot}
+//| label: fig-l02-mistakes-model
+//| fig-cap: "The model drawn by the student of @exr-l02-mistakes."
+//| fig-alt: "Three boxes, Salary, Origin and Age, and two more boxes, Job Satisfaction and Turnover Intention. Salary and Job Satisfaction are joined by a line with an arrowhead at Job Satisfaction, and Origin has an arrow pointing down to the middle of that line. Age has an arrow to Job Satisfaction, and Job Satisfaction has an arrow to Turnover Intention."
+//| fig-width: 4.6
+//| fig-height: 1.5
+
+digraph {
+  graph [rankdir = LR]
+  node [shape = box]
+  "Salary"; "Origin"; "Age"; "Job\nSatisfaction"; "Turnover\nIntention"
+  node [shape = point, width = 0, height = 0]
+  ""
+
+  "Age" -> "Job\nSatisfaction"
+  "Origin" -> ""
+  "Salary" -> "" [arrowhead = none]
+  "" -> "Job\nSatisfaction"
+  "Job\nSatisfaction" -> "Turnover\nIntention"
+
+  subgraph {
+    rank = same; "Origin"; "";
+  }
+  subgraph {
+    rank = same; "Age"; "Salary";
+  }
+}
+```
+
+::: {#exr-l02-mistakes}
+## Find the mistakes
+
+A student tests three hypotheses. Job satisfaction is measured with four questions.
+
+- $H_{a_{1}}$: **Job satisfaction** *increases* when **salary** increases
+- $H_{a_{2}}$: The **job satisfaction** of **Irish employees** is *higher* than the **job satisfaction** of **French employees**
+- $H_{a_{3}}$: The effect of **salary** on **job satisfaction** is *higher* for **Irish employees** than it is for **French employees**
+
+The student draws the model of @fig-l02-mistakes-model, fills the boxes in light blue to make the figure nicer, and writes the equation $Job\,Satisfaction = b_{1}\,Salary + b_{2}\,Salary*Origin + e$. Find at least five mistakes in the model and in the equation.
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+In the model:
+
+- **The arrow from Age has no hypothesis.** Every arrow must correspond to a tested hypothesis (Rule 1). Remove it, or add the hypothesis about age.
+- **The model has two outcome variables.** Job Satisfaction and Turnover Intention cannot be the outcomes of the same simple model (Rule 4). Turnover Intention needs its own model and its own hypotheses.
+- **Job Satisfaction is drawn as a square.** It is measured with four questions, so it is a latent variable and is drawn as a circle.
+- **The boxes are filled with a colour.** Models are drawn in black and white only, with line arrows.
+
+In the equation:
+
+- **The intercept $b_{0}$ is missing.** It is always included, even though it does not test a hypothesis.
+- **The main effect of Origin is missing.** An interaction involves the main effect of each predictor, and $H_{a_{2}}$ is tested by the estimate of Origin.
+
+The corrected model and equation:
+
+```{dot}
+//| label: solution-mistakes-corrected
+//| fig-width: 3.4
+//| fig-height: 1.1
+
+digraph {
+  graph [rankdir = LR]
+  node [shape = box]
+  "Salary"; "Origin"
+  node [shape = circle, width = 1.15, fixedsize = true]
+  "Job\nSatisfaction"
+  node [shape = point, width = 0, height = 0]
+  ""
+
+  "Origin" -> ""
+  "Salary" -> "" [arrowhead = none]
+  "" -> "Job\nSatisfaction"
+
+  subgraph {
+    rank = same; "Origin"; "";
+  }
+}
+```
+
+$$Job\,Satisfaction = b_{0} + b_{1}\,Salary + b_{2}\,Origin + b_{3}\,Salary*Origin + e$$
 :::

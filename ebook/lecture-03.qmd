@@ -6,6 +6,43 @@
 source("R/setup.R")
 ```
 
+```{r}
+#| label: data
+#| include: false
+# The data files of the lecture, used by the figures and the exercises of this chapter.
+library(patchwork)
+organisation_alpha <- readxl::read_excel(here("data/organisation_alpha.xlsx"), sheet = "list_employees_2020")
+salary_2017_sheet <- readxl::read_excel(here("data/organisation_alpha.xlsx"), sheet = "salary_2017")
+chess_llm <- readr::read_csv(here("data/chess_llm.csv"))
+unicef_cleaned <- readr::read_csv(here("data/unicef_cleaned.csv"))
+
+# draw_cells() draws a table as a grid of cells, for the figures that show where each
+# value of a table goes. cells has one row per cell: x and y (the centre of the cell),
+# width, text, fill and outline (colours) and face ("bold" or "plain").
+draw_cells <- function(cells, text_size = 2.8) {
+  list(
+    geom_tile(data = cells, aes(x = x, y = y, width = width, fill = fill, colour = outline), height = 0.9, linewidth = 0.6),
+    geom_text(data = cells, aes(x = x, y = y, label = text, fontface = face), size = text_size),
+    scale_fill_identity(),
+    scale_colour_identity()
+  )
+}
+cell_header <- "#eef1f2"
+cell_line <- "#c9cfd1"
+```
+
+::: {.callout-note .box-goals title="In this chapter"}
+After this chapter, you can:
+
+- explain how a psychometric scale measures a latent variable, and calculate its score from the items
+- tell validity from reliability
+- clean a spreadsheet with the five rules and give its variables snake_case names
+- apply the five key transformations in Excel: extension, reduction, direction, aggregation and combination
+- say whether a table is in a long or a wide format, and reshape it
+
+You need Microsoft Excel and the files `unicef.xlsx`, `unicef_cleaned.csv`, `organisation_alpha.xlsx` and `chess_llm.csv`. R is optional: the solutions of the exercises also give the R code.
+:::
+
 To perform any kind of analysis efficiently, the data file has to be formatted in the most suitable way. Three steps are required:
 
 1. Understanding how the data have been collected
@@ -13,6 +50,24 @@ To perform any kind of analysis efficiently, the data file has to be formatted i
 3. Transforming the data in order to obtain the relevant variables
 
 This chapter goes through these three steps in turn. Most of the examples use Microsoft Excel.
+
+@fig-l03-roadmap shows the journey of the data through these three steps, up to the analysis that the next chapters teach.
+
+```{r}
+#| label: fig-l03-roadmap
+#| fig-cap: "The journey of the data: collect, clean, transform, and only then analyse."
+#| fig-alt: "Four boxes in a row joined by arrows. Collect: a survey, its scales, a raw .csv file. Clean: five rules, snake_case names. Transform: five key transformations. Analyse: the models of the next chapters."
+#| fig-height: 1.4
+roadmap <- tribble(
+  ~step,       ~detail,
+  "Collect",   "a survey, its scales,\na raw .csv file",
+  "Clean",     "five rules,\nsnake_case names",
+  "Transform", "five key\ntransformations",
+  "Analyse",   "the models of\nthe next chapters"
+)
+
+flow_chart(roadmap)
+```
 
 ## Collecting data {#sec-l03-collecting}
 
@@ -39,6 +94,10 @@ A **psychometric scale** is a series of questions (items) used to measure a **la
 
 - the average of all items (each item contributes equally to the latent variable score)
 - a factor analysis (items contribute unequally to the latent variable score)
+
+::: {.callout-note .box-definition title="Definition: latent variable"}
+A **latent variable** is a construct that you cannot observe directly, such as a perception or an attitude. A psychometric scale measures it with several items, and its score is calculated from the answers to all of them.
+:::
 
 A scale should have been validated by its authors, so:
 
@@ -123,6 +182,73 @@ tribble(
   kable()
 ```
 
+@fig-l03-score places the answers of each respondent on the scale from 1 to 7. The score is the average of the four answers, so it sits among them: high for Sinead, low for Damien.
+
+```{r}
+#| label: fig-l03-score
+#| fig-cap: "The answers of three respondents to the four items (grey points) and their score, the average of the four answers (blue diamond)."
+#| fig-alt: "Dot plot with one row per respondent and the answer from 1 to 7 on the horizontal axis. Grey points mark the answers to q1 to q4, labelled with the item names. A blue diamond marks the score: 6.50 for Sinead, 5.25 for Patrick and 2.25 for Damien."
+#| fig-height: 3
+peou_answers <- tribble(
+  ~employee, ~q1, ~q2, ~q3, ~q4,
+  "Sinead",   7,  5,   7,   7,
+  "Patrick",  5,  4,   6,   6,
+  "Damien",   3,  1,   2,   3
+)
+
+peou_answers_long <- peou_answers |>
+  pivot_longer(q1:q4, names_to = "item", values_to = "answer")
+
+item_labels <- peou_answers_long |>
+  group_by(employee, answer) |>
+  summarise(items = paste(item, collapse = ", "), .groups = "drop")
+
+peou_scores <- peou_answers_long |>
+  group_by(employee) |>
+  summarise(peo_score = mean(answer)) |>
+  mutate(label = paste0("peo_score = ", format_number(peo_score)))
+
+respondent_order <- c("Damien", "Patrick", "Sinead")
+
+ggplot(peou_answers_long, aes(x = answer, y = factor(employee, levels = respondent_order))) +
+  geom_point(size = 2.6, colour = book_col("grey")) +
+  geom_text(data = item_labels, aes(label = items), nudge_y = 0.25, size = 3.1, colour = "#43464b") +
+  geom_point(data = peou_scores, aes(x = peo_score), shape = 18, size = 5, colour = book_col("blue")) +
+  geom_text(data = peou_scores, aes(x = peo_score, label = label), nudge_y = -0.3, size = 3.4) +
+  scale_x_continuous(limits = c(1, 7), breaks = 1:7) +
+  labs(x = "Answer (1 = totally disagree, 7 = totally agree)", y = NULL)
+```
+
+::: {.callout-tip .box-example title="Example: an item in the other direction"}
+Imagine that the published scale had a fifth item: "q5. I find MS EXCEL confusing", answered from 1 to 7. Agreeing with q5 means that MS EXCEL is *not* easy to use, so q5 runs in the opposite direction to q1 to q4. All the items must be analysed in the same direction (@sec-l03-scales), so reverse q5 before calculating the score: on a scale from 1 to 7, the reversed answer is $8 - answer$, so an answer of 2 becomes 6 (@fig-l03-reverse).
+:::
+
+```{r}
+#| label: fig-l03-reverse
+#| fig-cap: "Reversing an item answered from 1 to 7: each answer becomes 8 minus the answer."
+#| fig-alt: "Two rows of numbers joined by downward arrows. The top row, answer, reads 1 to 7. The bottom row, reversed answer, reads 7 to 1. The arrow from 2 to 6 is orange and labelled 8 - 2 = 6; 4 stays 4."
+#| fig-height: 1.7
+reversed_answers <- tibble(answer = 1:7) |>
+  mutate(
+    reversed = 8 - answer,
+    highlighted = answer == 2
+  )
+
+ggplot(reversed_answers, aes(x = answer)) +
+  geom_segment(
+    aes(xend = answer, y = 0.78, yend = 0.25, colour = highlighted),
+    linewidth = 0.9, arrow = arrow(length = unit(0.12, "cm"), type = "closed")
+  ) +
+  geom_text(aes(y = 1, label = answer), size = 4.5) +
+  geom_text(aes(y = 0, label = reversed), size = 4.5) +
+  annotate("text", x = 0.4, y = c(1, 0), label = c("answer", "reversed answer"), hjust = 1, size = 3.6, fontface = "bold") +
+  annotate("text", x = 2, y = -0.32, label = "8 - 2 = 6", size = 3.4) +
+  scale_colour_manual(values = c(`FALSE` = book_col("grey"), `TRUE` = book_col("orange")), guide = "none") +
+  scale_x_continuous(limits = c(-1.6, 7.4)) +
+  scale_y_continuous(limits = c(-0.5, 1.15)) +
+  theme_void()
+```
+
 ### Validity and reliability {#sec-l03-validity}
 
 **Validity** is about whether my variable is measuring the construct that I think I am measuring. To judge it, ask:
@@ -133,6 +259,10 @@ tribble(
 
 A validity test is only performed when a scale is created, so there is no need to run one for existing scales.
 
+::: {.callout-note .box-definition title="Definition: validity"}
+A measure is **valid** when it measures the construct that you think it measures. The authors of a scale test its validity when they create it.
+:::
+
 **Reliability** is the consistency of the items inside a measurement. It can be assessed with:
 
 - test-retest reliability
@@ -140,6 +270,65 @@ A validity test is only performed when a scale is created, so there is no need t
 - the correlation between items (Cronbach's alpha)
 
 A reliability test is performed every time a scale is used, but only using Cronbach's alpha.
+
+::: {.callout-note .box-definition title="Definition: reliability"}
+A measure is **reliable** when it gives consistent results, for example when its items are consistent with one another. Each time you use a scale, you check its reliability with Cronbach's alpha, which is based on the correlations between the items.
+:::
+
+@fig-l03-targets shows the two ideas as targets. The centre of each target is the construct you want to measure, and each point is one measurement. Reliable measurements are close to one another. Valid measurements are centred on the construct.
+
+```{r}
+#| label: fig-l03-targets
+#| fig-cap: "Validity and reliability as four targets. The centre is the construct you want to measure and each point is one measurement. The points are simulated for the illustration."
+#| fig-alt: "Four targets side by side, each with eight black points. Reliable, not valid: the points form a tight group away from the centre. Valid, not reliable: the points are spread out but centred on the centre. Neither reliable nor valid: the points are spread out and centred away from the centre. Reliable and valid: the points form a tight group on the centre."
+#| fig-height: 2.6
+set.seed(1005)
+target_cases <- tribble(
+  ~case,                         ~centre_x, ~centre_y, ~spread,
+  "Reliable,\nnot valid",        1.5,       1.3,       0.22,
+  "Valid,\nnot reliable",        0,         0,         0.95,
+  "Neither reliable\nnor valid", -1.1,      1.2,       0.95,
+  "Reliable\nand valid",         0,         0,         0.22
+) |>
+  mutate(case = factor(case, levels = case))
+
+# Eight measurements per target. They are moved so that their average is exactly the
+# centre of their group: on the construct for the valid cases, away from it otherwise.
+target_points <- target_cases |>
+  rowwise() |>
+  reframe(
+    case = case,
+    x = rnorm(8, mean = 0, sd = spread),
+    y = rnorm(8, mean = 0, sd = spread),
+    centre_x = centre_x,
+    centre_y = centre_y
+  ) |>
+  group_by(case) |>
+  mutate(
+    x = x - mean(x) + centre_x,
+    y = y - mean(y) + centre_y
+  ) |>
+  ungroup()
+
+target_rings <- tidyr::crossing(radius = c(1, 2, 3), angle = seq(0, 2 * pi, length.out = 200)) |>
+  mutate(
+    x = radius * cos(angle),
+    y = radius * sin(angle)
+  )
+
+ggplot() +
+  geom_path(data = target_rings, aes(x, y, group = radius), colour = book_col("grey"), linewidth = 0.5) +
+  annotate("point", x = 0, y = 0, shape = 3, size = 3, colour = book_col("grey")) +
+  geom_point(data = target_points, aes(x, y), size = 2) +
+  facet_wrap(~case, nrow = 1) +
+  coord_equal(xlim = c(-3.2, 3.2), ylim = c(-3.2, 3.2)) +
+  theme_void() +
+  theme(strip.text = element_text(face = "bold", size = 10, colour = book_col("ink"), lineheight = 0.95, margin = margin(b = 4)))
+```
+
+::: {.callout-warning .box-mistake title="Common mistake: taking reliability for validity"}
+A high Cronbach's alpha shows that the items agree with one another: the scale is reliable. It does not show that they measure the right construct, as the first target of @fig-l03-targets shows. The validity of an existing scale comes from the tests run by its authors.
+:::
 
 ### Survey example {#sec-l03-survey}
 
@@ -165,7 +354,7 @@ A survey usually measures several latent variables at once, each with its own it
 - *(BI1)* Assuming I had access to MS EXCEL, I intend to use it
 - *(BI2)* Given that I had access to MS EXCEL, I predict that I would use it
 
-@fig-l03-survey shows how these items relate to their latent variables. Actual Use is measured by a single indicator (AU). The arrows between the latent variables go from Perceived Ease-of-use to Perceived Usefulness and to Intention to Use, from Perceived Usefulness to Intention to Use, and from Intention to Use to Actual Use.
+@fig-l03-survey shows how these items relate to their latent variables. Actual Use is measured by a single indicator (AU). Perceived Ease-of-use has an arrow to Perceived Usefulness and to Intention to Use. Perceived Usefulness has an arrow to Intention to Use, which has an arrow to Actual Use.
 
 ```{dot}
 //| label: fig-l03-survey
@@ -202,8 +391,13 @@ digraph rmarkdown {
 }
 ```
 
+::: {.callout-tip .box-example title="Example: from 12 answers to 4 variables"}
+Each participant of this survey gives 12 answers: 11 items and the indicator AU. The analysis uses one variable for each latent variable: the score of Perceived Usefulness (the average of PU1 to PU5), the score of Perceived Ease-of-use (the average of PEOU1 to PEOU4), the score of Intention to Use (the average of BI1 and BI2), and AU itself, because Actual Use has a single indicator.
+:::
+
 ### Accessing your data {#sec-l03-access}
 
+::: {.callout-tip .box-howto title="In Google Forms: download the responses"}
 To download the responses from a Google Form:
 
 1. Log in to your Google account (be sure to use the DCU account)
@@ -211,12 +405,15 @@ To download the responses from a Google Form:
 3. Click on your survey form
 4. Click on Responses
 5. Download the response spreadsheet as .csv
+:::
 
+::: {.callout-tip .box-howto title="In Qualtrics: download the responses"}
 To download the responses from a Qualtrics survey:
 
 1. Log in to Qualtrics with your DCU login and password (<https://dcusurveys.qualtrics.com/>)
 2. Click on Data & Analysis
 3. Click on Export & Import > Export Data... > CSV (use numeric values)
+:::
 
 ::: {.callout-important title="Warning"}
 - Always save the unmodified raw version of your data on the cloud (for example Google Drive, Dropbox or OneDrive).
@@ -244,7 +441,7 @@ The data scientist Kareem Carr asked on social media: "dear data scientists, wha
 include_img("clean_tweet.png")
 ```
 
-::: {.callout-tip title="Your turn: find what is going wrong with this table"}
+::: {.callout-tip .box-yourturn title="Your turn: find what is going wrong with this table"}
 Look closely at the spreadsheet in @fig-l03-zoom. What makes it hard to analyse?
 
 ```{r}
@@ -255,7 +452,7 @@ include_img("clean_zoom.jpg")
 ```
 :::
 
-::: {.callout-note title="Answer from Michael" collapse="true"}
+::: {.callout-note .box-solution title="Answer from Michael" collapse="true"}
 Michael replied: "Ditch the chart, save as CSV and, at the very least, column headings should be in row 1, columns should start at column A. Any other spreadsheet is chaotic evil."
 
 ```{r}
@@ -279,6 +476,23 @@ An addition to Michael's list would be to transform the headers with a proper na
 include_img("name_convention.jpg")
 ```
 
+@tbl-l03-names applies snake_case to some headings of the file `unicef.xlsx`, which you clean in the next Your turn. In this sheet, a heading is spread over rows 3 and 5. Each one becomes a single short name.
+
+```{r}
+#| label: tbl-l03-names
+#| tbl-cap: "Headings of the first sheet of unicef.xlsx and a snake_case name for each. An empty cell in row 3 belongs to the heading on its left."
+tribble(
+  ~`Row 3 of the sheet`,                          ~`Row 5 of the sheet`, ~`snake_case name`,
+  "Countries and areas",                          "",                    "country",
+  "Population (thousands) 2018",                  "total",               "population_total_2018",
+  "",                                             "under 18",            "population_under_18_2018",
+  "Annual population growth rate (%)",            "2000-2018",           "pop_growth_rate_2000_2018",
+  "Annual number of births (thousands) 2018",     "",                    "annual_births_2018",
+  "Total fertility (live births per woman) 2018", "",                    "total_fertility_2018"
+) |>
+  kable()
+```
+
 ### Five rules to clean data {#sec-l03-rules}
 
 1. **Ditch the chart and all non-values.** Charts can mess up other software.
@@ -287,7 +501,120 @@ include_img("name_convention.jpg")
 4. **Use a naming convention.** snake_case is preferable but any would do.
 5. **Save as a .csv file.** It is a better format and keeps only the current sheet.
 
-::: {.callout-tip title="Your turn: clean the UNICEF file"}
+@fig-l03-clean-sheet applies the five rules to a small sheet like the one of Kareem Carr.
+
+```{r}
+#| label: fig-l03-clean-sheet
+#| fig-cap: "A small sheet before and after cleaning. Red cells break one of the five rules. The values are invented for the illustration."
+#| fig-alt: "Two drawings of spreadsheets. Before: column A is empty, row 1 holds the title Sales, row 2 is blank, the headings Column1, Sales Q1 and Sales Q2 are in row 3, the values for Dublin, Cork and Galway are in rows 4 to 6, and a bar chart sits in rows 7 to 9; notes name the rule each problem breaks. After: the headings city, sales_q1 and sales_q2 are in row 1 from column A, the values follow in rows 2 to 4, and a note says saved as sales.csv."
+#| fig-height: 3.6
+# Columns are 1.7 units wide: column A is centred on x = 1.7, column B on x = 3.4, and so on.
+column_width <- 1.7
+
+sheet_frame <- function(n_columns, n_rows) {
+  list(
+    annotate("text", x = seq_len(n_columns) * column_width, y = -0.35, label = LETTERS[seq_len(n_columns)], size = 3, colour = "#43464b"),
+    annotate("text", x = 0.55, y = -seq_len(n_rows), label = seq_len(n_rows), size = 3, colour = "#43464b")
+  )
+}
+
+messy_sheet <- tribble(
+  ~column, ~row, ~text,      ~problem,
+  1,       1,    "",         TRUE,
+  2,       1,    "Sales",    TRUE,
+  3,       1,    "",         FALSE,
+  4,       1,    "",         FALSE,
+  1,       2,    "",         TRUE,
+  2,       2,    "",         TRUE,
+  3,       2,    "",         TRUE,
+  4,       2,    "",         TRUE,
+  1,       3,    "",         TRUE,
+  2,       3,    "Column1",  TRUE,
+  3,       3,    "Sales Q1", TRUE,
+  4,       3,    "Sales Q2", TRUE,
+  1,       4,    "",         TRUE,
+  2,       4,    "Dublin",   FALSE,
+  3,       4,    "120",      FALSE,
+  4,       4,    "135",      FALSE,
+  1,       5,    "",         TRUE,
+  2,       5,    "Cork",     FALSE,
+  3,       5,    "80",       FALSE,
+  4,       5,    "95",       FALSE,
+  1,       6,    "",         TRUE,
+  2,       6,    "Galway",   FALSE,
+  3,       6,    "60",       FALSE,
+  4,       6,    "",         FALSE
+) |>
+  mutate(
+    x = column * column_width,
+    y = -row,
+    width = column_width - 0.05,
+    fill = if_else(problem, scales::alpha(book_col("red"), 0.12), "white"),
+    outline = cell_line,
+    face = "plain"
+  )
+
+messy_chart_bars <- tibble(x = c(3.9, 5.1, 6.3), height = c(0.9, 0.6, 0.45))
+
+messy_notes <- tribble(
+  ~y,  ~text,
+  -1,  "a title above the table (rule 2)",
+  -2,  "a blank row (rule 2)",
+  -3,  "headings in row 3, unclear\nnames (rules 2 and 4)",
+  -5,  "column A is empty (rule 3)",
+  -8,  "a chart under the table (rule 1)"
+)
+
+plot_messy <- ggplot() +
+  draw_cells(messy_sheet) +
+  annotate("rect", xmin = 2.6, xmax = 7.6, ymin = -9.4, ymax = -6.6, fill = scales::alpha(book_col("red"), 0.12), colour = cell_line) +
+  geom_rect(data = messy_chart_bars, aes(xmin = x - 0.25, xmax = x + 0.25, ymin = -9.2, ymax = -9.2 + 2.2 * height), fill = book_col("grey")) +
+  sheet_frame(n_columns = 4, n_rows = 9) +
+  geom_text(data = messy_notes, aes(x = 7.85, y = y, label = text), hjust = 0, size = 3.1, lineheight = 0.95) +
+  scale_x_continuous(limits = c(0.3, 12.7)) +
+  scale_y_continuous(limits = c(-9.6, 0)) +
+  labs(title = "Before: the sheet as it was saved") +
+  theme_void() +
+  theme(plot.title = element_text(face = "bold", size = 11))
+
+clean_sheet <- tribble(
+  ~column, ~row, ~text,
+  1,       1,    "city",
+  2,       1,    "sales_q1",
+  3,       1,    "sales_q2",
+  1,       2,    "Dublin",
+  2,       2,    "120",
+  3,       2,    "135",
+  1,       3,    "Cork",
+  2,       3,    "80",
+  3,       3,    "95",
+  1,       4,    "Galway",
+  2,       4,    "60",
+  3,       4,    ""
+) |>
+  mutate(
+    x = column * column_width,
+    y = -row,
+    width = column_width - 0.05,
+    fill = if_else(row == 1, cell_header, "white"),
+    outline = cell_line,
+    face = if_else(row == 1, "bold", "plain")
+  )
+
+plot_clean <- ggplot() +
+  draw_cells(clean_sheet) +
+  sheet_frame(n_columns = 3, n_rows = 4) +
+  annotate("text", x = 0.3, y = -5.2, label = "saved as sales.csv (rule 5)", hjust = 0, size = 3.1) +
+  scale_x_continuous(limits = c(0.3, 6)) +
+  scale_y_continuous(limits = c(-9.6, 0)) +
+  labs(title = "After: the five rules applied") +
+  theme_void() +
+  theme(plot.title = element_text(face = "bold", size = 11))
+
+plot_messy + plot_clean + plot_layout(widths = c(12.4, 5.7))
+```
+
+::: {.callout-tip .box-yourturn title="Your turn: clean the UNICEF file"}
 On the module Loop page, go to "Lecture Data" and download the document called "unicef.xlsx".
 
 **Open and clean the first sheet of this file, but only until column P. Remove all other columns.**
@@ -329,11 +656,13 @@ include_img("key_movements.png")
 include_img("extension_img.png")
 ```
 
+::: {.callout-tip .box-howto title="In Excel: extension"}
 In MS Excel:
 
 - the first row is the column name (use a naming convention)
 - the second row is the function (it starts with the = sign)
 - the following rows apply the function (double-click the bottom right corner of the cell)
+:::
 
 Some useful Excel functions:
 
@@ -348,6 +677,18 @@ Some useful Excel functions:
     - `IF(condition, value if true, value if false)`
     - `IFS(condition 1, value if 1 true, condition 2, value if 2 true, ...)`
 
+```{r}
+#| label: example-extension
+#| include: false
+first_employee <- organisation_alpha |>
+  slice(1) |>
+  mutate(salary_change = salary_2019 - salary_2018)
+```
+
+::: {.callout-tip .box-example title="Example: the change of salary of each employee"}
+In the sheet `list_employees_2020` of `organisation_alpha.xlsx`, $salary\_2018$ is in column J and $salary\_2019$ in column K. In the first empty column, write the name `salary_change` in row 1 and the function `=K2-J2` in row 2. For the first employee, `r first_employee$first_name`, this gives $`r format_number(first_employee$salary_2019)` - `r format_number(first_employee$salary_2018)` = `r format_number(first_employee$salary_change)`$. A double-click on the bottom right corner of the cell fills the column for all `r nrow(organisation_alpha)` employees.
+:::
+
 ### Reduction
 
 **Reduction = keep only certain values.**
@@ -360,12 +701,14 @@ Some useful Excel functions:
 include_img("reduction_img.png")
 ```
 
+::: {.callout-tip .box-howto title="In Excel: reduction"}
 In MS Excel:
 
 - select the header row
 - in the Data tab, use Filter
 - click the drop-down arrow of the column you want to filter
 - choose the values to keep
+:::
 
 For example, filtering the column Country to keep only the value USA leaves only the rows corresponding to USA visible.
 
@@ -386,15 +729,74 @@ For example, filtering the column Country to keep only the value USA leaves only
 include_img("direction_img.png")
 ```
 
+::: {.callout-tip .box-howto title="In Excel: direction"}
 In MS Excel:
 
 - select the table
 - in the Data tab, use Sort
 - choose the column to sort and how to sort it
+:::
 
 ::: {.callout-important title="Warning"}
 - Be careful to take into account the whole table (all rows and all columns).
 - Double-check that all columns changed.
+:::
+
+@fig-l03-sort shows why the whole table must be sorted. When only the column $salary\_2019$ is sorted, the salaries no longer belong to the right employees, and nothing in the sheet warns you.
+
+```{r}
+#| label: fig-l03-sort
+#| fig-cap: "Four employees of organisation_alpha.xlsx sorted by salary_2019. Sorting the whole table keeps each salary with its employee. Sorting only the salary column gives each employee a wrong salary (red)."
+#| fig-alt: "Three small tables with the columns first_name and salary_2019. Before sorting: Zared 32,577, Lynnell 43,796, Drusy 5,813 and Lulita 11,107. Whole table sorted: Drusy, Lulita, Zared and Lynnell, each with their own salary. Only salary_2019 sorted: the names stay in the first order while the salaries are sorted, so all four salary cells are red."
+#| fig-height: 2.2
+four_salaries <- organisation_alpha |>
+  slice(1:4) |>
+  select(first_name, salary_2019)
+
+sort_versions <- bind_rows(
+  four_salaries |>
+    mutate(version = "Before sorting", row = row_number(), wrong = FALSE),
+  four_salaries |>
+    arrange(salary_2019) |>
+    mutate(version = "Whole table sorted", row = row_number(), wrong = FALSE),
+  four_salaries |>
+    mutate(salary_2019 = sort(salary_2019)) |>
+    mutate(version = "Only salary_2019 sorted", row = row_number(), wrong = salary_2019 != four_salaries$salary_2019)
+)
+
+sort_headers <- tidyr::crossing(
+  version = unique(sort_versions$version),
+  tibble(x = c(1, 2), text = c("first_name", "salary_2019"))
+) |>
+  mutate(y = 0, fill = cell_header, face = "bold")
+
+sort_cells <- bind_rows(
+  sort_headers,
+  sort_versions |>
+    transmute(version, x = 1, y = -row, text = first_name, fill = "white", face = "plain"),
+  sort_versions |>
+    transmute(
+      version, x = 2, y = -row,
+      text = scales::comma(salary_2019, accuracy = 1),
+      fill = if_else(wrong, scales::alpha(book_col("red"), 0.15), "white"),
+      face = "plain"
+    )
+) |>
+  mutate(
+    version = factor(version, levels = c("Before sorting", "Whole table sorted", "Only salary_2019 sorted")),
+    width = 0.96,
+    outline = cell_line
+  )
+
+ggplot() +
+  draw_cells(sort_cells) +
+  facet_wrap(~version) +
+  theme_void() +
+  theme(strip.text = element_text(face = "bold", size = 10, margin = margin(b = 4)))
+```
+
+::: {.callout-warning .box-mistake title="Common mistake: reversing an item with a sort"}
+In this chapter, "direction" has two meanings. Direction, the transformation, changes the order of the rows and leaves every value as it is. Reversing an item, as in @sec-l03-latent, changes the values of a column: it is an extension, a new column that calculates 8 minus the answer.
 :::
 
 ### Aggregation
@@ -414,6 +816,7 @@ In MS Excel:
 - Simple: use a function at the end of the table
 - Complex: use a pivot table
 
+::: {.callout-tip .box-howto title="In Excel: a pivot table"}
 To create a pivot table:
 
 1. Select the data
@@ -421,6 +824,7 @@ To create a pivot table:
 3. Drag the columns to sort by row or by column
 4. Choose the value column to be aggregated
 5. Choose the type of aggregation
+:::
 
 If you want to use the pivot table for further analysis, copy and paste it into another document and paste it as values, which removes the dynamic link.
 
@@ -448,11 +852,97 @@ The syntax of the function is `=VLOOKUP(value, table, col_index, [range_lookup])
 - **col_index** is the column in the table from which to retrieve a value
 - **range_lookup** is TRUE for an approximate match and FALSE for an exact match
 
-::: {.callout-note title="Live demonstration"}
+```{r}
+#| label: example-vlookup
+#| include: false
+lookup_code <- organisation_alpha$employee_code[1]
+lookup_row <- which(salary_2017_sheet$employee_code == lookup_code) + 1
+lookup_value <- scales::comma(salary_2017_sheet$salary_2017[lookup_row - 1], accuracy = 0.01)
+lookup_last_row <- nrow(salary_2017_sheet) + 1
+```
+
+::: {.callout-tip .box-example title="Example: the 2017 salary of the first employee"}
+In `organisation_alpha.xlsx`, the 2017 salaries are in a second sheet, `salary_2017`, with the employee codes in column A and the salaries in column B (rows 1 to `r lookup_last_row`). In the sheet `list_employees_2020`, the formula `=VLOOKUP(A2,salary_2017!$A$1:$B$701,2,FALSE)` looks for the code in A2, `r lookup_code`, in column A of `salary_2017`. It finds it in row `r lookup_row` and returns the value of column 2 in that row, `r lookup_value` (@fig-l03-vlookup). The `$` signs freeze the table, so that it stays the same when the formula is copied down the column.
+:::
+
+```{r}
+#| label: fig-l03-vlookup
+#| fig-cap: "How VLOOKUP finds the 2017 salary of the first employee: it looks for the code in the first column of the table, then returns column 2 of that row."
+#| fig-alt: "Two tables drawn as cells. Left, the sheet list_employees_2020 with the columns employee_code, first_name and salary_2017; row 2 holds 0EWwT, Zared and 30,949.06. Right, the sheet salary_2017 with the columns employee_code and salary_2017, showing rows 1 to 3 and row 135, which holds 0EWwT and 30,949.06. An orange arrow goes from 0EWwT on the left to 0EWwT in row 135, labelled look for 0EWwT in the first column. A second orange arrow goes from 30,949.06 in row 135 back to the salary_2017 cell on the left, labelled return column 2 of that row."
+#| fig-height: 3.4
+lookup_cells <- tribble(
+  ~x,  ~y, ~text,                                                                   ~highlighted,
+  1.5, -1, "employee_code",                                                         FALSE,
+  3.2, -1, "first_name",                                                            FALSE,
+  4.9, -1, "salary_2017",                                                           FALSE,
+  1.5, -2, lookup_code,                                                             TRUE,
+  3.2, -2, organisation_alpha$first_name[1],                                        FALSE,
+  4.9, -2, lookup_value,                                                            TRUE,
+  7.8, -1, "employee_code",                                                         FALSE,
+  9.5, -1, "salary_2017",                                                           FALSE,
+  7.8, -2, salary_2017_sheet$employee_code[1],                                      FALSE,
+  9.5, -2, scales::comma(salary_2017_sheet$salary_2017[1], accuracy = 0.01),        FALSE,
+  7.8, -3, salary_2017_sheet$employee_code[2],                                      FALSE,
+  9.5, -3, scales::comma(salary_2017_sheet$salary_2017[2], accuracy = 0.01),        FALSE,
+  7.8, -5, lookup_code,                                                             TRUE,
+  9.5, -5, lookup_value,                                                            TRUE
+) |>
+  mutate(
+    width = 1.6,
+    fill = if_else(y == -1, cell_header, "white"),
+    outline = if_else(highlighted, book_col("orange"), cell_line),
+    face = if_else(y == -1, "bold", "plain")
+  )
+
+lookup_row_numbers <- tribble(
+  ~x,   ~y, ~text,
+  0.4,  -1, "1",
+  0.4,  -2, "2",
+  6.65, -1, "1",
+  6.65, -2, "2",
+  6.65, -3, "3",
+  6.65, -5, as.character(lookup_row)
+)
+
+ggplot() +
+  draw_cells(lookup_cells) +
+  geom_text(data = lookup_row_numbers, aes(x, y, label = text), size = 3, colour = "#43464b") +
+  annotate("text", x = c(7.8, 9.5), y = -4, label = "...", size = 3.5) +
+  annotate("text", x = 0.7, y = -0.3, label = "Sheet list_employees_2020 (columns A, B and V)", hjust = 0, size = 3.3, fontface = "bold") +
+  annotate("text", x = 6.95, y = -0.3, label = "Sheet salary_2017 (columns A and B)", hjust = 0, size = 3.3, fontface = "bold") +
+  annotate(
+    "curve", x = 1.5, y = -2.5, xend = 7.6, yend = -5.5, curvature = 0.3,
+    colour = book_col("orange"), linewidth = 0.8, arrow = arrow(length = unit(0.15, "cm"), type = "closed")
+  ) +
+  annotate(
+    "curve", x = 9.5, y = -5.5, xend = 4.9, yend = -2.5, curvature = -0.45,
+    colour = book_col("orange"), linewidth = 0.8, arrow = arrow(length = unit(0.15, "cm"), type = "closed")
+  ) +
+  annotate("text", x = 0.6, y = -5.3, label = paste0("1. look for ", lookup_code, "\nin the first column"), size = 3.2, hjust = 0, lineheight = 0.95) +
+  annotate("text", x = 10.4, y = -6.45, label = "2. return column 2 of that row", size = 3.2, hjust = 1) +
+  scale_x_continuous(limits = c(0.2, 10.5)) +
+  scale_y_continuous(limits = c(-6.8, 0)) +
+  theme_void()
+```
+
+```{r}
+#| label: example-vlookup-missing
+#| include: false
+missing_2017 <- organisation_alpha |>
+  select(-salary_2017) |>
+  left_join(salary_2017_sheet, by = "employee_code") |>
+  filter(is.na(salary_2017))
+```
+
+::: {.callout-warning .box-mistake title="Common mistake: leaving out FALSE in VLOOKUP"}
+Without its last argument, VLOOKUP uses TRUE, an approximate match. It then expects the first column of the table to be sorted in ascending order, and when a code is missing it can return the salary of another employee instead of an error. With FALSE, a missing code gives `#N/A`, which is the right answer: `r nrow(missing_2017)` employees of `list_employees_2020` have no 2017 salary.
+:::
+
+::: {.callout-note .box-demo title="Live demonstration"}
 In the lecture, these transformations are demonstrated live before the exercise below.
 :::
 
-::: {.callout-tip title="Your turn: transform the organisation data"}
+::: {.callout-tip .box-yourturn title="Your turn: transform the organisation data"}
 On the module Loop page, go to "Lecture Data" and download the document called "organisation_alpha.xls". <!-- check: the data folder holds organisation_alpha.xlsx -->
 
 1. **Extension:** create a new variable (column) which is the average response to all the questions of the survey for each employee (q1 to q9).
@@ -482,7 +972,11 @@ include_img("tidy_full.png")
 
 ### Long or wide? {#sec-l03-long-wide}
 
-The same data can be arranged in a **long** format, where each variable keeps its own column and a table has more rows (@fig-l03-long), or in a **wide** format, where the values of a variable are spread over several columns (@fig-l03-wide).
+The same data can be arranged in a **long** format or in a **wide** format. In the long format, each variable keeps its own column and the table has more rows (@fig-l03-long). In the wide format, the values of a variable are spread over several columns (@fig-l03-wide).
+
+::: {.callout-note .box-definition title="Definition: long and wide formats"}
+In a **wide** table, the values of one variable are spread over several columns, and the names of these columns hold the values of another variable (for example one column for each year). In the **long** version of the same table, these values are stacked in rows: one column says what each value belongs to (the year) and another column holds the value.
+:::
 
 ```{r}
 #| label: fig-l03-long
@@ -516,8 +1010,71 @@ include_img("long_or_wide.png")
 include_img("long_and_wide.png")
 ```
 
+@fig-l03-wide-long does the same with the first two games of `chess_llm.csv`, the file of the next Your turn, for three of the algorithms. Each value of the wide table gets its own row in the long table, and the name of its column becomes a value of the new variable $llm\_algorithm$.
+
+```{r}
+#| label: fig-l03-wide-long
+#| fig-cap: "The first two games of chess_llm.csv for three algorithms, in a wide table (left) and in a long table (right). Each colour follows one algorithm. In the file, the column attempt is spelled attemps."
+#| fig-alt: "Two tables drawn as cells. Left, a wide table with 2 rows and the columns attempt, GPT-3, GPT-3.5 and GPT-4, each algorithm column in its own colour: blue, red and green. An arrow points to the right, to a long table with 6 rows and the columns attempt, llm_algorithm and n_moves_to_win. Each row of the long table holds one attempt, one algorithm and its number of moves, in the colour of that algorithm."
+#| fig-height: 3.4
+llm_shown <- c("GPT-3", "GPT-3.5", "GPT-4")
+llm_fill <- c(
+  "GPT-3"   = scales::alpha(book_col("blue"), 0.18),
+  "GPT-3.5" = scales::alpha(book_col("red"), 0.18),
+  "GPT-4"   = scales::alpha(book_col("green"), 0.18)
+)
+
+chess_excerpt <- chess_llm |>
+  slice(1:2) |>
+  select(attempt = attemps, all_of(llm_shown))
+
+chess_excerpt_long <- chess_excerpt |>
+  pivot_longer(all_of(llm_shown), names_to = "llm_algorithm", values_to = "n_moves_to_win")
+
+wide_cells <- bind_rows(
+  tibble(column = c("attempt", llm_shown), row = 0, text = c("attempt", llm_shown), group = c(NA, llm_shown), face = "bold"),
+  chess_excerpt |>
+    mutate(row = row_number(), across(everything(), as.character)) |>
+    pivot_longer(-row, names_to = "column", values_to = "text") |>
+    mutate(row = as.numeric(row), group = if_else(column == "attempt", NA, column), face = "plain")
+) |>
+  mutate(
+    x = c("attempt" = 1, "GPT-3" = 2.2, "GPT-3.5" = 3.4, "GPT-4" = 4.6)[column],
+    width = 1.16
+  )
+
+long_cells <- bind_rows(
+  tibble(column = c("attempt", "llm_algorithm", "n_moves_to_win"), row = 0, text = column, group = NA, face = "bold"),
+  chess_excerpt_long |>
+    mutate(row = row_number(), group = llm_algorithm, across(c(attempt, n_moves_to_win), as.character)) |>
+    pivot_longer(c(attempt, llm_algorithm, n_moves_to_win), names_to = "column", values_to = "text") |>
+    mutate(group = if_else(column == "attempt", NA, group), face = "plain")
+) |>
+  mutate(
+    x = c("attempt" = 7, "llm_algorithm" = 8.55, "n_moves_to_win" = 10.5)[column],
+    width = c("attempt" = 1.16, "llm_algorithm" = 1.9, "n_moves_to_win" = 1.9)[column]
+  )
+
+table_cells <- bind_rows(wide_cells, long_cells) |>
+  mutate(
+    y = -row,
+    fill = case_when(!is.na(group) ~ llm_fill[group], row == 0 ~ cell_header, TRUE ~ "white"),
+    outline = cell_line
+  )
+
+ggplot() +
+  draw_cells(table_cells, text_size = 3.1) +
+  annotate("segment", x = 5.45, xend = 6.2, y = -1.5, yend = -1.5, colour = "#43464b", linewidth = 0.6, arrow = arrow(length = unit(0.15, "cm"), type = "closed")) +
+  annotate("text", x = 0.45, y = 0.85, label = "Wide: one column for each algorithm", hjust = 0, fontface = "bold", size = 3.4) +
+  annotate("text", x = 6.45, y = 0.85, label = "Long: one row for each game and algorithm", hjust = 0, fontface = "bold", size = 3.4) +
+  scale_x_continuous(limits = c(0.4, 11.5)) +
+  scale_y_continuous(limits = c(-6.5, 1.2)) +
+  theme_void()
+```
+
 #### Reshaping a table in Excel
 
+::: {.callout-tip .box-howto title="In Excel: reshape a table"}
 In the Data tab:
 
 1. Get Data > New Query > From File > From Workbook or CSV
@@ -526,6 +1083,7 @@ In the Data tab:
 4. Transform:
     - Pivot Columns: from a long table to a wide table
     - Unpivot Columns: from a wide table to a long table
+:::
 
 ### Repeating actions automatically {#sec-l03-macros}
 
@@ -534,6 +1092,7 @@ In Excel, the Macro button records a sequence of actions and reproduces them lat
 - VBA code is recorded automatically
 - it is useful to process similar data files
 
+::: {.callout-tip .box-howto title="In Excel: record a macro"}
 To record a macro:
 
 1. Go to the View tab
@@ -541,12 +1100,13 @@ To record a macro:
 3. Do your actions
 4. Save the macro with a keyboard shortcut
 5. Use the macro again to reproduce your actions
+:::
 
-::: {.callout-note title="Live demonstration"}
+::: {.callout-note .box-demo title="Live demonstration"}
 In the lecture, reshaping a table and recording a macro are demonstrated live before the exercise below.
 :::
 
-::: {.callout-tip title="Your turn: reshape the chess data"}
+::: {.callout-tip .box-yourturn title="Your turn: reshape the chess data"}
 Researchers are measuring how good at chess LLM algorithms (ChatGPT, Gemini, ...) are. They want to test the following hypothesis:
 
 `H1: The average number of moves to win a chess game is different for at least 1 of the LLM algorithms`
@@ -556,10 +1116,383 @@ Researchers are measuring how good at chess LLM algorithms (ChatGPT, Gemini, ...
 Suggested time: 10 minutes.
 :::
 
-::: {.callout-note title="Key points"}
+::: {.callout-note .box-keypoints title="Key points"}
 - Understand how the data were collected before analysing them, and keep an unmodified raw copy.
 - A latent variable is measured by several items, and its score is calculated from all of them.
 - Clean spreadsheets follow five rules: no charts, headings in row 1, columns starting at column A, a naming convention and a .csv file.
-- Five transformations cover most needs: extension, reduction, direction, aggregation and combination.
+- Five key transformations are worth mastering: extension, reduction, direction, aggregation and combination.
 - Tidy data have one variable per column, one observation per row and one value per cell.
+:::
+
+## Exercises {#sec-l03-exercises}
+
+These exercises use the data files of the lecture: `unicef_cleaned.csv`, `organisation_alpha.xlsx` and `chess_llm.csv`. The first ones need only a pen, and the last ones need Excel (the solutions also give the R code).
+
+::: {#exr-l03-vocabulary}
+## True or false?
+
+Say whether each statement is true or false, and correct the false ones.
+
+a. A latent variable is observed directly with one question of the survey.
+b. When the score of a scale is the average of its items, each item contributes equally to the score.
+c. A validity test is run every time an existing scale is used.
+d. Sorting the rows of a table by one column is a reduction.
+e. Saving a workbook as a .csv file keeps only the current sheet.
+f. In a wide table, the values of one variable are spread over several columns.
+g. In `=VLOOKUP(value, table, col_index, FALSE)`, FALSE asks for an exact match.
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+a. False. A latent variable is not observed directly: it is measured with several items, and its score is calculated from all of them.
+b. True. A factor analysis is the other way to calculate the score, and there the items contribute unequally.
+c. False. A validity test is only performed when a scale is created. The test run every time a scale is used is a reliability test, with Cronbach's alpha.
+d. False. Sorting the rows is a direction. A reduction keeps only certain values, for example with a filter.
+e. True. This is one of the reasons for rule 5 of the five rules to clean data.
+f. True. The long format gives this variable a single column, and the table has more rows.
+g. True. TRUE asks for an approximate match.
+:::
+
+```{r}
+#| label: exercise-scale-data
+#| include: false
+# Answers invented for the exercise. q5 ("I find MS EXCEL confusing") runs in the other direction.
+scale_answers <- tribble(
+  ~participant, ~q1, ~q2, ~q3, ~q4, ~q5,
+  "Aoife",      6,   6,   5,   7,   2,
+  "Ciaran",     2,   3,   2,   1,   6,
+  "Niamh",      4,   5,   4,   4,   4
+)
+
+scale_scores <- scale_answers |>
+  mutate(
+    q5_reversed = 8 - q5,
+    peo_score = (q1 + q2 + q3 + q4 + q5_reversed) / 5,
+    score_without_reversing = (q1 + q2 + q3 + q4 + q5) / 5
+  )
+
+ciaran <- scale_scores |>
+  filter(participant == "Ciaran")
+```
+
+::: {#exr-l03-scale}
+## A scale score by hand
+
+Imagine that the published scale of @sec-l03-latent had five items: its four items and a fifth one, "q5. I find MS EXCEL confusing", all answered from 1 ("totally disagree") to 7 ("totally agree"). Three participants answered them. The answers are invented for this exercise.
+
+```{r}
+#| label: exercise-scale-table
+scale_answers |>
+  kable(align = "lccccc")
+```
+
+1. Which item must be reversed before calculating the score, and why?
+2. Reverse it for each participant.
+3. Calculate the score of each participant as the average of the five items.
+4. What would Ciaran's score be if you forgot to reverse the item? What would you wrongly conclude?
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+1. q5. Agreeing with q5 means that MS EXCEL is not easy to use, while agreeing with q1 to q4 means that it is easy. All the items must be analysed in the same direction.
+
+For questions 2 and 3: on a scale from 1 to 7, the reversed answer is 8 minus the answer. Then add the five answers and divide the sum by 5.
+
+```{r}
+#| label: exercise-scale-solution
+scale_scores |>
+  select(participant, q1, q2, q3, q4, q5_reversed, peo_score) |>
+  kable(digits = 2, align = "lcccccc")
+```
+
+4. Without reversing, Ciaran's score is $(2 + 3 + 2 + 1 + 6) / 5 = `r format_number(ciaran$score_without_reversing)`$ instead of `r format_number(ciaran$peo_score)`. His answer to q5 says that he finds MS EXCEL confusing, but without reversing it raises his score of perceived ease-of-use: you would conclude that he finds MS EXCEL easier to use than he does.
+:::
+
+```{r}
+#| label: exercise-formats-data
+#| include: false
+table_a <- chess_llm |>
+  slice(1:3) |>
+  select(attemps, experience, `GPT-3`, `GPT-3.5`, `GPT-4`)
+
+table_b <- table_a |>
+  pivot_longer(c(`GPT-3`, `GPT-3.5`, `GPT-4`), names_to = "llm_algorithm", values_to = "n_moves_to_win") |>
+  slice(1:5)
+
+table_c <- organisation_alpha |>
+  slice(1:3) |>
+  select(employee_code, gender, salary_2018, salary_2019)
+
+chess_algorithm_columns <- c("GPT-3", "GPT-3.5", "GPT-4", "Gemini", "LLaMA", "Claude")
+```
+
+::: {#exr-l03-formats}
+## Wide or long?
+
+The three tables below are excerpts of the data files of the lecture.
+
+**Table A**, from `chess_llm.csv`:
+
+```{r}
+#| label: exercise-formats-a
+table_a |>
+  kable(align = "c")
+```
+
+**Table B**, from `chess_llm.csv`:
+
+```{r}
+#| label: exercise-formats-b
+table_b |>
+  kable(align = "c")
+```
+
+**Table C**, from `organisation_alpha.xlsx`:
+
+```{r}
+#| label: exercise-formats-c
+table_c |>
+  kable(align = "c", format.args = list(big.mark = ","), digits = 2)
+```
+
+1. Which tables are in a wide format, and which in a long format?
+2. Give the names of the columns of Table C in a long format. How many rows would this long table have for the `r nrow(organisation_alpha)` employees of the file?
+3. `chess_llm.csv` has `r nrow(chess_llm)` rows and `r length(chess_algorithm_columns)` columns named after an algorithm. How many rows does its long version have?
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+1. Tables A and C are wide. In Table A, the number of moves is spread over one column for each algorithm. In Table C, the salary is spread over one column for each year. Table B is long: the algorithm has its own column, $llm\_algorithm$, and the number of moves has its own column, $n\_moves\_to\_win$.
+2. $employee\_code$, $gender$, $year$ and $salary$. Each employee takes two rows, one for 2018 and one for 2019, so the table has $`r nrow(organisation_alpha)` \times 2 = `r nrow(organisation_alpha) * 2`$ rows.
+3. Each row of the wide file gives one row for each algorithm: $`r nrow(chess_llm)` \times `r length(chess_algorithm_columns)` = `r nrow(chess_llm) * length(chess_algorithm_columns)`$ rows. @exr-l03-chess shows that the file has one more column, which has no name.
+:::
+
+::: {#exr-l03-names}
+## Clean the variable names
+
+Give a snake_case name to each of these headings. The first four come from the second sheet of `unicef.xlsx`, "2. Child Mortality", where a heading is spread over two rows.
+
+1. Under-5 mortality rate (deaths per 1,000 live births), 1990
+2. Under-5 mortality rate by sex (deaths per 1,000 live births) 2018, male
+3. Infant mortality rate (deaths per 1,000 live births), 2018
+4. Annual number of under-5 deaths (thousands) 2018
+5. Column1, the heading of the cities in the sheet of @fig-l03-zoom
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+Here is one possible answer. Other names are fine if they use small letters only, separate the words with "_", and are short but clear.
+
+1. `under5_mortality_1990`
+2. `under5_mortality_male_2018`
+3. `infant_mortality_2018`
+4. `under5_deaths_2018`
+5. `city`: "Column1" says nothing about the content of the column, so the new name describes what it holds.
+
+The units, such as "deaths per 1,000 live births", do not fit in a short name: write them down next to your data so that you can report them. The file `unicef_cleaned.csv` of the lecture keeps a capital letter at the start of each name (for example `Population_total_2018`). This is fine too, because rule 4 asks for one convention used for every column, and snake_case is only the preferred one.
+:::
+
+```{r}
+#| label: exercise-unicef
+#| include: false
+unicef_sorted <- unicef_cleaned |>
+  arrange(desc(Population_total_2018))
+
+last_country_row <- which(unicef_cleaned$Country == "Zimbabwe")
+
+unicef_countries <- unicef_cleaned |>
+  slice(1:last_country_row)
+
+largest_countries <- unicef_countries |>
+  arrange(desc(Population_total_2018)) |>
+  head(3)
+
+high_fertility <- unicef_countries |>
+  filter(Total_fertility_2018 > 4)
+
+no_fertility <- unicef_countries |>
+  filter(is.na(Total_fertility_2018))
+```
+
+::: {#exr-l03-unicef}
+## Sort and filter the UNICEF data
+
+Open `unicef_cleaned.csv` in Excel. It holds the first sheet of `unicef.xlsx` after cleaning, with its columns up to the total fertility: `r nrow(unicef_cleaned)` rows and `r ncol(unicef_cleaned)` columns.
+
+1. Sort the table by $Population\_total\_2018$, from the largest to the smallest value. What are the first three rows? Are they countries?
+2. The countries stop at Zimbabwe, in row `r last_country_row + 1` of the sheet. Remove the rows below it, then sort again. Which are the three most populous countries in 2018?
+3. Keep only the countries with a $Total\_fertility\_2018$ greater than 4. How many are there?
+4. Some cells of $Total\_fertility\_2018$ are empty. What did they hold in `unicef.xlsx`?
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+1. Select the whole table, then **Data** > **Sort**, sort by $Population\_total\_2018$ from largest to smallest. The first three rows are `r paste(unicef_sorted$Country[1:3], collapse = ", ")`. They are not countries: the last `r nrow(unicef_cleaned) - last_country_row` rows of the file are regions, groups of countries and the whole world.
+2. After removing them (a reduction), the three most populous countries are `r paste(largest_countries$Country, collapse = ", ")`, with `r paste(scales::comma(largest_countries$Population_total_2018, accuracy = 1), collapse = ", ")` thousand people.
+3. Select the header row, **Data** > **Filter**, then in the drop-down arrow of $Total\_fertility\_2018$ choose **Number Filters** > **Greater Than** and type 4. `r nrow(high_fertility)` countries are left.
+4. A minus sign, which the notes under the table of `unicef.xlsx` explain as "Data not available". `r nrow(no_fertility)` countries have no value.
+
+```{r}
+#| echo: true
+#| eval: false
+#| code-fold: true
+#| code-summary: "R code"
+unicef_cleaned <- readr::read_csv(here("data/unicef_cleaned.csv"))
+
+# 1. Direction
+unicef_sorted <- unicef_cleaned |>
+  arrange(desc(Population_total_2018))
+
+# 2. Reduction: keep the rows up to Zimbabwe, then sort again
+last_country_row <- which(unicef_cleaned$Country == "Zimbabwe")
+
+unicef_countries <- unicef_cleaned |>
+  slice(1:last_country_row)
+
+largest_countries <- unicef_countries |>
+  arrange(desc(Population_total_2018)) |>
+  head(3)
+
+# 3. Reduction with a condition
+high_fertility <- unicef_countries |>
+  filter(Total_fertility_2018 > 4)
+
+# 4. Empty cells
+no_fertility <- unicef_countries |>
+  filter(is.na(Total_fertility_2018))
+```
+:::
+
+```{r}
+#| label: exercise-organisation
+#| include: false
+salary_by_location <- organisation_alpha |>
+  group_by(location) |>
+  summarise(mean_salary_2019 = mean(salary_2019))
+
+highest_location <- salary_by_location |>
+  slice_max(mean_salary_2019, n = 1)
+
+employees_with_2017 <- organisation_alpha |>
+  select(-salary_2017) |>
+  left_join(salary_2017_sheet, by = "employee_code")
+
+missing_2017_codes <- employees_with_2017 |>
+  filter(is.na(salary_2017)) |>
+  pull(employee_code)
+```
+
+::: {#exr-l03-organisation}
+## Aggregate and combine the organisation data
+
+Open `organisation_alpha.xlsx`, sheet `list_employees_2020`.
+
+1. With a pivot table, calculate the average $salary\_2019$ for each location. Which location has the highest average?
+2. Column V, $salary\_2017$, uses the formula of @fig-l03-vlookup. For how many employees does it show `#N/A`, and why?
+3. Why is the table of the formula written `salary_2017!$A$1:$B$701` and not `salary_2017!A1:B701`?
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+1. Select the data, **Insert** > **Pivot Table**, drag $location$ to the rows and $salary\_2019$ to the values, and choose **Average** as the type of aggregation.
+
+```{r}
+#| label: exercise-organisation-table
+salary_by_location |>
+  kable(digits = 2, format.args = list(big.mark = ","), align = "lc")
+```
+
+`r highest_location$location` has the highest average salary in 2019.
+
+2. `r length(missing_2017_codes)` employees (`r paste(missing_2017_codes, collapse = ", ")`). Their codes are not in the first column of the sheet `salary_2017`, and with FALSE, VLOOKUP looks for an exact match: when there is none, it returns `#N/A`.
+3. The formula is written in row 2 and copied down to row `r nrow(organisation_alpha) + 1`. Without the `$` signs, the table would move down one row with each copy (A2:B702, A3:B703, ...), and the first rows of `salary_2017` would drop out of the search. The `$` signs freeze the table.
+
+```{r}
+#| echo: true
+#| eval: false
+#| code-fold: true
+#| code-summary: "R code"
+organisation_alpha <- readxl::read_excel(here("data/organisation_alpha.xlsx"), sheet = "list_employees_2020")
+salary_2017_sheet <- readxl::read_excel(here("data/organisation_alpha.xlsx"), sheet = "salary_2017")
+
+# 1. Aggregation
+salary_by_location <- organisation_alpha |>
+  group_by(location) |>
+  summarise(mean_salary_2019 = mean(salary_2019))
+
+# 2. Combination: left_join() plays the role of VLOOKUP with FALSE
+employees_with_2017 <- organisation_alpha |>
+  select(-salary_2017) |>
+  left_join(salary_2017_sheet, by = "employee_code")
+
+missing_2017_codes <- employees_with_2017 |>
+  filter(is.na(salary_2017)) |>
+  pull(employee_code)
+```
+:::
+
+```{r}
+#| label: exercise-chess
+#| include: false
+chess_long <- chess_llm |>
+  select(-`...9`) |>
+  pivot_longer(`GPT-3`:Claude, names_to = "llm_algorithm", values_to = "n_moves_to_win")
+
+moves_by_algorithm <- chess_long |>
+  group_by(llm_algorithm) |>
+  summarise(mean_n_moves_to_win = mean(n_moves_to_win)) |>
+  arrange(mean_n_moves_to_win)
+```
+
+::: {#exr-l03-chess}
+## Reshape and summarise the chess data
+
+This exercise continues the last Your turn of the chapter.
+
+1. Open `chess_llm.csv` and look at its first row. How many columns hold numbers of moves, and how many of them have a heading?
+2. Reshape the file into a long table with the variables $llm\_algorithm$ and $n\_moves\_to\_win$. How many rows does it have?
+3. With a pivot table on the long table, calculate the average $n\_moves\_to\_win$ for each algorithm. Which algorithm needs the fewest moves on average?
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+1. The first row reads `attemps,experience,GPT-3,GPT-3.5,GPT-4,Gemini,LLaMA,Claude,`. It names `r length(chess_algorithm_columns)` algorithms, but each row of data holds `r ncol(chess_llm) - 2` numbers of moves: the last column has no heading. You cannot know which algorithm it measures, so leave it out of the analysis and ask the people who collected the data. The heading `attemps` also deserves a cleaner name, such as `attempt`.
+2. In Excel: **Data** > **Get Data** > **New Query** > **From File** > **From Workbook or CSV**, select the file > **Edit**, remove the column without a heading, select the `r length(chess_algorithm_columns)` columns of the algorithms, then **Transform** > **Unpivot Columns**. Rename the new columns "Attribute" and "Value" as `llm_algorithm` and `n_moves_to_win` (double-click a heading), then **Home** > **Close & Load** to bring the long table back into a sheet. The long table has $`r nrow(chess_llm)` \times `r length(chess_algorithm_columns)` = `r nrow(chess_long)`$ rows. The columns $attemps$ and $experience$ stay, because together they identify each game: each value of $attemps$ appears once for the beginners and once for the advanced players.
+3. Drag $llm\_algorithm$ to the rows and $n\_moves\_to\_win$ to the values of the pivot table, and choose **Average**.
+
+```{r}
+#| label: exercise-chess-table
+moves_by_algorithm |>
+  kable(digits = 2, align = "lc")
+```
+
+`r moves_by_algorithm$llm_algorithm[1]` needs the fewest moves on average (`r format_number(moves_by_algorithm$mean_n_moves_to_win[1])`). Whether the differences between the algorithms are statistically significant is the question of the hypothesis H1, which the models of the next chapters test.
+
+```{r}
+#| echo: true
+#| eval: false
+#| code-fold: true
+#| code-summary: "R code"
+chess_llm <- readr::read_csv(here("data/chess_llm.csv"))
+
+# The last column has no heading: read_csv() names it ...9, and it is left out.
+chess_long <- chess_llm |>
+  select(-`...9`) |>
+  pivot_longer(`GPT-3`:Claude, names_to = "llm_algorithm", values_to = "n_moves_to_win")
+
+moves_by_algorithm <- chess_long |>
+  group_by(llm_algorithm) |>
+  summarise(mean_n_moves_to_win = mean(n_moves_to_win)) |>
+  arrange(mean_n_moves_to_win)
+```
+:::
+
+::: {#exr-l03-mistakes}
+## Find the mistakes
+
+A student describes how the data of a survey were prepared. Find at least five problems.
+
+> I measured Perceived Ease-of-use with the four items of the published scale, but I changed the answers from 1 to 7 into answers from 1 to 5 to make the survey shorter. I also added a fifth item, "I find MS EXCEL confusing". Because the scale was published, I ran a validity test on my data. The score of each participant is the average of the five answers as they were given. To find the most confident participants, I selected the column peo_score and sorted it from the highest to the lowest value. I saved the file as data.xlsx, with my chart above the table.
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+- **The range of the answers was changed.** A validated scale keeps its range of possibilities: 1 to 7 here.
+- **An item was added to a validated scale.** The authors validated the scale with its own items, so changing them should be avoided.
+- **The validity test is not needed.** A validity test is only performed when a scale is created. What is needed every time a scale is used is a reliability test with Cronbach's alpha.
+- **The new item was not reversed.** "I find MS EXCEL confusing" runs in the other direction, so it must be reversed before the average: $6 - answer$ on the student's scale from 1 to 5 ($8 - answer$ on the original scale from 1 to 7).
+- **Only one column was sorted.** Sorting peo_score alone breaks the rows: the scores no longer belong to the right participants (@fig-l03-sort). Select the whole table before sorting.
+- **The file breaks the rules to clean data.** The chart must go, the headings must be in row 1, and the file must be saved as .csv.
 :::

@@ -6,7 +6,29 @@
 source("R/setup.R")
 ```
 
-This chapter is a practical session. Using the data and the list of variables you received by email, you go through a complete analysis, from the formulation of the hypotheses to the inclusion of the results in a Quarto template (@sec-l09-plan). The chapter then gives the details of the assignment of STA1005: the requirements of the research paper to submit and the criteria used to assess it (@sec-l09-assignment).
+```{r}
+#| label: data-model
+#| include: false
+library(patchwork)
+
+organisation_beta <- readr::read_csv(here("data/organisation_beta.csv"))
+
+# The model of the rehearsal in the exercises: 3 main effects and 1 interaction, in 1 model.
+model_rehearsal <- lm(formula = js_score ~ salary + perf + gender + perf:gender, data = organisation_beta)
+```
+
+::: {.callout-note .box-goals title="In this chapter"}
+After this chapter, you can:
+
+- carry out the eight tasks of a complete analysis, in their order, on the data you received by email
+- link each section of your research paper to the chapter that prepares it
+- check that your paper meets the requirements of the assignment before you submit it
+- write a results section that reports the fit of the model and concludes on each hypothesis
+
+You need the data and the list of variables received by email, jamovi and R, and, for the exercises, the file `organisation_beta.csv`.
+:::
+
+This chapter is a practical session. Using the data and the list of variables you received by email, you go through a complete analysis (@sec-l09-plan). The analysis goes from the formulation of the hypotheses to the inclusion of the results in a Quarto template. The chapter then gives the details of the assignment of STA1005: the requirements of the research paper to submit and the criteria used to assess it (@sec-l09-assignment).
 
 ## Planning of the session {#sec-l09-plan}
 
@@ -16,7 +38,33 @@ You have received by email some data generated from the paper you have selected 
 
 Each task below uses skills taught in the previous chapters, and the relevant chapters are given in brackets.
 
-::: {.callout-tip title="Your turn: analyse the data you received by email"}
+@fig-l09-tasks shows the eight tasks in their order, with the chapters that teach each one. The first three tasks prepare the literature review and the method section of your paper. The next four produce the results, and the last one puts them in your paper.
+
+```{r}
+#| label: fig-l09-tasks
+#| fig-cap: "The eight tasks of the session, in their order, with the chapters that teach each one. Read the first row, then the second."
+#| fig-alt: "Eight boxes in two rows of four, joined by arrows. First row: 1. Hypotheses, formulate them (Chapter 1); 2. Model, represent it (Chapter 2); 3. Equation, convert the model (Chapter 2); 4. Test, in jamovi (Chapters 4 and 5). Second row: 5. Assumptions, in jamovi (Chapter 6); 6. Conclusion, on each hypothesis (Chapters 4 and 5); 7. Test again, and assumptions in R (Chapter 7); 8. Quarto, results in a template (Chapter 8)."
+#| fig-height: 2.6
+tasks_first_row <- tribble(
+  ~step,           ~detail,
+  "1. Hypotheses", "formulate them\n(Chapter 1)",
+  "2. Model",      "represent it\n(Chapter 2)",
+  "3. Equation",   "convert the model\n(Chapter 2)",
+  "4. Test",       "in jamovi\n(Chapters 4 and 5)"
+)
+
+tasks_second_row <- tribble(
+  ~step,            ~detail,
+  "5. Assumptions", "in jamovi\n(Chapter 6)",
+  "6. Conclusion",  "on each hypothesis\n(Chapters 4 and 5)",
+  "7. Test again",  "and assumptions\nin R (Chapter 7)",
+  "8. Quarto",      "results in a\ntemplate (Chapter 8)"
+)
+
+flow_chart(tasks_first_row) / flow_chart(tasks_second_row)
+```
+
+::: {.callout-tip .box-yourturn title="Your turn: analyse the data you received by email"}
 Your tasks will be to:
 
 1. Formulate the corresponding hypotheses (see @sec-lecture-01)
@@ -31,6 +79,24 @@ Your tasks will be to:
 Suggested time: 5 minutes per task.
 :::
 
+For task 6, each hypothesis gets its own sentence, after one sentence on the fit of the model. The box below repeats the sentences of @sec-lecture-04.
+
+::: {.callout-note .box-report title="How to report: the conclusion on each hypothesis"}
+First the model, with the values of the Model Fit Measures table:
+
+> The predictions from the alternative model (i.e., with our predictors) are significantly better than the predictions from a null model ($R^2 = value_{R^2}, F(value_{df1}, value_{df2}) = value_{F}, p = value_{p}$).
+
+Then one sentence per hypothesis, with the values of its row in the Model Coefficients table:
+
+> The effect of {**predictor**} on {**outcome**} is statistically significant, therefore $H_0$ can be rejected ($b = value_b$, 95% CI $[value_{lower\,CI}, value_{upper\,CI}]$, $t(df_2) = value_t$, $p = value_{p}$).
+
+When $p$ is not lower than 0.05, the sentence says that the effect is not statistically significant and that $H_0$ can't be rejected.
+:::
+
+::: {.callout-warning .box-mistake title="Common mistake: writing p = 0.000"}
+A table that shows a $p$-value of 0.000 or $< .001$ has rounded a very small value. The $p$-value is never exactly 0, so $p = 0.000$ is wrong. Write $p < .001$ (@sec-lecture-04).
+:::
+
 ## Assignment {#sec-l09-assignment}
 
 ### The research paper to submit
@@ -38,13 +104,21 @@ Suggested time: 5 minutes per task.
 In the coming days, you will receive an email containing data and instructions for the assignment of STA1005.
 
 I will ask you to **submit on Loop a research paper using these data by Wednesday, June 21st at 1 pm**. <!-- check: dated deadline -->
-<!-- check: Lecture 1 gives the deadline as "June 21st, 2026", which is a Sunday, whereas this slide says "Wednesday, June 21st" (21 June was a Wednesday in 2023); lecture_1_ai.qmd has a PROPOSED note to update the deadline for the 2026-2027 cohort; "In the coming days" also depends on the date of the lecture -->
+<!-- check: Lecture 1 now gives the deadline as "June 21st, 2027", which is a Monday, whereas this slide still says "Wednesday, June 21st" (21 June was a Wednesday in 2023); "In the coming days" also depends on the date of the lecture -->
 
 The submitted research paper has to meet the following requirements:
 
 - It will have the **formatting style of a published PDF paper** (see examples here: <https://pkgs.rstudio.com/rticles/articles/examples.html>).
 - It will be **no longer than 6 pages** all included (references included, appendices included). Any page after the 6th page will be discarded.
 - The analysis has to include **at least 3 main effects hypotheses** and **at least 1 interaction effect hypothesis** that are tested **with only 1 model**.
+
+::: {.callout-tip .box-example title="Example: is the model of Chapter 4 enough?"}
+The interaction model of @sec-lecture-04, $js\_score = b_{0} + b_{1}\,salary + b_{2}\,perf + b_{3}\,salary*perf + e$, tests 2 main effects and 1 interaction: it is not enough. With a third predictor, such as $gender$, the model $js\_score = b_{0} + b_{1}\,salary + b_{2}\,perf + b_{3}\,gender + b_{4}\,perf*gender + e$ tests 3 main effects and 1 interaction in 1 model. The exercises of this chapter use it.
+:::
+
+::: {.callout-warning .box-mistake title="Common mistake: one model per hypothesis"}
+Testing each hypothesis with its own regression multiplies the tests. @sec-lecture-06 warns against it: to avoid $p$-hacking, all the hypotheses should be tested with one unique test, not with one test by hypothesis. Put all the predictors and the interaction in 1 model, and read one row of its Model Coefficients table for each hypothesis.
+:::
 
 This research paper should include:
 
@@ -54,11 +128,81 @@ This research paper should include:
 - a **results section** checking the conditions of application for your linear model as well as presenting descriptive and inferential statistics
 - a **discussion/conclusion** interpreting the results obtained with regard to the formulated hypotheses
 
+@fig-l09-paper-map shows where each section of the paper comes from: the chapters of this book that prepare it. Chapter 8 runs through the whole paper, because the paper is written in a Quarto journal template.
+
+```{r}
+#| label: fig-l09-paper-map
+#| fig-cap: "Where each part of your paper comes from: the sections of the research paper (rows) and the chapters of this book that prepare them (columns)."
+#| fig-alt: "A grid with the five sections of the paper as rows and Chapters 1 to 8 as columns. Introduction: Chapter 1, variables and research question. Literature review and hypotheses: Chapter 1, hypotheses. Method: Chapter 2, model and equation, and Chapter 3, measures and data. Results: Chapter 4, tables and sentences; Chapter 5, categorical predictors; Chapter 6, assumptions; Chapter 7, the model in R. Discussion and conclusion: Chapters 4 and 5, conclude on each hypothesis. A tall box in the Chapter 8 column covers all five rows: the whole paper in a Quarto journal template."
+#| fig-height: 4.4
+paper_sections <- c(
+  "Introduction",
+  "Literature review\nand hypotheses",
+  "Method",
+  "Results",
+  "Discussion and\nconclusion"
+)
+
+paper_map <- tribble(
+  ~section,                            ~chapter, ~contribution,
+  "Introduction",                      1,        "variables,\nresearch\nquestion",
+  "Literature review\nand hypotheses", 1,        "hypotheses",
+  "Method",                            2,        "model,\nequation",
+  "Method",                            3,        "measures,\ndata",
+  "Results",                           4,        "tables,\nsentences",
+  "Results",                           5,        "categorical\npredictors",
+  "Results",                           6,        "assumptions",
+  "Results",                           7,        "the model\nin R",
+  "Discussion and\nconclusion",        4,        "conclude\non each\nhypothesis",
+  "Discussion and\nconclusion",        5,        "conclude\non each\nhypothesis"
+) |>
+  mutate(row = match(section, rev(paper_sections)))
+
+quarto_column <- tibble(
+  chapter = 8,
+  label = "the whole\npaper in\na Quarto\njournal\ntemplate"
+)
+
+ggplot(paper_map, aes(x = chapter, y = row)) +
+  geom_rect(
+    data = quarto_column,
+    aes(xmin = chapter - 0.46, xmax = chapter + 0.46, ymin = 0.55, ymax = 5.45),
+    inherit.aes = FALSE,
+    fill = "#fdf0e1", colour = book_col("orange"), linewidth = 0.6
+  ) +
+  geom_text(data = quarto_column, aes(x = chapter, y = 3, label = label), inherit.aes = FALSE, size = 2.7, lineheight = 0.95) +
+  geom_tile(width = 0.92, height = 0.9, fill = "#fdf0e1", colour = book_col("orange"), linewidth = 0.6) +
+  geom_text(aes(label = contribution), size = 2.7, lineheight = 0.95) +
+  scale_x_continuous(
+    breaks = 1:8, labels = paste("Ch.", 1:8), position = "top",
+    limits = c(0.5, 8.5), expand = expansion(add = 0)
+  ) +
+  scale_y_continuous(breaks = 1:5, labels = rev(paper_sections), expand = expansion(add = 0.05)) +
+  labs(x = NULL, y = NULL) +
+  theme(
+    panel.grid.major = element_blank(),
+    axis.text.x = element_text(face = "bold"),
+    axis.text.y = element_text(hjust = 1, size = 10, lineheight = 0.95)
+  )
+```
+
+::: {.callout-note .box-definition title="Definition: descriptive and inferential statistics"}
+In a results section, the **descriptive statistics** describe the variables: numeric summaries (mean and standard deviation values), distribution figures and a correlation matrix. The **inferential statistics** indicate the relevance of the model and give the results of the hypothesis tests (@sec-lecture-04).
+:::
+
+::: {.callout-note .box-definition title="Definition: conditions of application"}
+The **conditions of application** of a linear model are the assumptions of the General Linear Model (@sec-lecture-06): **L**inearity of the effects, **I**ndependence of the observations, **N**ormality of the residuals and **E**qual variance of the residuals. They are never perfectly met, so the results section checks that they are reasonable enough to apply the test.
+:::
+
 There is no requirement to use specific statistical software to perform your analyses.
 
 ### Assessment criteria
 
 Obtaining statistically significant results (i.e., *p* < 0.05), rather than not significant results, will not lead to a higher mark.
+
+::: {.callout-warning .box-mistake title="Common mistake: reading a non-significant effect as no effect"}
+When $p$ is not lower than 0.05, $H_0$ can't be rejected. This does not show that the predictor has no effect: it only says that, with this sample, the estimate cannot be told apart from 0. Report a non-significant result with the same values as a significant one, and conclude that $H_0$ can't be rejected, not that the effect is absent.
+:::
 
 The only assessment criteria are the following:
 
@@ -67,11 +211,319 @@ The only assessment criteria are the following:
 - Relevance of Tables and/or Figures
 - Overall presentation style
 
-::: {.callout-note title="Key points"}
-- The practical session has eight tasks, from formulating the hypotheses to including the results in a Quarto template, based on the data and the list of variables received by email.
+::: {.callout-tip .box-howto title="Checklist: before you submit your paper"}
+- The paper has the formatting style of a published PDF paper and is no longer than 6 pages, references and appendices included.
+- The introduction presents your variables and your research question.
+- The literature review has no more than 5 references and ends with your hypotheses, clearly formulated.
+- There are at least 3 main effects hypotheses and at least 1 interaction effect hypothesis, tested with only 1 model.
+- The method section describes the variables and gives a representation of the model and its equation.
+- The results section checks the conditions of application and presents descriptive and inferential statistics, with the test of each hypothesis.
+- The discussion/conclusion interprets the results with regard to the hypotheses.
+- The paper is submitted on Loop.
+:::
+
+::: {.callout-note .box-keypoints title="Key points"}
+- The practical session has eight tasks, from formulating the hypotheses to including the results in a Quarto template. They use the data and the list of variables received by email.
 - The equation is tested twice, with jamovi and then with R, and the assumptions of the General Linear Model are reported each time.
 - The research paper is submitted on Loop. It has the formatting style of a published PDF paper and is no longer than 6 pages, references and appendices included.
 - The analysis includes at least 3 main effects hypotheses and at least 1 interaction effect hypothesis, all tested with only 1 model.
 - The paper has a short introduction, a short literature review with no more than 5 references, a method section with the model and its equation, a results section and a discussion/conclusion.
-- Obtaining significant results does not lead to a higher mark. The assessment looks at the accuracy of the description of variables, hypotheses, model and equation, the conformity of the analyses and interpretations, the relevance of tables and figures, and the presentation style.
+- Obtaining significant results does not lead to a higher mark.
+- The assessment has four criteria: the accuracy of the description of variables, hypotheses, model and equation; the conformity of the analyses and interpretations; the relevance of tables and figures; and the presentation style.
+:::
+
+## Exercises {#sec-l09-exercises}
+
+These exercises rehearse the tasks of the session on the Organisation Beta data (`organisation_beta.csv`), one step per exercise, before you do them on your own data in the last exercise. You need jamovi or R from @exr-l09-test onwards.
+
+```{r}
+#| label: exercise-values
+#| include: false
+# Values used in the solutions, all taken from the model fitted at the start of the chapter.
+fit_rehearsal <- broom::glance(model_rehearsal)
+coefficients_rehearsal <- broom::tidy(model_rehearsal, conf.int = TRUE)
+
+estimate_of <- function(term_name) {
+  coefficients_rehearsal$estimate[coefficients_rehearsal$term == term_name]
+}
+
+p_value_of <- function(term_name) {
+  coefficients_rehearsal$p.value[coefficients_rehearsal$term == term_name]
+}
+
+number_of_employees <- nrow(organisation_beta)
+number_of_predictors <- fit_rehearsal$df
+
+# Conditions of application: the largest Cook's distance, and the VIF of each term of the model
+# (1 / (1 - R2) of the regression of each term on the other terms).
+largest_cook_distance <- max(cooks.distance(model_rehearsal))
+
+model_terms <- model.matrix(model_rehearsal)[, -1]
+vif_of_terms <- sapply(colnames(model_terms), function(term_name) {
+  other_terms <- model_terms[, colnames(model_terms) != term_name]
+  1 / (1 - summary(lm(model_terms[, term_name] ~ other_terms))$r.squared)
+})
+
+# Slope of perf for each gender: b2 for female employees (the reference category), b2 + b4 for male employees.
+slope_perf_female <- estimate_of("perf")
+slope_perf_male <- estimate_of("perf") + estimate_of("perf:gendermale")
+```
+
+::: {#exr-l09-hypotheses}
+## Hypotheses for a research question
+
+The CEO of Organisation Beta asks a new research question: *"What is the relationship between Job Satisfaction, Salary, Performance and Gender?"* The CEO expects that job satisfaction increases when salary increases and when performance increases, that the job satisfaction of female and male employees is different, and that the effect of performance on job satisfaction is different for female and male employees.
+
+1. Give the outcome and the predictors, with their type.
+2. Write the four alternative hypotheses with the templates of @sec-lecture-01: three main effects and one interaction.
+3. Write the null hypothesis of each one.
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+1. The outcome is $js\_score$ (continuous, from 0 to 10). The predictors are $salary$ (continuous), $perf$ (continuous, from 0 to 10) and $gender$ (categorical nominal, female or male).
+2. The alternative hypotheses:
+    - $H_{a_{1}}$: **Job satisfaction** *increases* when **salary** increases
+    - $H_{a_{2}}$: **Job satisfaction** *increases* when **performance** increases
+    - $H_{a_{3}}$: The **job satisfaction** of **female employees** is *different* than the **job satisfaction** of **male employees**
+    - $H_{a_{4}}$: The effect of **performance** on **job satisfaction** is *different* for **female employees** than it is for **male employees**
+3. The null hypotheses:
+    - $H_{0_{1}}$: Job satisfaction stays the same when salary increases
+    - $H_{0_{2}}$: Job satisfaction stays the same when performance increases
+    - $H_{0_{3}}$: The job satisfaction of female employees is the same as the job satisfaction of male employees
+    - $H_{0_{4}}$: The effect of performance on job satisfaction is the same for female employees as it is for male employees
+
+The interaction hypothesis comes with the main effect hypotheses of both its predictors, performance ($H_{a_{2}}$) and gender ($H_{a_{3}}$), as @sec-lecture-01 requires.
+:::
+
+::: {#exr-l09-model}
+## The model and its equation
+
+Use the four hypotheses of @exr-l09-hypotheses.
+
+1. Represent the model that includes these hypotheses.
+2. Convert this model into an equation, and say which estimate tests each hypothesis.
+3. Does the model meet the requirements of the assignment?
+4. Write the `formula` of `lm()` that corresponds to the equation.
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+1. @fig-l09-model, just after this solution, draws the model in the two ways of @sec-lecture-02: with a crossing arrow, or with the interaction as a predictor of its own. Job satisfaction is a latent variable measured with several questions, so it is drawn as a circle.
+2. The equation is:
+
+    $$js\_score = b_{0} + b_{1}\,salary + b_{2}\,perf + b_{3}\,gender + b_{4}\,perf*gender + e$$
+
+    $H_{a_{1}}$ is tested by $b_1$ ($b_1 > 0$), $H_{a_{2}}$ by $b_2$ ($b_2 > 0$), $H_{a_{3}}$ by $b_3$ ($b_3 \neq 0$) and $H_{a_{4}}$ by $b_4$ ($b_4 \neq 0$). Each null hypothesis states that its estimate is 0.
+3. Yes: it tests 3 main effects hypotheses and 1 interaction effect hypothesis with only 1 model.
+4. `js_score ~ salary + perf + gender + perf:gender`, where the interaction is written with `:` (@sec-lecture-07).
+:::
+
+@fig-l09-model is the representation of the model of @exr-l09-model, in the two equivalent forms of @sec-lecture-02. On the left, the crossing arrow of $gender$ stands for its main effect and for its interaction with $perf$.
+
+```{r}
+#| label: fig-l09-model
+#| fig-cap: "The model of the exercises, with a crossing arrow (left) and with the interaction as a predictor of its own (right). Both test the same four hypotheses."
+#| fig-alt: "Two diagrams. Left: boxes perf and salary have arrows labelled b2 and b1 pointing to a circle labelled js_score; a box gender has an arrow labelled b3 and b4 pointing down to the middle of the arrow from perf. Right: four boxes, salary, perf, gender and perf X gender, have arrows labelled b1 to b4 pointing to the circle js_score."
+#| fig-height: 3
+draw_model <- function(boxes, arrows, outcome, title) {
+  ggplot() +
+    geom_segment(
+      data = arrows,
+      aes(x = x, y = y, xend = xend, yend = yend),
+      arrow = arrow(length = unit(0.18, "cm"), type = "closed"),
+      colour = book_col("ink"), linewidth = 0.6
+    ) +
+    geom_text(data = arrows, aes(x = label_x, y = label_y, label = label), parse = TRUE, size = 3.6) +
+    geom_tile(
+      data = boxes,
+      aes(x = x, y = y, width = width), height = 0.5,
+      fill = "white", colour = book_col("ink"), linewidth = 0.6
+    ) +
+    geom_text(data = boxes, aes(x = x, y = y, label = name), size = 3.4) +
+    geom_point(data = outcome, aes(x = x, y = y), shape = 21, size = 24, fill = "white", colour = book_col("ink"), stroke = 0.6) +
+    geom_text(data = outcome, aes(x = x, y = y, label = name), size = 3.4) +
+    coord_cartesian(xlim = c(-0.8, 4.6), ylim = c(-1.9, 1.9)) +
+    labs(title = title) +
+    theme_void() +
+    theme(plot.title = element_text(face = "bold", size = 11, colour = book_col("ink")))
+}
+
+outcome <- tibble(x = 3.8, y = 0, name = "js_score")
+
+crossing_boxes <- tribble(
+  ~name,    ~x,  ~y,   ~width,
+  "gender", 1.7, 1.3,  1.1,
+  "perf",   0,   0,    1.1,
+  "salary", 0,   -1.3, 1.1
+)
+
+crossing_arrows <- tribble(
+  ~x,   ~y,    ~xend, ~yend, ~label,          ~label_x, ~label_y,
+  0.55, 0,     3.18,  0,     "b[2]",          1.0,      0.2,
+  0.55, -1.25, 3.25,  -0.25, "b[1]",          2.0,      -1.0,
+  1.7,  1.05,  1.7,   0.02,  "b[3]~and~b[4]", 2.35,     0.6
+)
+
+predictor_boxes <- tribble(
+  ~name,           ~x,   ~y,   ~width,
+  "salary",        0.15, 1.5,  1.7,
+  "perf",          0.15, 0.5,  1.7,
+  "gender",        0.15, -0.5, 1.7,
+  "perf X gender", 0.15, -1.5, 1.7
+)
+
+predictor_arrows <- predictor_boxes |>
+  mutate(
+    x = x + 0.85,
+    xend = 3.2,
+    yend = y * 0.25,
+    label = paste0("b[", row_number(), "]"),
+    label_x = (x + xend) / 2,
+    label_y = (y + yend) / 2 + 0.2
+  ) |>
+  select(x, y, xend, yend, label, label_x, label_y)
+
+draw_model(crossing_boxes, crossing_arrows, outcome, "With a crossing arrow") +
+  draw_model(predictor_boxes, predictor_arrows, outcome, "With the interaction as a predictor")
+```
+
+::: {#exr-l09-test}
+## Test the model and read the tables
+
+Test the model of @exr-l09-model with `organisation_beta.csv`, in jamovi and in R.
+
+1. Which row of the Model Coefficients table tests each hypothesis?
+2. What are $df1$ and $df2$ of the Overall Model Test? Why?
+3. For which hypotheses can the null hypothesis be rejected?
+4. Check the conditions of application of the model.
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+In jamovi:
+
+1. Open `organisation_beta.csv` and set $js\_score$, $salary$ and $perf$ as continuous and $gender$ as nominal.
+2. Go to **Analyses** > **Regression** > **Linear Regression**.
+3. Set $js\_score$ as the Dependent Variable, $salary$ and $perf$ as Covariates and $gender$ as a Factor.
+4. In the **Model Builder** option, select both $perf$ and $gender$ to bring them in at once and to obtain the term $perf*gender$.
+5. Add the $F$ test to the Model Fit Measures and the confidence interval to the Model Coefficients (@sec-lecture-04), and tick all the boxes of **Assumption Checks** (@sec-lecture-06).
+
+```{r}
+#| echo: true
+#| eval: false
+#| code-fold: true
+#| code-summary: "R code"
+model_rehearsal <- lm(formula = js_score ~ salary + perf + gender + perf:gender, data = organisation_beta)
+
+summary(model_rehearsal)
+
+library(performance)
+check_model(model_rehearsal)
+```
+
+**Model Fit Measures**
+
+```{r}
+#| label: exercise-test-fit
+model_fit_table(model_rehearsal)
+```
+
+**Model Coefficients**
+
+```{r}
+#| label: exercise-test-coefficients
+model_coefficients_table(model_rehearsal)
+```
+
+1. The row `salary` tests $H_{a_{1}}$, `perf` tests $H_{a_{2}}$, `gendermale` tests $H_{a_{3}}$ and `perf:gendermale` tests $H_{a_{4}}$. The intercept tests no hypothesis. Female comes first in the alphabetical order, so it is the reference category: the row `gendermale` (male - female in jamovi) compares male employees with female employees.
+2. $df1 = `r number_of_predictors`$, the number of predictors: the interaction counts as a predictor. $df2 = N - K - 1 = `r number_of_employees` - `r number_of_predictors` - 1 = `r df.residual(model_rehearsal)`$.
+3. Only $H_{0_{1}}$ can be rejected: the $p$-value of $salary$ is lower than 0.05 ($`r format_p(p_value_of("salary"))`$). The $p$-values of $perf$ ($`r format_p(p_value_of("perf"))`$), $gender$ ($`r format_p(p_value_of("gendermale"))`$) and the interaction ($`r format_p(p_value_of("perf:gendermale"))`$) are higher than 0.05.
+4. The four assumptions of @sec-lecture-06:
+    - **Linearity**: the residual plot shows no curve.
+    - **Independence**: each row is a different employee, and the 20 employees were simulated independently of each other (@sec-lecture-04).
+    - **Normality**: in the Q-Q plot of the residuals, the points stay close to the diagonal line.
+    - **Equal variance**: the plot of the residuals against the fitted values is a cloud without a pattern.
+
+    The additional checks are fine for anomalous data: the largest Cook's distance is `r format_number(largest_cook_distance)`, below 1. The VIFs of $salary$ (`r format_number(vif_of_terms[["salary"]])`) and $perf$ (`r format_number(vif_of_terms[["perf"]])`) are below 5, but those of $gender$ (`r format_number(vif_of_terms[["gendermale"]])`) and of the interaction (`r format_number(vif_of_terms[["perf:gendermale"]])`) are above 5. This is expected: the interaction is computed from $perf$ and $gender$, so it is strongly correlated with $gender$. It does not change the test of the interaction, but say it when you report the collinearity statistics.
+:::
+
+@fig-l09-interaction shows the kind of figure that a results section can give for an interaction: the data with the lines predicted by the model. It is drawn in R from the model of @exr-l09-test, for an employee with the average salary.
+
+```{r}
+#| label: fig-l09-interaction
+#| fig-cap: "Job satisfaction against performance for female and male employees (points), with the lines predicted by the model for an employee with the average salary."
+#| fig-alt: "Scatterplot of js_score, from 0 to 10, against perf, from about 0.6 to 8.3, with 8 blue points for female employees and 12 red points for male employees. A blue line for female employees is almost flat, at about 7.1 to 7.2. A red line for male employees rises slowly from about 6.1 to 7.2. The two lines have different slopes but stay close to each other."
+#| fig-height: 3.6
+prediction_lines <- organisation_beta |>
+  group_by(gender) |>
+  reframe(perf = range(perf)) |>
+  mutate(salary = mean(organisation_beta$salary))
+
+prediction_lines$js_score <- predict(model_rehearsal, newdata = prediction_lines)
+
+ggplot(organisation_beta, aes(perf, js_score, colour = gender)) +
+  geom_point(size = 2.5) +
+  geom_line(data = prediction_lines, linewidth = 1) +
+  scale_colour_manual(values = c(female = book_col("blue"), male = book_col("red"))) +
+  scale_y_continuous(limits = c(0, 10.5), breaks = seq(0, 10, 2)) +
+  labs(x = "perf", y = "js_score", colour = "gender")
+```
+
+::: {#exr-l09-report}
+## Report each hypothesis
+
+Use the tables of the solution of @exr-l09-test.
+
+1. Report the fit of the model in one sentence.
+2. Report each of the four hypotheses in one sentence, and conclude.
+3. What does @fig-l09-interaction show about $H_{a_{4}}$?
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+1. The predictions from the alternative model (i.e., with our predictors) are significantly better than the predictions from a null model (`r report_fit(model_rehearsal)`).
+2. The four hypotheses:
+    - The effect of $salary$ on $js\_score$ is statistically significant, therefore $H_{0_{1}}$ can be rejected (`r report_estimate(model_rehearsal, "salary")`). The estimate is positive, so $H_{a_{1}}$ is considered plausible. As in @sec-lecture-04, $b$ and its interval print as 0.00 because the unit of $salary$ is 1 euro: the estimate is `r format_number(estimate_of("salary"), 5)`.
+    - The effect of $perf$ on $js\_score$ is not statistically significant, therefore $H_{0_{2}}$ can't be rejected (`r report_estimate(model_rehearsal, "perf")`).
+    - The effect of $gender$ on $js\_score$ is not statistically significant, therefore $H_{0_{3}}$ can't be rejected (`r report_estimate(model_rehearsal, "gendermale")`).
+    - The interaction effect between $perf$ and $gender$ is not statistically significant, therefore $H_{0_{4}}$ can't be rejected (`r report_estimate(model_rehearsal, "perf:gendermale")`).
+
+    With an interaction in the model, the rows of its two predictors are read for the reference value of the other one. The row `perf` is the effect of $perf$ for female employees, the reference category. The row `gendermale` is the difference between male and female employees for a $perf$ of 0.
+3. The line of the male employees rises a little more than the line of the female employees: the slope of $perf$ is `r format_number(slope_perf_male)` for male employees ($b_2 + b_4$) and `r format_number(slope_perf_female)` for female employees ($b_2$). This difference is the estimate of the interaction, $b_4 = `r format_number(estimate_of("perf:gendermale"))`$, and it is not statistically significant: the data do not allow us to reject $H_{0_{4}}$.
+:::
+
+::: {#exr-l09-mistakes}
+## Find the mistakes
+
+A student writes the following paragraph in the results section of the rehearsal. Compare it with the solutions of @exr-l09-test and @exr-l09-report, and find at least five mistakes.
+
+> The model explains `r scales::percent(fit_rehearsal$r.squared, accuracy = 1)` of the variance of job satisfaction ($R^2 = `r sub("^0", "", format_number(fit_rehearsal$r.squared))`$, $F(`r number_of_predictors`, `r number_of_employees - 1`) = `r format_number(fit_rehearsal$statistic)`$, $p = .000$). Salary has a significant effect on job satisfaction ($b = `r format_number(estimate_of("salary"))`$, $t(`r df.residual(model_rehearsal)`) = `r format_number(coefficients_rehearsal$statistic[coefficients_rehearsal$term == "salary"])`$, $`r format_p(p_value_of("salary"))`$), which proves $H_{a_{1}}$. The effect of performance is not significant ($b = `r format_number(estimate_of("perf"))`$, $`r format_p(p_value_of("perf"))`$), so performance has no effect on job satisfaction. Female employees are more satisfied than male employees ($b = `r format_number(estimate_of("gendermale"))`$, $`r format_p(p_value_of("gendermale"))`$). As the interaction is not significant, $H_{a_{4}}$ is rejected.
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+- **$df2$ is wrong.** $df2 = N - K - 1 = `r number_of_employees` - `r number_of_predictors` - 1 = `r df.residual(model_rehearsal)`$, not `r number_of_employees - 1`: the student subtracted 1 from $N$ and forgot the predictors.
+- **$p = .000$ is never written.** The $p$-value of the model is very small but not 0: write $p < .001$.
+- **The report of the estimates is incomplete.** Each estimate needs $b$, its 95% confidence interval, $t(df_2)$ and $p$. The estimates of performance and gender also lack their $t$.
+- **A test does not prove a hypothesis.** $H_{0_{1}}$ is rejected and $H_{a_{1}}$ is considered plausible.
+- **A non-significant effect is not the absence of an effect.** $H_{0_{2}}$ can't be rejected, which does not show that performance has no effect.
+- **The gender sentence reports a difference that is not significant.** With $`r format_p(p_value_of("gendermale"))`$, $H_{0_{3}}$ can't be rejected, so the paper cannot say that one group is more satisfied than the other.
+- **A test does not reject the alternative hypothesis.** When the interaction is not significant, $H_{0_{4}}$ can't be rejected.
+:::
+
+::: {#exr-l09-own-data}
+## Your own data
+
+Go through the same route with the data and the list of variables you received by email.
+
+1. Formulate your hypotheses with the templates of @sec-lecture-01, then represent the model and convert it into an equation.
+2. Test the equation and check the conditions of application, in jamovi and in R.
+3. Write one sentence for the fit of the model and one sentence for each hypothesis.
+4. Put the results in a Quarto journal template (@sec-lecture-08) and go through the checklist of @sec-l09-assignment.
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+There is no single answer, because your data are your own. Check your work against the rehearsal:
+
+- Each alternative hypothesis has its null hypothesis, and the interaction hypothesis comes with the main effect hypotheses of its predictors (@exr-l09-hypotheses).
+- Each hypothesis is one estimate of the equation, and all of them are in 1 model (@exr-l09-model).
+- $df1$ is the number of predictors, interactions included, and $df2 = N - K - 1$ (@exr-l09-test).
+- jamovi and R give the same values. If they differ, check the type of each variable and the terms of the model.
+- Each sentence gives $b$, its 95% CI, $t(df_2)$ and $p$, and concludes on $H_0$ (@exr-l09-report). None of the mistakes of @exr-l09-mistakes is left.
 :::

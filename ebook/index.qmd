@@ -1,34 +1,71 @@
 # Preface {.unnumbered}
 
-This book follows STA1005, Quantitative Research Methods, at DCU Business School. It is written from the slides of the lectures of the module, with one chapter for each lecture, so that what is shown in the lecture room can also be read, searched and revisited at your own pace.
+```{r}
+#| label: setup
+#| include: false
+source("R/setup.R")
+```
+
+This book follows STA1005, Quantitative Research Methods, at DCU Business School. It is written from the slides of the lectures, with one chapter for each lecture. What is shown in the lecture room can also be read, searched and revisited at your own pace.
 
 ## What the module is about
 
 The module is built on three aims:
 
 1. **Understanding the basics**
-2. **Using open source software and coding languages** (jamovi and R)
+2. **Using an open source coding language** (R) <!-- check: the slide of Lecture 1 now reads "Using open source coding language (R)" and no longer names jamovi, but Lectures 4 to 6 still teach the analyses with jamovi, as the next section says -->
 3. **Applying this knowledge and these skills to the writing of research papers**
 
 In the end, I want you to become a data scientist with enough knowledge and skills to challenge bad science and wrong ideas, and to apply to data science positions.
 
 ## How the book is organised
 
-The nine chapters are grouped in three parts.
+The nine chapters are grouped in three parts. Together they follow the route of a research paper, from its hypotheses to its results (@fig-preface-route).
 
-The first part, *Research papers, models and data*, links statistics to the sections of a research paper. It introduces the module and shows how to identify variables and formulate hypotheses (@sec-lecture-01), explains how to represent the model tested in a paper and how to write its equation (@sec-lecture-02), and shows how to collect, clean and transform the data (@sec-lecture-03).
+```{r}
+#| label: fig-preface-route
+#| fig-cap: "The route of the book, from the hypotheses of a research paper to the paper itself."
+#| fig-alt: "Flow chart of six boxes joined by arrows, from left to right. Hypotheses: Chapter 1. Model: Chapter 2. Data: Chapter 3. Test: Chapters 4 to 6. R and Quarto: Chapters 7 and 8. Your paper: Chapter 9."
+#| fig-height: 1.6
+tribble(
+  ~step,          ~detail,
+  "Hypotheses",   "Chapter 1",
+  "Model",        "Chapter 2",
+  "Data",         "Chapter 3",
+  "Test",         "Chapters\n4 to 6",
+  "R and Quarto", "Chapters\n7 and 8",
+  "Your paper",   "Chapter 9"
+) |>
+  flow_chart()
+```
 
-The second part, *The General Linear Model*, is about the one test taught in the module. It introduces the model with continuous predictors, and shows how to run it in jamovi and how to report its results (@sec-lecture-04). It then turns to categorical predictors, their codings and contrasts (@sec-lecture-05), and covers the assumptions of the model, model selection, power analysis and reasonable statistics, ending with agentic AI for statistical analysis (@sec-lecture-06).
+The first part, *Research papers, models and data*, links statistics to the sections of a research paper. @sec-lecture-01 introduces the module and shows how to identify variables and formulate hypotheses. @sec-lecture-02 explains how to represent the model tested in a paper and how to write its equation. @sec-lecture-03 shows how to collect, clean and transform the data.
 
-The third part, *From analysis to report*, brings the pieces together. It introduces R for hypothesis testing (@sec-lecture-07) and Quarto to embed text and code output in professional documents (@sec-lecture-08). It ends with a practical session, followed by the details of the assignment (@sec-lecture-09).
+The second part, *The General Linear Model*, is about the one test taught in the module. @sec-lecture-04 introduces the model with continuous predictors, and shows how to run it in jamovi and how to report its results. @sec-lecture-05 turns to categorical predictors, their codings and contrasts. @sec-lecture-06 covers the assumptions of the model, model selection, power analysis and reasonable statistics, and ends with agentic AI for statistical analysis.
+
+The third part, *From analysis to report*, covers the tools and the practice needed to write a paper. @sec-lecture-07 introduces R for hypothesis testing, and @sec-lecture-08 introduces Quarto to embed text and code output in professional documents. @sec-lecture-09 is a practical session, followed by the details of the assignment.
 
 ## How to read the book
 
-Every chapter ends with a box of **key points**. Along the way, you will find these boxes:
+Every chapter opens with a box, **In this chapter**, which lists what you will be able to do after reading it and what you need. It ends with a box of **key points**, followed by numbered **exercises**.
 
-- **Your turn** boxes are exercises, with a suggested time. When the slides give an answer, it follows in a **Solution** box that is closed by default: try the exercise first, then open the solution.
+Along the way, you will find these boxes:
+
+- **Definition** boxes give the terms that you must be able to define.
+- **Example** boxes apply an idea to the case study of the module, with its numbers.
+- **In jamovi**, **In Excel**, **In RStudio** and similar boxes give a procedure, step by step.
+- **How to report** boxes give the sentence to write in the results section of a paper.
+- **Common mistake** boxes name an error that is easy to make, and give the right reading.
+- **Your turn** boxes are the exercises of the lectures, with a suggested time. When the slides give an answer, it follows in a **Solution** box.
 - **Warning** boxes highlight what to be careful about.
 - **Live demonstration** boxes mark the moments when something is shown live in the lecture room, usually before an exercise.
+- **Going further** and **In R: the same model** boxes hold what you can skip at a first reading, such as the R code of an analysis that the chapter runs in jamovi.
+
+The exercises at the end of a chapter are numbered: Exercise 4.1 is the first exercise of Chapter 4. Each one is followed by its solution. Many of them use the data of Organisation Beta, the case study of the module (file `organisation_beta.csv`).
+
+In the online book, the solutions and the boxes to skip at a first reading are closed: try the exercise first, then open the solution. In the PDF and EPUB versions, they are printed in full.
+
+The figures drawn for this book use the same colours from the first chapter to the last: blue for the model (a regression line, an estimate), red for what the model misses (the residuals) and orange for the one element that the text is talking about.
 
 The code is hidden by default. It is shown only where reading or typing it is part of what is taught.
 
@@ -41,4 +78,4 @@ Since 2019, I have been teaching **Data Analytics** and **Statistics** at DCU Bu
 - Website: <https://damien-dupre.github.io>
 - Email: <damien.dupre@dcu.ie>
 
-<!-- check: this book was drafted by Claude (Anthropic) from your lecture slides. The AI version of Lecture 1 asks students to disclose every use of AI, so consider adding an AI use statement to this preface. None has been added without your decision. -->
+<!-- check: this book was drafted by Claude (Anthropic) from your lecture slides, and its wording was then edited with an academic style review. The figures drawn in R, the boxes and the numbered exercises with their solutions were also written by Claude. Lecture 1 now asks students to disclose every use of AI, so consider adding an AI use statement to this preface. None has been added without your decision. Possible wording, to adapt to what you actually did: "This book was drafted with Claude (Anthropic) from the STA1005 lecture slides. The author is responsible for its content." -->

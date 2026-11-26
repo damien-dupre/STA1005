@@ -1,7 +1,114 @@
+/* Styles of the EPUB version of the book.
+   The colours are those of book.scss and R/setup.R. */
+
 /* Diagrams drawn from DOT or Mermaid code carry a fixed width and height.
    On a narrow screen the width shrinks to fit but the height stays, which
    stretches the picture. Letting the height follow the width fixes this. */
 img {
   max-width: 100%;
   height: auto !important;
+}
+
+/* Figures use the full width of the page. Some readers indent them, which cuts wide images. */
+figure {
+  margin: 1em 0;
+  text-align: center;
+}
+
+figcaption {
+  font-size: 0.9em;
+  color: #43464b;
+  text-align: center;
+}
+
+blockquote {
+  border-left: 4px solid #eb811b;
+  background-color: #fdf6ee;
+  margin: 1em 0;
+  padding: 0.5em 1em;
+}
+
+/* Boxes ----------------------------------------------------------------------
+   A box is a Quarto callout. Its colour follows the callout type, then the
+   class that says what the box is for (the class sits on the div around it). */
+
+div.callout {
+  border: 1px solid #dfe3e4;
+  border-left: 5px solid #0072B2;
+  margin: 1.2em 0;
+}
+
+div.callout-title {
+  background-color: #e8f1f8;
+  padding: 0.4em 0.8em;
+}
+
+div.callout-title p {
+  margin: 0;
+}
+
+div.callout-content {
+  padding: 0.1em 0.8em;
+}
+
+/* The icons of the HTML book are not available in an e-reader. */
+div.callout-icon-container {
+  display: none;
+}
+
+/* Callout types */
+div.callout-tip { border-left-color: #009E73; }
+div.callout-tip div.callout-title { background-color: #e5f5f0; }
+
+div.callout-warning { border-left-color: #CC3311; }
+div.callout-warning div.callout-title { background-color: #fbeee4; }
+
+div.callout-important { border-left-color: #c0392b; }
+div.callout-important div.callout-title { background-color: #f9e7e5; }
+
+/* Box classes */
+div.box-goals > div.callout { border-left-color: #eb811b; background-color: #fffaf4; }
+div.box-goals div.callout-title { background-color: #fdf0e1; }
+
+div.box-definition > div.callout { border-left-color: #0072B2; }
+div.box-definition div.callout-title { background-color: #e8f1f8; }
+
+div.box-example > div.callout { border-left-color: #009E73; }
+div.box-example div.callout-title { background-color: #e5f5f0; }
+
+div.box-howto > div.callout { border-left-color: #0f7c8a; }
+div.box-howto div.callout-title { background-color: #e6f2f3; }
+
+div.box-report > div.callout { border-left-color: #7a5195; }
+div.box-report div.callout-title { background-color: #f1ecf5; }
+
+div.box-mistake > div.callout { border-left-color: #CC3311; }
+div.box-mistake div.callout-title { background-color: #fbeee4; }
+
+div.box-yourturn > div.callout { border-left-color: #009E73; }
+div.box-yourturn div.callout-title { background-color: #e5f5f0; }
+
+div.box-solution > div.callout { border-left-color: #8a9396; }
+div.box-solution div.callout-title { background-color: #f1f2f3; }
+
+div.box-keypoints > div.callout { border-left-color: #43464b; background-color: #f6f7f7; }
+div.box-keypoints div.callout-title { background-color: #e9eaeb; }
+
+div.box-further > div.callout { border-left-color: #8a9396; }
+div.box-further div.callout-title { background-color: #f1f2f3; }
+
+div.box-demo > div.callout { border-left-color: #882255; }
+div.box-demo div.callout-title { background-color: #f9eef4; }
+
+/* Exercises ------------------------------------------------------------------ */
+div.theorem.exercise {
+  border: 1px solid #dfe3e4;
+  border-left: 5px solid #eb811b;
+  background-color: #fffdfa;
+  margin: 1.5em 0 0.4em;
+  padding: 0.5em 0.9em 0.1em 0.9em;
+}
+
+div.theorem.exercise span.theorem-title {
+  color: #b35a00;
 }

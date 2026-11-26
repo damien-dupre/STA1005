@@ -6,7 +6,38 @@
 source("R/setup.R")
 ```
 
-This chapter introduces R for hypothesis testing. @sec-l07-r-rstudio and @sec-l07-coding explain what R and RStudio are, how to open them in Posit Cloud and how the RStudio window is organised. @sec-l07-basics presents the basics of R code (scripts, packages, functions and objects), and @sec-l07-access and @sec-l07-save show how to open and save data. @sec-l07-help points to resources for learning more and for solving problems. Finally, @sec-l07-lm and @sec-l07-results show how to write linear regression models with `lm()`, how to read their results and how to report them with the packages `{performance}` and `{report}`.
+::: {.callout-note .box-goals title="In this chapter"}
+After this chapter, you can:
+
+- tell R from RStudio and find your way around the panes of RStudio
+- install and load a package, call a function and create an object with `<-`
+- open a data file with code and save a data frame as a .csv file
+- translate the equation of a model into the `formula` of `lm()` and read the output of `summary()`
+- check the assumptions of a model with `check_model()` and write its results with `report()`
+
+You need a Posit Cloud account (or R and RStudio on your computer) and the file `organisation_beta.csv`.
+:::
+
+This chapter introduces R for hypothesis testing. @sec-l07-r-rstudio and @sec-l07-coding explain what R and RStudio are, how to open them in Posit Cloud and how the RStudio window is organised. @sec-l07-basics presents the basics of R code (scripts, packages, functions and objects), and @sec-l07-access and @sec-l07-save show how to open and save data. @sec-l07-help points to resources for learning more and for solving problems. Finally, @sec-l07-lm shows how to write linear regression models with `lm()`, and @sec-l07-results how to read their results and report them with the packages `{performance}` and `{report}`.
+
+@fig-l07-roadmap shows the steps of a hypothesis test in R as this chapter teaches them, with the function used at each step.
+
+```{r}
+#| label: fig-l07-roadmap
+#| fig-cap: "From a data file to the sentences of the results section: the steps of a hypothesis test in R and their functions."
+#| fig-alt: "Five boxes in a row joined by arrows. Data: open the file with read.csv(). Model: write the formula in lm(). Results: read the output of summary(). Assumptions: check the model with check_model(). Report: write the text with report()."
+#| fig-height: 1.4
+analysis_steps <- tribble(
+  ~step,         ~detail,
+  "Data",        "open the file\nread.csv()",
+  "Model",       "write the formula\nlm()",
+  "Results",     "read the output\nsummary()",
+  "Assumptions", "check the model\ncheck_model()",
+  "Report",      "write the text\nreport()"
+)
+
+flow_chart(analysis_steps)
+```
 
 **Recap.** Modern data science uses free and open-source languages. Proprietary languages (for example Matlab, Stata and SAS) and software (for example SPSS) are outdated, and the main open-source computer languages for data science are Python and R. Python is the language most used by computer engineers for web and app development, but R has some advantages:
 
@@ -37,12 +68,18 @@ include_img("car_motor.jpeg")
 include_img("car_dashboard.jpeg")
 ```
 
+::: {.callout-warning .box-mistake title="Common mistake: confusing R and RStudio"}
+RStudio does not compute anything: it sends your code to R and shows what R returns. The results and the error messages in the console come from R. On your own computer, RStudio works only if R is installed too; in Posit Cloud, both are already installed.
+:::
+
 ### Posit Cloud
 
+::: {.callout-tip .box-howto title="In Posit Cloud: create a new project"}
 To use RStudio in Posit Cloud, go to <https://posit.cloud/> in your web browser (Chrome, Firefox, ...) and then:
 
 1. Sign up.
 2. In your workspace, click "new project".
+:::
 
 Most of the R code displayed in this chapter is also included in the lecture slides, which are available at <https://damien-dupre.github.io/STA1005/lectures/lecture_7>. Rather than typing the code manually, copy and paste it from this page or from the slides.
 
@@ -88,7 +125,7 @@ The status of R is indicated by the symbol in the console prompt (@fig-l07-conso
 include_img("r_console.png")
 ```
 
-::: {.callout-warning title="The console doesn't save"}
+::: {.callout-warning .box-mistake title="The console doesn't save"}
 You can execute code by typing it directly into the Console. However, it will not be saved. And if you make a mistake you will have to re-type everything all over again.
 
 Instead, **write all your code in a document (R script or Quarto file) in the Code Editor**.
@@ -101,7 +138,7 @@ The Environment tab of the Workspace pane shows you the **names of all the data 
 ### Files, Plots, Packages and Help
 
 - The **Files** panel gives access to the file directory.
-- The **Plots** panel shows all your plots. There are buttons for opening the plot in a pop-up window and for exporting it as a pdf or jpeg.
+- The **Plots** panel shows all your plots. There are buttons for opening the plot in a pop-up window and for exporting it as a PDF or JPEG.
 - The **Packages** panel shows a list of all the R packages installed on the local or remote machine and indicates whether or not they are currently loaded.
 - With the **Help** menu for R functions you can access essential information to use them. Just have a look at some of them by pressing `F1` with the cursor on the function, using the `help()` function, or by typing `?` followed by the function name, such as:
 
@@ -143,11 +180,13 @@ paste("active", "code")
 
 ### Running R code
 
+::: {.callout-tip .box-howto title="In RStudio: run a line of code"}
 In an R Script, place your cursor anywhere on the line you want to run and either:
 
 - press `Ctrl` + `Enter` (Windows)
 - press `command` + `Enter` (Mac)
 - click the `Run` button on RStudio's interface
+:::
 
 ::: {.content-visible unless-format="pdf"}
 @fig-l07-run shows an example: the code `print("hello world")` is typed in a new R script and run with the `Run` button, and the console prints the result.
@@ -199,7 +238,15 @@ Once the package is loaded you can use all the functions from this package, such
 praise()
 ```
 
-::: {.callout-tip title="Your turn: install and run a package"}
+::: {.callout-note .box-definition title="Definition: package"}
+An R **package** is a set of functions, written by the community of R users, that extends the functionality of R. It is installed once with `install.packages()` and loaded with `library()` in every new R session, before its functions are used.
+:::
+
+::: {.callout-warning .box-mistake title="Common mistake: installing a package but not loading it"}
+`install.packages()` copies the package onto the computer, but it does not make its functions available. Each time R starts again, load the package with `library()` first. Without it, `praise()` stops with the error `could not find function "praise"`.
+:::
+
+::: {.callout-tip .box-yourturn title="Your turn: install and run a package"}
 Open an R Script in RStudio. In this document:
 
 1. Use line 1 to **install the package "praise"**:
@@ -240,6 +287,68 @@ For example, the function `seq()` makes a sequence of numbers. Its first argumen
 seq(from = 1, to = 10)
 ```
 
+@fig-l07-function reads this call part by part. The name of the function comes first. The arguments follow inside the brackets, separated by a comma, each written as its name, the `=` sign and its value.
+
+```{r}
+#| label: fig-l07-function
+#| fig-cap: "The parts of a function call: the name of the function, the names of its arguments and their values."
+#| fig-alt: "The code seq(from = 1, to = 10) written in large letters with a label on each part. Below seq: function name, what the function does, here making a sequence of numbers. Above from and above to: argument name, the first number and the last number of the sequence. Below 1 and below 10: value, the information given to the argument."
+#| fig-height: 2.8
+call_characters <- tibble(character = strsplit("seq(from = 1, to = 10)", "")[[1]]) |>
+  mutate(
+    position = row_number(),
+    role = case_when(
+      character %in% c("(", ")", "=", ",") ~ "punctuation",
+      TRUE ~ "code"
+    )
+  )
+
+call_parts <- tribble(
+  ~position, ~name,           ~meaning,                         ~side,
+  2.0,       "Function name", "what the function does:\nmake a sequence", "below",
+  6.5,       "Argument name", "from: the first number\nof the sequence",  "above",
+  15.5,      "Argument name", "to: the last number\nof the sequence",     "above",
+  12.0,      "Value",         "given to from",                  "below",
+  20.5,      "Value",         "given to to",                    "below"
+) |>
+  mutate(
+    tick_from = if_else(side == "below", 2.62, 3.38),
+    tick_to   = if_else(side == "below", 2.25, 3.75),
+    name_y    = if_else(side == "below", 2.00, 4.62),
+    meaning_y = if_else(side == "below", 1.72, 4.34)
+  )
+
+ggplot() +
+  geom_text(
+    data = call_characters |> filter(role == "code"),
+    aes(x = position, y = 3, label = character),
+    family = "mono", fontface = "bold", size = 8
+  ) +
+  geom_text(
+    data = call_characters |> filter(role == "punctuation"),
+    aes(x = position, y = 3, label = character),
+    family = "mono", fontface = "bold", size = 8, colour = book_col("grey")
+  ) +
+  geom_segment(
+    data = call_parts,
+    aes(x = position, xend = position, y = tick_from, yend = tick_to),
+    colour = book_col("orange"), linewidth = 0.8
+  ) +
+  geom_text(data = call_parts, aes(x = position, y = name_y, label = name), fontface = "bold", size = 4.2) +
+  geom_text(
+    data = call_parts,
+    aes(x = position, y = meaning_y, label = meaning),
+    size = 3.3, lineheight = 0.95, colour = "#43464b", vjust = 1
+  ) +
+  scale_x_continuous(limits = c(-4, 27)) +
+  scale_y_continuous(limits = c(0.9, 4.8)) +
+  theme_void()
+```
+
+::: {.callout-note .box-definition title="Definition: function and argument"}
+A **function** is an algorithm that transforms data into something else. It is called by its name followed by brackets, such as `seq()`. An **argument** is a piece of information that the function requires. It is given inside the brackets as `name = value`, and a comma separates it from the next argument.
+:::
+
 ::: {.callout-important title="Warning"}
 Arguments don't need to be explicitly called, they can also be matched by position:
 
@@ -247,6 +356,17 @@ Arguments don't need to be explicitly called, they can also be matched by positi
 #| echo: true
 seq(1, 10)
 ```
+:::
+
+::: {.callout-tip .box-example title="Example: the order of the arguments"}
+When the names are left out, R gives the first value to `from` and the second to `to`. Swapping the two values therefore changes the result:
+
+```{r}
+#| echo: true
+seq(10, 1)
+```
+
+With their names, the arguments can come in any order: `seq(to = 10, from = 1)` gives the same sequence as `seq(from = 1, to = 10)`.
 :::
 
 ### Assigning values to objects
@@ -262,6 +382,80 @@ x
 seq(x, 10)
 ```
 
+@fig-l07-assignment draws what this code does. The first line puts the value 4 in a box called `x` and prints nothing. Afterwards, the name `x` gives the content back: typed alone, it prints `[1] 4`, and in `seq(x, 10)` it is the value of the first argument.
+
+```{r}
+#| label: fig-l07-assignment
+#| fig-cap: "Assigning and using an object: `<-` puts a content in a box with a name (left), and the name then gives the content back (right)."
+#| fig-alt: "Two panels. Left, titled Assign, under the code x <- 4: the value 4 travels along an arrow labelled <- from the right into a box whose name tag reads x. Nothing is printed. Right, titled Use, under the code x and seq(x, 10): the box x sends its content 4 out along an arrow, and the console prints [1] 4 and then [1] 4 5 6 7 8 9 10."
+#| fig-height: 3
+assignment_boxes <- tribble(
+  ~panel,     ~x_centre,
+  "1. Assign", 1.3,
+  "2. Use",    1.3
+)
+
+# The console lines are those that R prints for x and seq(x, 10).
+printed_x <- capture.output(x)
+printed_sequence <- capture.output(seq(x, 10))
+
+assignment_arrows <- tribble(
+  ~panel,      ~x,  ~xend, ~y,  ~label,
+  "1. Assign", 4.0, 2.2,  1.0, "<-",
+  "2. Use",    2.2, 3.0,  1.0, ""
+)
+
+assignment_text <- tribble(
+  ~panel,      ~x,  ~y,   ~label,                     ~family, ~hjust, ~size,
+  "1. Assign", 0.3, 2.55, "x <- 4",                   "mono",  0,      5.2,
+  "1. Assign", 4.25, 1.0, "4",                        "mono",  0,      7,
+  "1. Assign", 3.1, 0.15, "prints nothing",           "sans",  0.5,    3.5,
+  "2. Use",    0.3, 2.55, "x\nseq(x, 10)",            "mono",  0,      5.2,
+  "2. Use",    3.15, 1.25, printed_x,                 "mono",  0,      3.4,
+  "2. Use",    3.15, 0.75, printed_sequence,          "mono",  0,      3.4,
+  "2. Use",    3.15, 0.15, "printed in the console",  "sans",  0,      3.5
+)
+
+ggplot() +
+  geom_rect(
+    data = assignment_boxes,
+    aes(xmin = x_centre - 0.75, xmax = x_centre + 0.75, ymin = 0.45, ymax = 1.55),
+    fill = "#f4f6f6", colour = book_col("ink"), linewidth = 0.6
+  ) +
+  geom_label(
+    data = assignment_boxes,
+    aes(x = x_centre, y = 1.55, label = "x"),
+    family = "mono", fontface = "bold", size = 5, fill = "white", label.size = 0.4
+  ) +
+  geom_text(data = assignment_boxes, aes(x = x_centre, y = 0.95, label = "4"), family = "mono", size = 7) +
+  geom_segment(
+    data = assignment_arrows,
+    aes(x = x, xend = xend, y = y, yend = y),
+    arrow = arrow(length = unit(0.25, "cm"), type = "closed"),
+    colour = book_col("orange"), linewidth = 1
+  ) +
+  geom_text(
+    data = assignment_arrows |> filter(label != ""),
+    aes(x = (x + xend) / 2, y = y + 0.28, label = label),
+    family = "mono", fontface = "bold", size = 5
+  ) +
+  geom_text(
+    data = assignment_text,
+    aes(x = x, y = y, label = label, family = family, hjust = hjust, size = size),
+    lineheight = 0.95
+  ) +
+  scale_size_identity() +
+  facet_wrap(~panel) +
+  scale_x_continuous(limits = c(0, 9.6)) +
+  scale_y_continuous(limits = c(-0.05, 2.95)) +
+  theme_void() +
+  theme(strip.text = element_text(face = "bold", hjust = 0, size = 12, margin = margin(b = 4)))
+```
+
+::: {.callout-note .box-definition title="Definition: object"}
+An **object** is a box with a name that can include anything: a value, a vector, a data frame, a figure, a model or a function. It is created with `object_name <- object_content`, and it then appears in the Environment pane (@sec-l07-environment).
+:::
+
 It is very important to distinguish values and objects in R, as @tbl-l07-values shows.
 
 ```{r}
@@ -275,6 +469,10 @@ tribble(
 ) |>
   kable()
 ```
+
+::: {.callout-warning .box-mistake title="Common mistake: forgetting the quotes"}
+A word without quotes is the name of an object. `install.packages(praise)` stops with the error `object 'praise' not found`, because R looks for an object called `praise`. The name of the package to install is a character value, so it takes quotes: `install.packages("praise")`. In the same way, `paste(active, code)` fails where `paste("active", "code")` works.
+:::
 
 ### Different R objects
 
@@ -303,7 +501,64 @@ dataframe_example <- data.frame(
   )
 ```
 
-::: {.callout-tip title="Your turn: make a bar chart"}
+@fig-l07-dataframe shows how these objects fit together, with the first rows of the Organisation Beta data used later in this chapter. Each column of a data frame is a vector, all its vectors have the same length, and each row is one observation (here, one employee).
+
+```{r}
+#| label: fig-l07-dataframe
+#| fig-cap: "A data frame is a set of vectors of the same length: each column is a vector (one variable) and each row is an observation (one employee). The first five rows of organisation_beta.csv are shown, with rounded values."
+#| fig-alt: "A table of five rows and four columns: employee, gender, salary and js_score, with the values, rounded, of the first five employees of Organisation Beta. An orange frame surrounds the salary column, labelled one column is one vector, a numeric vector of 20 values. A dark frame surrounds the first row, labelled one row is one observation, employee 1. Under each column, its type of vector is written: numeric for employee, salary and js_score, character for gender."
+#| fig-height: 3.4
+first_employees <- read_csv(here("data/organisation_beta.csv"), show_col_types = FALSE)
+
+table_cells <- first_employees |>
+  slice_head(n = 5) |>
+  transmute(
+    row = row_number(),
+    employee = as.character(employee),
+    gender = paste0('"', gender, '"'),
+    salary = format(round(salary), big.mark = ""),
+    js_score = format_number(js_score)
+  ) |>
+  pivot_longer(-row, names_to = "variable", values_to = "value") |>
+  mutate(column = match(variable, c("employee", "gender", "salary", "js_score")))
+
+table_header <- tibble(
+  column = 1:4,
+  variable = c("employee", "gender", "salary", "js_score"),
+  vector_type = c("numeric", "character", "numeric", "numeric")
+)
+
+ggplot() +
+  geom_tile(
+    data = table_cells,
+    aes(x = column, y = -row),
+    width = 0.96, height = 0.9, fill = "#f4f6f6", colour = "white"
+  ) +
+  geom_text(data = table_cells, aes(x = column, y = -row, label = value), family = "mono", size = 4.4) +
+  geom_text(data = table_header, aes(x = column, y = 0, label = variable), family = "mono", fontface = "bold", size = 4.5) +
+  geom_text(
+    data = table_header,
+    aes(x = column, y = -6.25, label = paste0(vector_type, "\nvector")),
+    size = 3.7, lineheight = 0.95, colour = "#43464b"
+  ) +
+  annotate("rect", xmin = 2.5, xmax = 3.5, ymin = -5.6, ymax = 0.45, fill = NA, colour = book_col("orange"), linewidth = 1.1) +
+  annotate("rect", xmin = 0.5, xmax = 4.5, ymin = -1.47, ymax = -0.53, fill = NA, colour = book_col("ink"), linewidth = 0.8) +
+  annotate("text", x = 4.65, y = -1, hjust = 0, size = 3.9, lineheight = 0.95, label = "one row = one observation\n(employee 1)") +
+  annotate(
+    "text", x = 4.65, y = -3.6, hjust = 0, size = 3.9, lineheight = 0.95,
+    label = paste0("one column = one vector\n(salary: ", nrow(first_employees), " numeric values,\nthe first 5 are shown)")
+  ) +
+  annotate("segment", x = 3.5, xend = 4.6, y = -3.6, yend = -3.6, colour = book_col("orange"), linewidth = 0.6) +
+  scale_x_continuous(limits = c(0.4, 6.75)) +
+  scale_y_continuous(limits = c(-6.9, 0.5)) +
+  theme_void()
+```
+
+::: {.callout-note .box-definition title="Definition: vector and data frame"}
+A **vector** is a series of values of the same type, created with `c()`, such as `c(1, 2)` or `c("one", "two")`. A **data frame** is a table made of vectors of the same length: each column is a vector (a variable) and each row is an observation.
+:::
+
+::: {.callout-tip .box-yourturn title="Your turn: make a bar chart"}
 In the same R Script in RStudio, **copy, paste and run** the following code:
 
 ```r
@@ -323,10 +578,12 @@ Suggested time: 5 minutes.
 
 ### Upload and import
 
+::: {.callout-tip .box-howto title="In Posit Cloud: open a data file"}
 Posit Cloud is a free remote computer: the computing is not run on your computer. To open data on Posit Cloud, you first need to `Upload` your file on this computer and then to `Import` the data in R:
 
 1. Upload your file.
 2. Import your data, with the `Import Dataset` button of the Environment pane (@fig-l07-import).
+:::
 
 ```{r}
 #| label: fig-l07-import
@@ -349,7 +606,7 @@ To ensure code reproducibility, open data with the appropriate function (for exa
 my_file_object <- read.csv(file = "C:/path/to/my/file.csv")
 my_file_object <- read.csv("C:/path/to/my/file.csv")
 
-# Macos
+# macOS
 my_file_object <- read.csv(file = "/Users/path/to/my/file.csv")
 my_file_object <- read.csv("/Users/path/to/my/file.csv")
 ```
@@ -365,7 +622,99 @@ my_file_object <- read.csv("C:/path/to/my/file")
 my_file_object <- read.csv("C:\path\to\my\file.csv")
 ```
 
-::: {.callout-tip title="Your turn: upload and import the data"}
+@fig-l07-path takes apart the Windows path of the first example and shows where each of these three paths goes wrong.
+
+```{r}
+#| label: fig-l07-path
+#| fig-cap: "The parts of a file path (top) and the three paths that generate an error (bottom), with the faulty part underlined."
+#| fig-alt: "Top, the path C:/path/to/my/file.csv in large letters with a label on each part: C: is the start of the path on Windows, path/to/my are the folders, the forward slashes separate the folders, file is the file name and .csv is the extension. Bottom, three paths with a red line under the faulty part. Incomplete path: /path/to/my/file.csv, the start of the path is missing. Missing file extension: C:/path/to/my/file, the .csv at the end is missing. Use of backward slash: C:\\path\\to\\my\\file.csv, every backward slash is underlined because R reads it as the start of a special character."
+#| fig-height: 4.6
+path_characters <- function(path, row, first_position = 1) {
+  tibble(character = strsplit(path, "")[[1]]) |>
+    mutate(position = first_position + row_number() - 1, row = row)
+}
+
+good_path <- path_characters("C:/path/to/my/file.csv", row = 0) |>
+  mutate(separator = character == "/")
+
+good_path_parts <- tribble(
+  ~from, ~to, ~name,       ~meaning,                          ~side,
+  1,     2,   "Start",     "C: on Windows,\n/Users on macOS", "above",
+  4,     13,  "Folders",   "path/to/my",                      "below",
+  15,    18,  "File name", "file",                            "above",
+  19,    22,  "Extension", ".csv",                            "below"
+) |>
+  mutate(
+    centre = (from + to) / 2,
+    tick_from = if_else(side == "below", -0.3, 0.3),
+    tick_to   = if_else(side == "below", -0.55, 0.55),
+    name_y    = if_else(side == "below", -0.75, 1.3),
+    meaning_y = if_else(side == "below", -1.02, 0.88)
+  )
+
+# The wrong paths are aligned on the good one, so that what is missing leaves a gap.
+wrong_paths <- bind_rows(
+  path_characters("/path/to/my/file.csv", row = 1, first_position = 3),
+  path_characters("C:/path/to/my/file", row = 2),
+  path_characters("C:\\path\\to\\my\\file.csv", row = 3)
+) |>
+  mutate(y = -1.15 - 1.05 * row)
+
+wrong_marks <- tribble(
+  ~row, ~from, ~to,  ~problem,
+  1,    0.6,   2.4,  "Incomplete path:\nthe start is missing",
+  2,    18.6,  22.4, "Missing file extension:\n.csv is missing",
+  3,    2.6,   3.4,  "Use of backward slash:\n\\ starts a special character",
+  3,    7.6,   8.4,  "",
+  3,    10.6,  11.4, "",
+  3,    13.6,  14.4, ""
+) |>
+  mutate(y = -1.15 - 1.05 * row)
+
+ggplot() +
+  geom_text(
+    data = good_path,
+    aes(x = position, y = 0, label = character, colour = separator),
+    family = "mono", fontface = "bold", size = 6
+  ) +
+  geom_segment(
+    data = good_path_parts,
+    aes(x = centre, xend = centre, y = tick_from, yend = tick_to),
+    colour = book_col("orange"), linewidth = 0.8
+  ) +
+  geom_text(data = good_path_parts, aes(x = centre, y = name_y, label = name), fontface = "bold", size = 4.4) +
+  geom_text(
+    data = good_path_parts,
+    aes(x = centre, y = meaning_y, label = meaning),
+    size = 3.7, lineheight = 0.9, colour = "#43464b"
+  ) +
+  annotate("text", x = 24, y = 0, hjust = 0, size = 3.8, colour = "#43464b", label = "/ separates the folders") +
+  geom_text(
+    data = wrong_paths,
+    aes(x = position, y = y, label = character),
+    family = "mono", size = 6
+  ) +
+  geom_segment(
+    data = wrong_marks,
+    aes(x = from, xend = to, y = y - 0.25, yend = y - 0.25),
+    colour = book_col("red"), linewidth = 1.1
+  ) +
+  geom_text(
+    data = wrong_marks |> filter(problem != ""),
+    aes(x = 24, y = y, label = problem),
+    hjust = 0, size = 3.8, lineheight = 0.95
+  ) +
+  scale_colour_manual(values = c("FALSE" = book_col("ink"), "TRUE" = book_col("grey")), guide = "none") +
+  scale_x_continuous(limits = c(-3, 40)) +
+  scale_y_continuous(limits = c(-4.6, 1.45)) +
+  theme_void()
+```
+
+::: {.callout-warning .box-mistake title="Common mistake: copying a Windows path with backslashes"}
+Windows displays paths with `\`, but in an R character value `\` starts a special character (for example `\t` is a tab). `read.csv("C:\path\to\my\file.csv")` therefore stops before reading anything, with the error `'\p' is an unrecognized escape in character string`. Replace every `\` by `/`.
+:::
+
+::: {.callout-tip .box-yourturn title="Your turn: upload and import the data"}
 1. Click on `Upload` to upload the "organisation_beta.csv" file on your Posit Cloud.
 2. Click on `Import` to import these data in R.
 3. Check that the data appears in the Environment pane (see @sec-l07-environment). How many observations and variables does it have?
@@ -399,10 +748,10 @@ write.csv(my_file_object, "my_file_name.csv")
 
 # Saved in the directory you prefer
 write.csv(my_file_object, "C:/path/to/my/my_file_name.csv") # Windows
-write.csv(my_file_object, "/Users/path/to/my/my_file_name.csv") # Macos
+write.csv(my_file_object, "/Users/path/to/my/my_file_name.csv") # macOS
 ```
 
-::: {.callout-tip title="Your turn: save the data"}
+::: {.callout-tip .box-yourturn title="Your turn: save the data"}
 Save the data contained in the object "organisation_beta" in a new .csv file (give a different name than "organisation_beta.csv" else this document will be overwritten).
 
 Suggested time: 3 minutes.
@@ -427,6 +776,7 @@ Find all the free books in the [Big Book of R](https://www.bigbookofr.com/)!
 
 ### How to solve your pRoblems
 
+::: {.callout-tip .box-howto title="In R: solve a problem"}
 When something does not work, follow these steps:
 
 1. **Look at your error.**
@@ -435,6 +785,7 @@ When something does not work, follow these steps:
 2. **Look at your object** with `str(ObjectName)`.
 3. **Look at the function** and its documentation (`F1` or `?`).
 4. **Use GenAI.**
+:::
 
 ## Linear regression models in R {#sec-l07-lm}
 
@@ -471,6 +822,10 @@ Here is an example with `organisation_beta.csv`:
 lm(formula = js_score ~ salary + perf, data = organisation_beta)
 ```
 
+::: {.callout-note .box-definition title="Definition: formula"}
+The **formula** is the translation of the equation of the model for `lm()`. The outcome is written on the left of `~` and the predictors on its right. The intercept $b_0$ and the error $e$ are not written: `lm()` adds the intercept itself, and the error is what the model leaves unexplained.
+:::
+
 ### Mastering the formula
 
 `lm()` has only one difficulty: the `formula`. The `formula` is the direct translation of the equation tested (@eq-l07-model), but with its own representation:
@@ -478,6 +833,10 @@ lm(formula = js_score ~ salary + perf, data = organisation_beta)
 1. The `=` sign is replaced by `~` (read "according to" or "by").
 2. Each predictor is added with the `+` sign.
 3. An interaction effect uses the symbol `:` instead of `*`.
+
+::: {.callout-warning .box-mistake title="Common mistake: writing = in the formula"}
+In R, `=` gives a value to an argument, so it cannot also separate the outcome from the predictors. `lm(formula = js_score = salary + perf, data = organisation_beta)` stops with the error `unexpected '='`. The formula uses `~`: `js_score ~ salary + perf`.
+:::
 
 Here are some generic equations and their conversion in `formula`:
 
@@ -513,7 +872,99 @@ $$js\_score = b_0 + b_1 salary + b_2 perf + b_3 salary * perf + e$$
 lm(formula = js_score ~ salary + perf + salary:perf, data = organisation_beta)
 ```
 
-::: {.callout-tip title="Your turn: test two models"}
+@fig-l07-formula matches each part of these two equations with its part of the formula. The outcome and the predictors keep their names, `=` becomes `~`, $b_0$ and $e$ are not written, and $salary * perf$ becomes `salary:perf`.
+
+```{r}
+#| label: fig-l07-formula
+#| fig-cap: "From the equation of the model (top line of each block) to the formula of lm() (bottom line): each predictor of the equation keeps its name in the formula, without its estimate b."
+#| fig-alt: "Two blocks. Each shows an equation and, below it, the formula of lm(), with vertical lines joining the parts that correspond. Block 1, two main effects: js_score = b0 + b1 salary + b2 perf + e becomes js_score ~ salary + perf. An orange line labelled = becomes ~ joins the equals sign to the tilde. Under b0 and e, a note says not written. Block 2, two main effects and their interaction: js_score = b0 + b1 salary + b2 perf + b3 salary*perf + e becomes js_score ~ salary + perf + salary:perf. A last line says that js_score ~ salary * perf is a shortcut for the same model."
+#| fig-height: 4.4
+formula_blocks <- tribble(
+  ~block, ~title,                                     ~title_y,
+  1,      "Two main effects",                         1.05,
+  2,      "Two main effects and their interaction",   -1.75
+)
+
+equation_terms <- tribble(
+  ~block, ~x,   ~term,                     ~in_formula,
+  1,      1.0,  "js_score",                "js_score",
+  1,      2.9,  "'='",                     "~",
+  1,      3.9,  "b[0]",                    NA,
+  1,      4.7,  "'+'",                     NA,
+  1,      6.2,  "b[1]~salary",             "salary",
+  1,      7.7,  "'+'",                     "+",
+  1,      9.1,  "b[2]~perf",               "perf",
+  1,      10.4, "'+'",                     NA,
+  1,      11.2, "e",                       NA,
+  2,      1.0,  "js_score",                "js_score",
+  2,      2.9,  "'='",                     "~",
+  2,      3.9,  "b[0]",                    NA,
+  2,      4.7,  "'+'",                     NA,
+  2,      6.2,  "b[1]~salary",             "salary",
+  2,      7.7,  "'+'",                     "+",
+  2,      9.1,  "b[2]~perf",               "perf",
+  2,      10.4, "'+'",                     "+",
+  2,      12.6, "b[3]~salary*'*'*perf",    "salary:perf",
+  2,      14.8, "'+'",                     NA,
+  2,      15.55, "e",                       NA
+) |>
+  mutate(
+    equation_y = if_else(block == 1, 0.45, -2.35),
+    formula_y = equation_y - 1
+  )
+
+not_written <- equation_terms |>
+  filter(term %in% c("b[0]", "e"))
+
+ggplot(equation_terms, aes(x = x)) +
+  geom_text(data = formula_blocks, aes(x = -1.6, y = title_y, label = title), hjust = 0, fontface = "bold", size = 4) +
+  geom_text(aes(y = equation_y, label = term), parse = TRUE, size = 5) +
+  geom_segment(
+    data = equation_terms |> filter(!is.na(in_formula), in_formula != "~"),
+    aes(xend = x, y = equation_y - 0.25, yend = formula_y + 0.25),
+    colour = book_col("grey"), linewidth = 0.5
+  ) +
+  geom_segment(
+    data = equation_terms |> filter(in_formula == "~"),
+    aes(xend = x, y = equation_y - 0.25, yend = formula_y + 0.25),
+    colour = book_col("orange"), linewidth = 1
+  ) +
+  geom_text(
+    data = equation_terms |> filter(in_formula == "~", block == 1),
+    aes(x = x + 0.2, y = equation_y - 0.5, label = "= becomes ~"),
+    hjust = 0, size = 3.2
+  ) +
+  geom_text(
+    data = equation_terms |> filter(!is.na(in_formula)),
+    aes(y = formula_y, label = in_formula),
+    family = "mono", fontface = "bold", size = 4.6
+  ) +
+  geom_text(data = not_written, aes(y = formula_y, label = "not\nwritten"), size = 3, lineheight = 0.9, colour = "#43464b") +
+  geom_text(
+    data = tibble(x = -1.6, y = c(0.45, -0.55, -2.35, -3.35), label = c("equation", "formula", "equation", "formula")),
+    aes(x = x, y = y, label = label),
+    hjust = 0, size = 3.2, colour = "#43464b"
+  ) +
+  annotate(
+    "text", x = -1.6, y = -4.15, hjust = 0, size = 3.4,
+    label = "Shortcut: js_score ~ salary * perf gives the same model as js_score ~ salary + perf + salary:perf"
+  ) +
+  scale_x_continuous(limits = c(-1.7, 16.3)) +
+  scale_y_continuous(limits = c(-4.4, 1.3)) +
+  theme_void()
+```
+
+::: {.callout-note .box-further collapse="true" title="Going further: the shortcut salary * perf"}
+In a formula, `salary * perf` is a shortcut for `salary + perf + salary:perf`: the two main effects and their interaction. Both formulas give the same estimates:
+
+```{r}
+#| echo: true
+lm(formula = js_score ~ salary * perf, data = organisation_beta)
+lm(formula = js_score ~ salary + perf + salary:perf, data = organisation_beta)
+```
+:::
+
+::: {.callout-tip .box-yourturn title="Your turn: test two models"}
 Test the following models in Posit Cloud:
 
 $$js\_score = b_0 + b_1 salary + b_2 gender + e$$
@@ -541,6 +992,17 @@ lm_js <- lm(formula = js_score ~ salary + location, data = organisation_beta)
 aov(lm_js)
 ```
 
+::: {.callout-warning .box-mistake title="Common mistake: printing aov() without summary()"}
+Printed on its own, `aov(lm_js)` gives the sums of squares and the degrees of freedom, but no $F$ value and no $p$-value. The omnibus test is printed by `summary(aov(lm_js))`. Each row of this table tests its predictor once the predictors written before it in the formula are taken into account, so write the categorical predictor last, as in `js_score ~ salary + location`.
+
+```{r}
+#| echo: true
+lm_js <- lm(formula = js_score ~ salary + location, data = organisation_beta)
+
+summary(aov(lm_js))
+```
+:::
+
 ### The summary() output
 
 While the function `lm()` computes the model, the function `summary()` displays the results:
@@ -553,6 +1015,81 @@ summary(lm_js)
 ```
 
 The output of the `summary()` function is pretty dense, but let's analyse it line by line.
+
+@fig-l07-summary-map is a reading map of this output: it repeats the output of `summary(lm_js)` printed above and gives, for each block, the question that the block answers.
+
+```{r}
+#| label: fig-l07-summary-map
+#| fig-cap: "A reading map of the summary() output of the model js_score ~ salary + gender: each block of the output (typewriter font) and, under it, the question it answers (bold)."
+#| fig-alt: "The text of the summary() output in a typewriter font, cut into its blocks, with an orange bar along each block and the question that the block answers written in bold under it. Call: which model was fitted? Residuals: are the residuals centred on 0 and symmetric? Coefficients, with the columns Estimate, Std. Error, t value and Pr(>|t|): what is each estimate b, and is it significantly different from 0? Here Estimate is b, Std. Error is SE, t value is t and Pr(>|t|) is p. Residual standard error on 17 degrees of freedom: how spread are the residuals, and what are the degrees of freedom of the t-tests? Multiple R-squared: how much of the variance of the outcome does the model explain? F-statistic: are the predictions better than those of a model without predictors?"
+#| fig-height: 7
+summary_lines <- capture.output(summary(lm_js)) |>
+  str_replace_all("\t", "  ")
+
+find_line <- function(pattern) {
+  str_which(summary_lines, fixed(pattern))[1]
+}
+
+summary_blocks <- tribble(
+  ~first,                  ~last,                   ~question,
+  "Call:",                 "lm(formula",            "Which model was fitted?",
+  "Residuals:",            "Residuals:",            "Are the residuals centred on 0 and symmetric?",
+  "Coefficients:",         "Signif. codes",         "What is each estimate b, and is it significantly different from 0?\n(Estimate = b, Std. Error = SE, t value = t, Pr(>|t|) = p)",
+  "Residual standard error", "Residual standard error", "How spread are the residuals? What are the df of the t-tests?",
+  "Multiple R-squared",    "Multiple R-squared",    "How much of the variance of the outcome does the model explain?",
+  "F-statistic",           "F-statistic",           "Are the predictions better than those of a model without predictors?"
+) |>
+  mutate(
+    from = map_int(first, find_line),
+    to = map_int(last, find_line),
+    to = if_else(first == "Residuals:", from + 2L, to),
+    question_rows = if_else(str_detect(question, "\n"), 2L, 1L)
+  )
+
+# Each output line takes one row; the question of a block takes one or two rows under it.
+# The blank lines of the output are left out.
+summary_rows <- tibble(text = summary_lines, line = seq_along(summary_lines)) |>
+  filter(text != "") |>
+  mutate(block = map_int(line, \(l) which(summary_blocks$from <= l & summary_blocks$to >= l)[1]))
+
+layout_rows <- list()
+row_position <- 0
+for (block_number in seq_len(nrow(summary_blocks))) {
+  block_lines <- summary_rows |>
+    filter(block == block_number)
+  block_start <- row_position + 1
+  layout_rows[[length(layout_rows) + 1]] <- block_lines |>
+    mutate(y = -(row_position + row_number()), kind = "output")
+  row_position <- row_position + nrow(block_lines)
+  question_y <- -(row_position + 0.85 + (summary_blocks$question_rows[block_number] - 1) / 2)
+  layout_rows[[length(layout_rows) + 1]] <- tibble(
+    text = summary_blocks$question[block_number], y = question_y, kind = "question", block = block_number,
+    block_top = -block_start + 0.4, block_bottom = question_y - summary_blocks$question_rows[block_number] / 2 + 0.05
+  )
+  row_position <- row_position + summary_blocks$question_rows[block_number] + 1.1
+}
+layout_rows <- bind_rows(layout_rows)
+
+ggplot() +
+  geom_segment(
+    data = layout_rows |> filter(kind == "question"),
+    aes(x = -1.2, xend = -1.2, y = block_top, yend = block_bottom),
+    colour = book_col("orange"), linewidth = 1
+  ) +
+  geom_text(
+    data = layout_rows |> filter(kind == "output"),
+    aes(x = 0, y = y, label = text),
+    hjust = 0, family = "mono", size = 3
+  ) +
+  geom_text(
+    data = layout_rows |> filter(kind == "question"),
+    aes(x = 0, y = y, label = text),
+    hjust = 0, fontface = "bold", size = 3.4, lineheight = 0.95
+  ) +
+  scale_x_continuous(limits = c(-1.6, 82), expand = expansion(add = 0)) +
+  scale_y_continuous(limits = c(min(layout_rows$y) - 1, 0), expand = expansion(add = 0)) +
+  theme_void()
+```
 
 The first line reminds us of what the actual regression model is:
 
@@ -592,6 +1129,19 @@ Each row in this table refers to one of the coefficients estimated in the regres
 - The third column gives you the $t$-statistic.
 - Finally, the fourth column gives you the actual $p$ value for each of these tests.
 
+```{r}
+#| label: example-gendermale
+#| include: false
+model_gender <- lm(formula = js_score ~ salary + gender, data = organisation_beta)
+
+gender_row <- broom::tidy(model_gender) |>
+  filter(term == "gendermale")
+```
+
+::: {.callout-tip .box-example title="Example: the row gendermale"}
+`gender` is a character variable, so `lm()` treats it as a categorical predictor. It takes the first category in alphabetical order, `female`, as the reference, and the row `gendermale` compares the men with this reference. For the same salary, the job satisfaction predicted for a man is `r format_number(abs(gender_row$estimate))` points lower than for a woman, a difference that is not statistically significant ($`r format_p(gender_row$p.value)`$). In the same way, with `location` the reference is `Australia`, and the rows are `locationFrance` and `locationIreland`.
+:::
+
 The only thing that the previous table doesn't list is the degrees of freedom used in the $t$-test, which is always $N-K-1$ and is listed immediately below, in this line:
 
 ```
@@ -611,6 +1161,16 @@ So in this case, the model performed significantly better than you'd expect by c
 
 To communicate about your statistical analyses in an academic report, the simplest method is to find the values in the `summary()` output and to copy and paste them in the text according to the expected format that we have seen in the previous lectures (@sec-lecture-04 and @sec-lecture-05). However, this task can be long, difficult and lead to human errors. Thankfully, R has additional packages that provide alternative functions to read linear regression models and communicate results. Because there are too many packages, I will focus only on two additional packages: `{performance}` and `{report}`.
 
+::: {.callout-note .box-report title="How to report: a model fitted with lm()"}
+In the format of @sec-lecture-04, the model `js_score ~ salary + gender` of the `summary()` output above gives these sentences:
+
+> The predictions from the alternative model are significantly better than the predictions from a null model (`r report_fit(model_gender)`).
+
+> The effect of $salary$ on $js\_score$ is statistically significant, therefore $H_0$ can be rejected (`r report_estimate(model_gender, "salary")`).
+
+The estimate of salary prints as 0.00 because its unit is 1 euro (`r format_number(coef(model_gender)[["salary"]], 7)` in the output). The 95% confidence interval is not in the `summary()` output: `confint(lm_js)` prints it.
+:::
+
 ### Assumption check with `{performance}`
 
 To install `{performance}` use the usual `install.packages()` function:
@@ -619,11 +1179,13 @@ To install `{performance}` use the usual `install.packages()` function:
 install.packages("performance")
 ```
 
+::: {.callout-tip .box-howto title="In R: check the assumptions of a model"}
 The package `{performance}` will print visualisations allowing to check the model's assumptions (see <https://easystats.github.io/performance/>). To print the performance diagnosis:
 
 1. Load the package `{performance}`.
 2. Create an object containing the output of the function `lm()`.
 3. Use this object as input of the function `check_model()` from the `{performance}` package.
+:::
 
 ```{r}
 #| label: fig-l07-check-model
@@ -647,11 +1209,13 @@ To install `{report}` use the usual `install.packages()` function:
 install.packages("report")
 ```
 
+::: {.callout-tip .box-howto title="In R: write the results of a model"}
 The package `{report}` will print a text containing all the statistics already in sentences ready to be interpreted (see <https://easystats.github.io/report/>). To print the statistical analyses:
 
 1. Load the package `{report}`.
 2. Create an object containing the output of the function `lm()`.
 3. Use this object as input of the function `report()` from the `{report}` package.
+:::
 
 **Note: if used in a Quarto document, the chunk containing `report()` has to include the chunk option `results='asis'`.**
 
@@ -668,7 +1232,7 @@ lm_js <- lm(formula = js_score ~ salary + perf, data = organisation_beta)
 report(lm_js)
 ```
 
-::: {.callout-tip title="Your turn: check and report three models"}
+::: {.callout-tip .box-yourturn title="Your turn: check and report three models"}
 In Posit Cloud, check the `check_model()` and `report()` output from the `lm()` function testing the following models:
 
 $$js\_score = b_0 + b_1 salary + b_2 gender + e$$
@@ -680,10 +1244,340 @@ $$js\_score = b_0 + b_1 salary + b_2 location + b_3 salary * location + e$$
 Suggested time: 5 minutes.
 :::
 
-::: {.callout-note title="Key points"}
+::: {.callout-note .box-keypoints title="Key points"}
 - R is the language and RStudio is the interface used to write it. Write all your code in a script or a Quarto file, because the console does not save anything.
 - A package is installed once with `install.packages()` and loaded every time with `library()`. Functions are called with arguments, and objects are created with `<-`.
 - Data are opened with a function such as `read.csv()`, using the path, the name and the extension of the file, and saved with `write.csv()`.
 - In `lm()`, the `formula` replaces `=` by `~`, adds the predictors with `+` and writes an interaction with `:`.
-- `summary()` gives the residuals, the coefficients, the degrees of freedom, $R^2$ and the $F$-test, while `check_model()` and `report()` help to check the assumptions and to write the results.
+- `summary()` gives the residuals, the coefficients, the degrees of freedom, $R^2$ and the $F$-test. `check_model()` and `report()` help to check the assumptions and to write the results.
+:::
+
+## Exercises {#sec-l07-exercises}
+
+These exercises use R in Posit Cloud (or RStudio on your computer) and the Organisation Beta data (`organisation_beta.csv`), opened as the object `organisation_beta`. Try each one before opening its solution. The first four need only a pen, and the last four need R.
+
+::: {#exr-l07-vocabulary}
+## True or false?
+
+Say whether each statement is true or false, and correct the false ones.
+
+a. R is the interface and RStudio is the language.
+b. Code typed in the console is saved with your project.
+c. A package has to be installed with `install.packages()` at the start of every R session.
+d. In `read.csv("organisation_beta.csv")`, the text between quotes is the name of an object.
+e. The line `x <- 4` prints 4 in the console.
+f. In the `formula` of `lm()`, the `=` sign of the equation is replaced by `~`.
+g. In the `summary()` output, the degrees of freedom of the $t$-tests are given in the line "Residual standard error".
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+a. False. R is the language, and RStudio is the interface used to write R code (the engine and the dashboard).
+b. False. The console does not save anything: write your code in an R script or a Quarto file.
+c. False. A package is installed once, and it is loaded with `library()` in every new R session.
+d. False. A word with quotes is a character value: here, the name of the file. A word without quotes is the name of an object.
+e. False. `x <- 4` creates the object `x` and prints nothing. Type `x` to print its content.
+f. True. The outcome goes on the left of `~` and the predictors on its right.
+g. True. In the output of this chapter, "Residual standard error: `r format_number(sigma(model_gender), 4)` on `r df.residual(model_gender)` degrees of freedom" gives $df = N - K - 1 = `r nrow(organisation_beta)` - 2 - 1 = `r df.residual(model_gender)`$.
+:::
+
+::: {#exr-l07-print}
+## What does this code print?
+
+Without running it, write what each piece of code prints in the console. Then check your answers in R.
+
+1. 
+    ```r
+    a <- 3
+    seq(a, 7)
+    ```
+2. 
+    ```r
+    paste("job", "satisfaction")
+    ```
+3. 
+    ```r
+    x <- 4
+    paste("x", x)
+    ```
+4. 
+    ```r
+    my_scores <- c(5, 7, 9)
+    my_scores
+    ```
+5. 
+    ```r
+    1 + 1 # 2 + 2
+    ```
+6. 
+    ```r
+    y <- 10
+    ```
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+**1.** `a` contains 3, so `seq(a, 7)` is `seq(3, 7)`: the sequence from 3 to 7.
+
+```{r}
+#| echo: true
+a <- 3
+seq(a, 7)
+```
+
+**2.** `paste()` joins the two character values with a space.
+
+```{r}
+#| echo: true
+paste("job", "satisfaction")
+```
+
+**3.** `"x"` with quotes is the character value x, whereas `x` without quotes is the object, which contains 4.
+
+```{r}
+#| echo: true
+x <- 4
+paste("x", x)
+```
+
+**4.** `c()` creates a vector of three numeric values, and the name of the object prints its content.
+
+```{r}
+#| echo: true
+my_scores <- c(5, 7, 9)
+my_scores
+```
+
+**5.** Everything after `#` is a comment, so only `1 + 1` is run.
+
+```{r}
+#| echo: true
+1 + 1 # 2 + 2
+```
+
+**6.** Nothing: an assignment creates the object `y` without printing it. The object appears in the Environment pane.
+
+```{r}
+#| echo: true
+y <- 10
+```
+:::
+
+::: {#exr-l07-fix}
+## Fix the code
+
+Each line below contains one error of a kind that this chapter warns about. Find it and correct the line.
+
+```r
+install.packages(performance)
+library(performance
+my_file_object <- read.csv("C:\path\to\my\organisation_beta.csv")
+my_file_object <- read.csv("C:/path/to/my/organisation_beta")
+lm(formula = js_score = salary + perf, data = organisation_beta)
+lm(formula = js_score ~ salary + perf, data = "organisation_beta")
+```
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+**1.** The name of the package needs quotes. Without them, R looks for an object called `performance`, which does not exist yet, and stops with an error.
+
+**2.** The closing bracket is missing. The console shows the `+` prompt and waits for the end of the command: press `Esc` and add `)`.
+
+**3.** The path uses backward slashes, which R reads as the start of special characters (`'\p' is an unrecognized escape in character string`). Use forward slashes.
+
+**4.** The file extension `.csv` is missing, so R cannot find the file.
+
+**5.** In the formula, `=` must be replaced by `~` (the error is `unexpected '='`).
+
+**6.** `data` expects the data frame object, written without quotes. With quotes, `"organisation_beta"` is only a character value, and `lm()` stops with the error `'data' must be a data.frame, environment, or list`.
+
+The corrected lines are:
+
+```r
+install.packages("performance")
+library(performance)
+my_file_object <- read.csv("C:/path/to/my/organisation_beta.csv")
+my_file_object <- read.csv("C:/path/to/my/organisation_beta.csv")
+```
+
+and, for the two models, the same corrected line, which runs:
+
+```{r}
+#| echo: true
+lm(formula = js_score ~ salary + perf, data = organisation_beta)
+```
+:::
+
+::: {#exr-l07-formula}
+## From words to formulas
+
+Write the `lm()` code that tests each model with the data `organisation_beta`.
+
+1. $H_a$: $js\_score$ increases when $perf$ increases.
+2. $js\_score = b_0 + b_1 salary + b_2 location + e$
+3. $H_{a1}$: $js\_score$ increases when $salary$ increases. $H_{a2}$: $js\_score$ is different for men and women. $H_{a3}$: the effect of $salary$ on $js\_score$ is different for men and women.
+4. In the other direction, write the equation of the model tested by this code:
+
+    ```r
+    lm(formula = js_score ~ perf + gender + perf:gender, data = organisation_beta)
+    ```
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+**1.** One predictor, so one term on the right of `~`.
+
+```{r}
+#| echo: true
+lm(formula = js_score ~ perf, data = organisation_beta)
+```
+
+**2.** Each predictor is added with `+`. Because `location` is categorical with three categories, the output gives one estimate for France and one for Ireland, each compared with Australia.
+
+```{r}
+#| echo: true
+lm(formula = js_score ~ salary + location, data = organisation_beta)
+```
+
+**3.** Two main effects and their interaction, written with `:`. The shortcut `js_score ~ salary * gender` gives the same model.
+
+```{r}
+#| echo: true
+lm(formula = js_score ~ salary + gender + salary:gender, data = organisation_beta)
+```
+
+**4.** $js\_score = b_0 + b_1 perf + b_2 gender + b_3 perf * gender + e$
+:::
+
+::: {#exr-l07-interaction}
+## Fit a model and read its summary
+
+The CEO of Organisation Beta wants to test the model $js\_score = b_0 + b_1 salary + b_2 perf + b_3 salary * perf + e$.
+
+1. Write and run the code that fits the model and prints its results.
+2. In the output, find $R^2$, the $F$ value, its degrees of freedom and its $p$-value.
+3. Which estimates are significantly different from 0 at the 0.05 level?
+4. Write the sentence that reports the fit of the model and the sentence that reports the interaction, in the format of @sec-lecture-04.
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+**1.** The interaction is written with `:`, and `summary()` prints the results.
+
+```{r}
+#| echo: true
+model_interaction <- lm(formula = js_score ~ salary + perf + salary:perf, data = organisation_beta)
+
+summary(model_interaction)
+```
+
+**2.** The last two lines give $R^2 = `r format_number(summary(model_interaction)$r.squared, 4)`$ (Multiple R-squared), $F = `r format_number(summary(model_interaction)$fstatistic[["value"]])`$ with `r summary(model_interaction)$fstatistic[["numdf"]]` and `r summary(model_interaction)$fstatistic[["dendf"]]` degrees of freedom, and its $p$-value, `r format_number(broom::glance(model_interaction)$p.value, 7)`.
+
+**3.** Only the estimates of the intercept and of `salary` have a value lower than 0.05 in the column `Pr(>|t|)`. The estimates of `perf` and of `salary:perf` are not significantly different from 0. The intercept is not used to test a hypothesis.
+
+**4.** The predictions from the alternative model are significantly better than the predictions from a null model (`r report_fit(model_interaction)`). The interaction effect between $salary$ and $perf$ on $js\_score$ is not statistically significant, therefore $H_0$ can't be rejected (`r report_estimate(model_interaction, "salary:perf")`). Because the unit of $salary$ is 1 euro, the estimate and its interval print as 0.00 (with a minus sign when the value is negative): the value in the output is `r format_number(coef(model_interaction)[["salary:perf"]], 8)`.
+:::
+
+::: {#exr-l07-location}
+## A categorical predictor
+
+Fit the model $js\_score = b_0 + b_1 salary + b_2 location + e$ and print its summary.
+
+1. Which rows does the Coefficients block contain? What is the reference category of `location`, and why?
+2. What does the estimate of `locationIreland` mean? Is it significantly different from 0?
+3. Test the hypothesis "$js\_score$ is different according to the $location$ of the employees" with the omnibus test, and report the result.
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+```{r}
+#| echo: true
+model_location <- lm(formula = js_score ~ salary + location, data = organisation_beta)
+
+summary(model_location)
+```
+
+```{r}
+#| label: exercise-location-values
+#| include: false
+ireland_row <- broom::tidy(model_location) |>
+  filter(term == "locationIreland")
+
+location_omnibus <- summary(aov(model_location))[[1]]
+location_row <- location_omnibus[trimws(rownames(location_omnibus)) == "location", ]
+```
+
+**1.** The rows are `(Intercept)`, `salary`, `locationFrance` and `locationIreland`. The reference category is `Australia`, the first of the three categories in alphabetical order, so it has no row of its own: France and Ireland are each compared with it.
+
+**2.** For the same salary, the job satisfaction predicted for an employee in Ireland is `r format_number(ireland_row$estimate)` points higher than for an employee in Australia. This difference is not significantly different from 0 ($`r format_p(ireland_row$p.value)`$).
+
+**3.** The two rows compare the categories two by two, so the hypothesis about `location` as a whole is tested with the omnibus test, printed by `summary(aov())`. `location` is written last in the formula, so its row tests location for the same salary.
+
+```{r}
+#| echo: true
+summary(aov(model_location))
+```
+
+The effect of $location$ on $js\_score$ is not statistically significant, therefore $H_0$ can't be rejected ($F(`r location_row$Df`, `r df.residual(model_location)`) = `r format_number(location_row[["F value"]])`$, $`r format_p(location_row[["Pr(>F)"]])`$).
+:::
+
+::: {#exr-l07-check-report}
+## Check the assumptions and report
+
+This exercise does the first model of the last "Your turn" box: $js\_score = b_0 + b_1 salary + b_2 gender + e$.
+
+1. Write the code that checks the assumptions of the model with `{performance}` and writes its results with `{report}`.
+2. Do the diagnostic plots show a problem with the assumptions of the model?
+3. Compare the text of `report()` with the sentences of the box "How to report: a model fitted with lm()". Which values are the same? What does `report()` add?
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+**1.** Load the two packages, store the model in an object, and give this object to `check_model()` and to `report()`. In a Quarto document, the chunk with `report()` needs the option `results='asis'`.
+
+```{r}
+#| echo: true
+#| fig-width: 9
+#| fig-height: 9
+library(performance)
+library(report)
+
+model_gender <- lm(formula = js_score ~ salary + gender, data = organisation_beta)
+
+check_model(model_gender)
+```
+
+```{r}
+#| echo: true
+#| results: asis
+report(model_gender)
+```
+
+**2.** No panel shows a clear problem. The lines predicted by the model resemble the observed data, the reference line of Linearity stays close to 0 and the one of Homogeneity of Variance rises and falls a little without a clear trend, all the points are inside the contour lines of Influential Observations, the VIF of both predictors is low (below 5), and the dots of Normality of Residuals fall close to the line. With only `r nrow(organisation_beta)` employees, small bumps in these lines are expected.
+
+**3.** The values of the fit are the same: $R^2$ = `r format_number(summary(model_gender)$r.squared)`, $F(`r summary(model_gender)$fstatistic[["numdf"]]`, `r df.residual(model_gender)`)$ = `r format_number(summary(model_gender)$fstatistic[["value"]])` and $`r format_p(broom::glance(model_gender)$p.value)`$, and so are the estimate of salary, its 95% confidence interval and its $t(`r df.residual(model_gender)`)$. `report()` adds the adjusted $R^2$, a sentence on the intercept, the effect of gender and the standardised estimates (Std. beta). It also writes small numbers in scientific notation (`r formatC(coef(model_gender)[["salary"]], format = "e", digits = 2)` for `r format_number(coef(model_gender)[["salary"]], 5)`) and $p$-values with a leading zero ($p = `r format_number(gender_row$p.value, 3)`$), which APA style writes $`r format_p(gender_row$p.value)`$: check its text before you copy it into a paper.
+:::
+
+::: {#exr-l07-own-data}
+## Your own research
+
+Take the data of your own research project, or of a paper that you know well.
+
+1. Open the data in R with code, and save this code in an R script or a Quarto file.
+2. Write each of your hypotheses, then the equation of the model that tests them, then its `formula`.
+3. Fit the model with `lm()` and read its `summary()`: which estimate tests which hypothesis?
+4. Check the assumptions with `check_model()` and write the results with `report()`. Rewrite the text of `report()` in the format of @sec-lecture-04.
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+The answer depends on your data, but the code always has the same structure. Replace the path, the name of the object, the variables and the formula by your own:
+
+```r
+library(performance)
+library(report)
+
+my_data <- read.csv("C:/path/to/my/my_data.csv")
+
+my_model <- lm(formula = my_outcome ~ my_predictor_1 + my_predictor_2, data = my_data)
+
+summary(my_model)
+check_model(my_model)
+report(my_model)
+```
+
+Check that each hypothesis matches one row of the Coefficients block (or, for a categorical predictor with three or more categories, the row of this predictor in `summary(aov(my_model))`, with the predictor written last in the formula), that the predictors are of the right type in `str(my_data)`, and that the path, the name and the extension of the file are right if `read.csv()` stops with an error.
 :::

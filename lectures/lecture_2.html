@@ -95,7 +95,7 @@
     code span.vs { color: #cc9393; } /* VerbatimString */
     code span.wa { color: #7f9f7f; font-weight: bold; } /* Warning */
   </style>
-  <link rel="stylesheet" href="lecture_2_files/libs/revealjs/dist/theme/quarto-a422b0ec4d33f76272dd6bd1314f9877.css">
+  <link rel="stylesheet" href="lecture_2_files/libs/revealjs/dist/theme/quarto-18f0c6ed0e11f0c3835f2dac24bcb4fd.css">
   <link href="lecture_2_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="lecture_2_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="lecture_2_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -250,8 +250,8 @@ Damien Dupré | DCU Business School
 </div>
 </section>
 <section>
-<section id="model-representation-in-the-method-section-of-academic-reseach-paper" class="title-slide slide level1 center">
-<h1>1. Model Representation in the Method Section of Academic Reseach Paper</h1>
+<section id="model-representation-in-the-method-section" class="title-slide slide level1 center">
+<h1>1. Model Representation in the Method Section</h1>
 
 </section>
 <section id="method-section-in-academic-papers" class="slide level2 smaller">
@@ -388,7 +388,7 @@ Damien Dupré | DCU Business School
 </section>
 <section id="structure-of-models" class="slide level2">
 <h2>Structure of Models</h2>
-<p>Distinguish square and circles</p>
+<p>Distinguish squares and circles</p>
 <ul>
 <li><strong>squares</strong> are actual <strong>measures/items</strong></li>
 <li><strong>circles</strong> are <strong>latent variables</strong> related to measures/items</li>
@@ -399,6 +399,99 @@ Damien Dupré | DCU Business School
 <li><span class="math inline">\(Job\,Satisfaction\)</span> is a latent variable with several questions so it’s a circle.</li>
 </ul>
 <p>Items used for latent variables can be omitted in a model, variables are the most important.</p>
+</section>
+<section id="squares-versus-circles" class="slide level2">
+<h2>Squares versus Circles</h2>
+<div class="quarto-layout-panel" data-layout="[1,1]">
+<div class="quarto-layout-row">
+<div id="first-column" class="center quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<p><strong>Square: a directly measured variable</strong></p>
+<div class="cell" data-fig-height="3" data-fig-width="5" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<svg width="480" height="288" viewbox="0.00 0.00 62.00 44.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 40)">
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-40 58,-40 58,4 -4,4"></polygon>
+<!-- Salary -->
+<g id="node1" class="node">
+<title>Salary</title>
+<polygon fill="none" stroke="black" points="54,-36 0,-36 0,0 54,0 54,-36"></polygon>
+<text text-anchor="middle" x="27" y="-13.8" font-family="Times,serif" font-size="14.00">Salary</text>
+</g>
+</g>
+</svg>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>One variable, one measure: the value is observed directly (£, €, $)</p>
+</div>
+<div id="second-column" class="center quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<p><strong>Circle: a latent variable measured by items</strong></p>
+<div class="cell" data-fig-height="3" data-fig-width="5" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<svg width="480" height="288" viewbox="0.00 0.00 242.92 152.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 148)">
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-148 238.92,-148 238.92,4 -4,4"></polygon>
+<!-- Job Satisfaction -->
+<g id="node1" class="node">
+<title>Job Satisfaction</title>
+<ellipse fill="none" stroke="black" cx="72.46" cy="-72" rx="72.42" ry="18"></ellipse>
+<text text-anchor="middle" x="72.46" y="-67.8" font-family="Times,serif" font-size="14.00">Job Satisfaction</text>
+</g>
+<!-- Item 1 -->
+<g id="node2" class="node">
+<title>Item 1</title>
+<polygon fill="none" stroke="black" points="234.92,-144 180.92,-144 180.92,-108 234.92,-108 234.92,-144"></polygon>
+<text text-anchor="middle" x="207.92" y="-121.8" font-family="Times,serif" font-size="14.00">Item 1</text>
+</g>
+<!-- Job Satisfaction&#45;&gt;Item 1 -->
+<g id="edge1" class="edge">
+<title>Job Satisfaction-&gt;Item 1</title>
+<path fill="none" stroke="black" d="M111.34,-87.33C130.24,-94.98 152.97,-104.17 171.51,-111.67"></path>
+<polygon fill="black" stroke="black" points="170.21,-114.92 180.79,-115.43 172.83,-108.43 170.21,-114.92"></polygon>
+</g>
+<!-- Item 2 -->
+<g id="node3" class="node">
+<title>Item 2</title>
+<polygon fill="none" stroke="black" points="234.92,-90 180.92,-90 180.92,-54 234.92,-54 234.92,-90"></polygon>
+<text text-anchor="middle" x="207.92" y="-67.8" font-family="Times,serif" font-size="14.00">Item 2</text>
+</g>
+<!-- Job Satisfaction&#45;&gt;Item 2 -->
+<g id="edge2" class="edge">
+<title>Job Satisfaction-&gt;Item 2</title>
+<path fill="none" stroke="black" d="M145.27,-72C154.1,-72 162.82,-72 170.79,-72"></path>
+<polygon fill="black" stroke="black" points="170.79,-75.5 180.79,-72 170.79,-68.5 170.79,-75.5"></polygon>
+</g>
+<!-- Item 3 -->
+<g id="node4" class="node">
+<title>Item 3</title>
+<polygon fill="none" stroke="black" points="234.92,-36 180.92,-36 180.92,0 234.92,0 234.92,-36"></polygon>
+<text text-anchor="middle" x="207.92" y="-13.8" font-family="Times,serif" font-size="14.00">Item 3</text>
+</g>
+<!-- Job Satisfaction&#45;&gt;Item 3 -->
+<g id="edge3" class="edge">
+<title>Job Satisfaction-&gt;Item 3</title>
+<path fill="none" stroke="black" d="M111.34,-56.67C130.24,-49.02 152.97,-39.83 171.51,-32.33"></path>
+<polygon fill="black" stroke="black" points="172.83,-35.57 180.79,-28.57 170.21,-29.08 172.83,-35.57"></polygon>
+</g>
+</g>
+</svg>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>One variable, several items: the variable is inferred from the answers to the questions</p>
+</div>
+</div>
+</div>
 </section>
 <section id="main-effect-relationship" class="slide level2">
 <h2>Main Effect Relationship</h2>
@@ -495,7 +588,7 @@ Damien Dupré | DCU Business School
 </section>
 <section id="interaction-effect-relationship" class="slide level2">
 <h2>Interaction Effect Relationship</h2>
-<p>An interaction means that <strong>the effect of a Predictor 1 on the Outcome variable will be different according the possibilities of a Predictor 2</strong> (also called Moderation).</p>
+<p>An interaction means that <strong>the effect of a Predictor 1 on the Outcome variable will be different according to the possibilities of a Predictor 2</strong> (also called Moderation).</p>
 <div class="quarto-layout-panel" data-layout="[1,1]">
 <div class="quarto-layout-row">
 <div id="first-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
@@ -617,28 +710,288 @@ Damien Dupré | DCU Business School
 </div>
 </div>
 </div>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Hypotheses tested</strong></p>
+</div>
+<div class="callout-content">
 <p>This model tests three hypotheses: 2 main effects and 1 interaction effect</p>
+</div>
+</div>
+</div>
 </section>
 <section id="types-of-model" class="slide level2 smaller">
 <h2>Types of Model</h2>
-<h3 id="simple-model">Simple Model</h3>
+<div class="panel-tabset">
+<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">Simple Model</a></li><li><a href="#tabset-1-2">Mediation Model</a></li><li><a href="#tabset-1-3">Structural Equation Model</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1">
+<div class="quarto-layout-panel" data-layout="[1,1]">
+<div class="quarto-layout-row">
+<div id="first-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
 <ul>
 <li>One or more predictors</li>
 <li>Only one outcome</li>
 <li>Made of main or/and interaction effects</li>
 </ul>
-<h3 id="mediation-model-simple-or-moderated">Mediation Model (simple or moderated)</h3>
+</div>
+<div id="second-column" class="center quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="cell" data-fig-height="2" data-fig-width="4" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<svg width="384" height="192" viewbox="0.00 0.00 189.13 98.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 94)">
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-94 185.13,-94 185.13,4 -4,4"></polygon>
+<!-- Predictor 1 -->
+<g id="node1" class="node">
+<title>Predictor 1</title>
+<polygon fill="none" stroke="black" points="77.73,-90 0.09,-90 0.09,-54 77.73,-54 77.73,-90"></polygon>
+<text text-anchor="middle" x="38.91" y="-67.8" font-family="Times,serif" font-size="14.00">Predictor 1</text>
+</g>
+<!-- Outcome -->
+<g id="node2" class="node">
+<title>Outcome</title>
+<polygon fill="none" stroke="black" points="181.29,-63 113.66,-63 113.66,-27 181.29,-27 181.29,-63"></polygon>
+<text text-anchor="middle" x="147.48" y="-40.8" font-family="Times,serif" font-size="14.00">Outcome</text>
+</g>
+<!-- Predictor 1&#45;&gt;Outcome -->
+<g id="edge1" class="edge">
+<title>Predictor 1-&gt;Outcome</title>
+<path fill="none" stroke="black" d="M77.78,-62.4C86.21,-60.27 95.2,-57.99 103.8,-55.81"></path>
+<polygon fill="black" stroke="black" points="104.84,-59.16 113.67,-53.31 103.12,-52.37 104.84,-59.16"></polygon>
+</g>
+<!-- Predictor 2 -->
+<g id="node3" class="node">
+<title>Predictor 2</title>
+<polygon fill="none" stroke="black" points="77.73,-36 0.09,-36 0.09,0 77.73,0 77.73,-36"></polygon>
+<text text-anchor="middle" x="38.91" y="-13.8" font-family="Times,serif" font-size="14.00">Predictor 2</text>
+</g>
+<!-- Predictor 2&#45;&gt;Outcome -->
+<g id="edge2" class="edge">
+<title>Predictor 2-&gt;Outcome</title>
+<path fill="none" stroke="black" d="M77.78,-27.6C86.21,-29.73 95.2,-32.01 103.8,-34.19"></path>
+<polygon fill="black" stroke="black" points="103.12,-37.63 113.67,-36.69 104.84,-30.84 103.12,-37.63"></polygon>
+</g>
+</g>
+</svg>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-1-2">
+<div class="quarto-layout-panel" data-layout="[1,1]">
+<div class="quarto-layout-row">
+<div id="first-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
 <ul>
-<li>At least 2 predictors (one call Mediator)</li>
+<li>At least 2 predictors (one called Mediator)</li>
 <li>Only one outcome</li>
 <li>Made of main effects only for simple mediation / main and interaction effects for moderated mediation</li>
 </ul>
-<h3 id="structural-equation-model-sem">Structural Equation Model (SEM)</h3>
+</div>
+<div id="second-column" class="center quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="cell" data-fig-height="2" data-fig-width="4" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<svg width="384" height="192" viewbox="0.00 0.00 281.95 67.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 63)">
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-63 277.95,-63 277.95,4 -4,4"></polygon>
+<!-- Predictor -->
+<g id="node1" class="node">
+<title>Predictor</title>
+<polygon fill="none" stroke="black" points="67.48,-36 -0.16,-36 -0.16,0 67.48,0 67.48,-36"></polygon>
+<text text-anchor="middle" x="33.66" y="-13.8" font-family="Times,serif" font-size="14.00">Predictor</text>
+</g>
+<!-- Mediator -->
+<g id="node2" class="node">
+<title>Mediator</title>
+<polygon fill="none" stroke="black" points="170.79,-59 103.16,-59 103.16,-23 170.79,-23 170.79,-59"></polygon>
+<text text-anchor="middle" x="136.98" y="-36.8" font-family="Times,serif" font-size="14.00">Mediator</text>
+</g>
+<!-- Predictor&#45;&gt;Mediator -->
+<g id="edge1" class="edge">
+<title>Predictor-&gt;Mediator</title>
+<path fill="none" stroke="black" d="M67.55,-25.47C75.78,-27.33 84.71,-29.36 93.33,-31.32"></path>
+<polygon fill="black" stroke="black" points="92.72,-34.77 103.25,-33.57 94.27,-27.94 92.72,-34.77"></polygon>
+</g>
+<!-- Outcome -->
+<g id="node3" class="node">
+<title>Outcome</title>
+<polygon fill="none" stroke="black" points="274.11,-36 206.48,-36 206.48,0 274.11,0 274.11,-36"></polygon>
+<text text-anchor="middle" x="240.29" y="-13.8" font-family="Times,serif" font-size="14.00">Outcome</text>
+</g>
+<!-- Predictor&#45;&gt;Outcome -->
+<g id="edge3" class="edge">
+<title>Predictor-&gt;Outcome</title>
+<path fill="none" stroke="black" d="M67.47,-15.7C78.82,-15.01 91.62,-14.34 103.32,-14 133.22,-13.13 140.73,-13.13 170.63,-14 178.95,-14.24 187.82,-14.65 196.34,-15.11"></path>
+<polygon fill="black" stroke="black" points="196.3,-18.62 206.48,-15.7 196.7,-11.63 196.3,-18.62"></polygon>
+</g>
+<!-- Mediator&#45;&gt;Outcome -->
+<g id="edge2" class="edge">
+<title>Mediator-&gt;Outcome</title>
+<path fill="none" stroke="black" d="M170.87,-33.53C179.09,-31.67 188.03,-29.64 196.65,-27.68"></path>
+<polygon fill="black" stroke="black" points="197.59,-31.06 206.56,-25.43 196.04,-24.23 197.59,-31.06"></polygon>
+</g>
+</g>
+</svg>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-1-3">
+<div class="quarto-layout-panel" data-layout="[1,1]">
+<div class="quarto-layout-row">
+<div id="first-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
 <ul>
 <li>At least 2 predictors (usually latent variables)</li>
 <li>One or more outcome</li>
 <li>Made of main or/and interaction effects</li>
 </ul>
+</div>
+<div id="second-column" class="center quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="cell" data-fig-height="2.5" data-fig-width="4" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<svg width="384" height="240" viewbox="0.00 0.00 344.41 254.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 250)">
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-250 340.41,-250 340.41,4 -4,4"></polygon>
+<!-- Latent\nPredictor 1 -->
+<g id="node1" class="node">
+<title>Latent\nPredictor 1</title>
+<ellipse fill="none" stroke="black" cx="55.03" cy="-181" rx="55.05" ry="29.33"></ellipse>
+<text text-anchor="middle" x="55.03" y="-185.2" font-family="Times,serif" font-size="14.00">Latent</text>
+<text text-anchor="middle" x="55.03" y="-168.4" font-family="Times,serif" font-size="14.00">Predictor 1</text>
+</g>
+<!-- Latent\nOutcome -->
+<g id="node3" class="node">
+<title>Latent\nOutcome</title>
+<ellipse fill="none" stroke="black" cx="193.65" cy="-123" rx="47.7" ry="29.33"></ellipse>
+<text text-anchor="middle" x="193.65" y="-127.2" font-family="Times,serif" font-size="14.00">Latent</text>
+<text text-anchor="middle" x="193.65" y="-110.4" font-family="Times,serif" font-size="14.00">Outcome</text>
+</g>
+<!-- Latent\nPredictor 1&#45;&gt;Latent\nOutcome -->
+<g id="edge7" class="edge">
+<title>Latent\nPredictor 1-&gt;Latent\nOutcome</title>
+<path fill="none" stroke="black" d="M98.51,-162.97C113.03,-156.8 129.38,-149.86 144.33,-143.52"></path>
+<polygon fill="black" stroke="black" points="146.08,-146.57 153.91,-139.44 143.34,-140.13 146.08,-146.57"></polygon>
+</g>
+<!-- Item 1a -->
+<g id="node4" class="node">
+<title>Item 1a</title>
+<polygon fill="none" stroke="black" points="223.02,-246 164.28,-246 164.28,-210 223.02,-210 223.02,-246"></polygon>
+<text text-anchor="middle" x="193.65" y="-223.8" font-family="Times,serif" font-size="14.00">Item 1a</text>
+</g>
+<!-- Latent\nPredictor 1&#45;&gt;Item 1a -->
+<g id="edge1" class="edge">
+<title>Latent\nPredictor 1-&gt;Item 1a</title>
+<path fill="none" stroke="black" d="M101.9,-196.78C118.98,-202.66 138.16,-209.25 154.47,-214.87"></path>
+<polygon fill="black" stroke="black" points="153.62,-218.27 164.21,-218.22 155.9,-211.65 153.62,-218.27"></polygon>
+</g>
+<!-- Item 1b -->
+<g id="node5" class="node">
+<title>Item 1b</title>
+<polygon fill="none" stroke="black" points="223.31,-199 164,-199 164,-163 223.31,-163 223.31,-199"></polygon>
+<text text-anchor="middle" x="193.65" y="-176.8" font-family="Times,serif" font-size="14.00">Item 1b</text>
+</g>
+<!-- Latent\nPredictor 1&#45;&gt;Item 1b -->
+<g id="edge2" class="edge">
+<title>Latent\nPredictor 1-&gt;Item 1b</title>
+<path fill="none" stroke="black" d="M110.42,-181C124.86,-181 140.17,-181 153.62,-181"></path>
+<polygon fill="black" stroke="black" points="153.95,-184.5 163.95,-181 153.95,-177.5 153.95,-184.5"></polygon>
+</g>
+<!-- Latent\nPredictor 2 -->
+<g id="node2" class="node">
+<title>Latent\nPredictor 2</title>
+<ellipse fill="none" stroke="black" cx="55.03" cy="-65" rx="55.05" ry="29.33"></ellipse>
+<text text-anchor="middle" x="55.03" y="-69.2" font-family="Times,serif" font-size="14.00">Latent</text>
+<text text-anchor="middle" x="55.03" y="-52.4" font-family="Times,serif" font-size="14.00">Predictor 2</text>
+</g>
+<!-- Latent\nPredictor 2&#45;&gt;Latent\nOutcome -->
+<g id="edge8" class="edge">
+<title>Latent\nPredictor 2-&gt;Latent\nOutcome</title>
+<path fill="none" stroke="black" d="M98.51,-83.03C113.03,-89.2 129.38,-96.14 144.33,-102.48"></path>
+<polygon fill="black" stroke="black" points="143.34,-105.87 153.91,-106.56 146.08,-99.43 143.34,-105.87"></polygon>
+</g>
+<!-- Item 2a -->
+<g id="node6" class="node">
+<title>Item 2a</title>
+<polygon fill="none" stroke="black" points="223.02,-83 164.28,-83 164.28,-47 223.02,-47 223.02,-83"></polygon>
+<text text-anchor="middle" x="193.65" y="-60.8" font-family="Times,serif" font-size="14.00">Item 2a</text>
+</g>
+<!-- Latent\nPredictor 2&#45;&gt;Item 2a -->
+<g id="edge3" class="edge">
+<title>Latent\nPredictor 2-&gt;Item 2a</title>
+<path fill="none" stroke="black" d="M110.42,-65C124.98,-65 140.42,-65 153.95,-65"></path>
+<polygon fill="black" stroke="black" points="154.33,-68.5 164.33,-65 154.33,-61.5 154.33,-68.5"></polygon>
+</g>
+<!-- Item 2b -->
+<g id="node7" class="node">
+<title>Item 2b</title>
+<polygon fill="none" stroke="black" points="223.31,-36 164,-36 164,0 223.31,0 223.31,-36"></polygon>
+<text text-anchor="middle" x="193.65" y="-13.8" font-family="Times,serif" font-size="14.00">Item 2b</text>
+</g>
+<!-- Latent\nPredictor 2&#45;&gt;Item 2b -->
+<g id="edge4" class="edge">
+<title>Latent\nPredictor 2-&gt;Item 2b</title>
+<path fill="none" stroke="black" d="M101.9,-49.22C118.85,-43.39 137.87,-36.85 154.1,-31.26"></path>
+<polygon fill="black" stroke="black" points="155.49,-34.49 163.81,-27.92 153.21,-27.87 155.49,-34.49"></polygon>
+</g>
+<!-- Item 3a -->
+<g id="node8" class="node">
+<title>Item 3a</title>
+<polygon fill="none" stroke="black" points="336.2,-164 277.46,-164 277.46,-128 336.2,-128 336.2,-164"></polygon>
+<text text-anchor="middle" x="306.83" y="-141.8" font-family="Times,serif" font-size="14.00">Item 3a</text>
+</g>
+<!-- Latent\nOutcome&#45;&gt;Item 3a -->
+<g id="edge5" class="edge">
+<title>Latent\nOutcome-&gt;Item 3a</title>
+<path fill="none" stroke="black" d="M238.91,-132.16C248.33,-134.1 258.19,-136.15 267.37,-138.04"></path>
+<polygon fill="black" stroke="black" points="266.88,-141.52 277.38,-140.11 268.3,-134.66 266.88,-141.52"></polygon>
+</g>
+<!-- Item 3b -->
+<g id="node9" class="node">
+<title>Item 3b</title>
+<polygon fill="none" stroke="black" points="336.48,-117 277.17,-117 277.17,-81 336.48,-81 336.48,-117"></polygon>
+<text text-anchor="middle" x="306.83" y="-94.8" font-family="Times,serif" font-size="14.00">Item 3b</text>
+</g>
+<!-- Latent\nOutcome&#45;&gt;Item 3b -->
+<g id="edge6" class="edge">
+<title>Latent\nOutcome-&gt;Item 3b</title>
+<path fill="none" stroke="black" d="M238.91,-113.45C248.24,-111.43 258.01,-109.32 267.11,-107.36"></path>
+<polygon fill="black" stroke="black" points="268.01,-110.74 277.05,-105.21 266.54,-103.9 268.01,-110.74"></polygon>
+</g>
+</g>
+</svg>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 </section>
 <section id="simple-model-1" class="slide level2">
 <h2>Simple Model</h2>
@@ -799,7 +1152,7 @@ Damien Dupré | DCU Business School
 <li>but it requires 2 main effects</li>
 </ul>
 </section>
-<section id="structural-equation-model" class="slide level2">
+<section id="structural-equation-model-1" class="slide level2">
 <h2>Structural Equation Model</h2>
 <div class="quarto-layout-panel" data-layout="[1,1]">
 <div class="quarto-layout-row">
@@ -1105,25 +1458,8 @@ Damien Dupré | DCU Business School
 </section>
 <section id="representing-a-model" class="slide level2">
 <h2>Representing a Model</h2>
-<div class="quarto-layout-panel" data-layout="[0.6,0.4]">
-<div class="quarto-layout-row">
-<div id="first-column" class="quarto-layout-cell" style="flex-basis: 60.0%;justify-content: flex-start;">
-<p>The representation of a model can easily be done directly in a manuscript written with Microsoft Words</p>
-<p>For more details, is it also possible to draw the model in Microsoft PowerPoint and to copy-paste it in Microsoft Words.</p>
-</div>
-<div id="second-column" class="quarto-layout-cell" style="flex-basis: 40.0%;justify-content: flex-start;">
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="https://www.myofficetricks.com/wp-content/uploads/2020/09/myofficetricks.com_2020-09-23_01-58-57.gif"></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
+<p>The representation of a model can easily be done directly in a manuscript written with Microsoft Word</p>
+<p>For more details, it is also possible to draw the model in Microsoft PowerPoint and to copy-paste it in Microsoft Word.</p>
 <div class="callout callout-important callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
@@ -1134,7 +1470,7 @@ Damien Dupré | DCU Business School
 </div>
 <div class="callout-content">
 <ul>
-<li>Do NOT fill boxes with any color, use only black and white colors.</li>
+<li>Do NOT fill boxes with any colour, use only black and white colours.</li>
 <li>Use line arrow, no thick arrows allowed.</li>
 </ul>
 </div>
@@ -1143,81 +1479,50 @@ Damien Dupré | DCU Business School
 </section>
 <section id="representing-a-model-1" class="slide level2">
 <h2>Representing a Model</h2>
-<p>Beside MS Words and PowerPoint, there are some ways to draw models in a nicer way.</p>
+<p>Besides MS Word and PowerPoint, there are some ways to draw models in a nicer way.</p>
 <p><strong>Flowchart Software/Websites</strong></p>
-<p>There are many of them and google would find them very quickly but to my knowledge, <a href="https://www.diagrams.net/" class="uri">https://www.diagrams.net/</a> is free, easy to use and very efficient.</p>
+<p>There are many of them and google would find them very quickly but to my knowledge, <a href="https://www.drawio.com//" class="uri">https://www.drawio.com//</a> is free, easy to use and very efficient.</p>
+<p><strong>Flowchart Coding Languages</strong></p>
+<p>Going further into the details of how to design academic models, flowchart coding languages are the final step.</p>
+<p>Instead of using a GUI, it is possible to draw models from a couple of lines of code, which is faster after practising a lot and while using AI.</p>
 </section>
 <section id="representing-a-model-2" class="slide level2">
 <h2>Representing a Model</h2>
-<p><strong>Flowchart Coding Languages</strong></p>
-<p>Going further into details of how to design academic models, flowchart coding languages are the ultimate steps.</p>
-<p>Instead of using a GUI, it is possible to draw models from a couple of lines of code which is faster after practising a lot.</p>
-<p>To my knowledge, the main flowchart coding language tool implementing the <a href="https://en.wikipedia.org/wiki/DOT_(graph_description_language)">DOT style</a> are:</p>
+<p>The oldest is the <strong>DOT language</strong> (used by <a href="https://graphviz.org/">Graphviz</a>), which dates back to the early 1990s and can be tried online with <a href="https://viz-js.com/">viz-js</a>.</p>
+<p>To my knowledge, the most used is <strong>Mermaid</strong> (<a href="https://mermaid.js.org/">mermaid-js</a>), created in 2014 and displayed natively by GitHub. It has its own syntax (not DOT), can be tried online with the <a href="https://mermaid.live/">Mermaid Live Editor</a> and is the one used in this module.</p>
+<p>All Mermaid rules are in:</p>
 <ul>
-<li><a href="http://mermaid-js.github.io/mermaid/##/">mermaid-js</a></li>
-<li><a href="http://viz-js.com/">viz-js</a></li>
-<li><a href="https://www.nomnoml.com/">nomnoml</a></li>
+<li><a href="https://mermaid.js.org/syntax/flowchart.html" class="uri">https://mermaid.js.org/syntax/flowchart.html</a></li>
+<li><a href="https://mermaid.js.org/syntax/block.html" class="uri">https://mermaid.js.org/syntax/block.html</a></li>
 </ul>
-<p><a href="https://modeling-languages.com/text-uml-tools-complete-list/">But many more alternative can be used</a></p>
+<p>Other tools such as <a href="https://www.nomnoml.com/">nomnoml</a> also have their own syntax. <a href="https://modeling-languages.com/text-uml-tools-complete-list/">However, many more alternatives can be used</a></p>
 </section>
-<section id="dot-language" class="slide level2">
-<h2>DOT Language</h2>
-<p>It is easy to start by following these rules:</p>
+<section id="mermaid-language" class="slide level2">
+<h2>Mermaid Language</h2>
 <ul>
-<li>Variable names must not include space between words</li>
-<li>Arrows are represented by the characters - and &gt;</li>
+<li>Start with <code>flowchart LR</code> (left to right)</li>
+<li>Write each variable as <code>P1[Predictor 1]</code>, with <code>[ ]</code> for a square and <code>(( ))</code> for a circle</li>
+<li>Draw an arrow with <code>--&gt;</code></li>
 </ul>
 <div class="quarto-layout-panel" data-layout="[1,1]">
 <div class="quarto-layout-row">
 <div id="first-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
 <p>What you type:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource dot number-lines code-with-copy"><code class="sourceCode dot"><span id="cb1-1"><a href=""></a><span class="kw">digraph</span> <span class="ot">{</span></span>
-<span id="cb1-2"><a href=""></a><span class="co">  </span><span class="st">"Predictor 1"</span><span class="co"> </span><span class="ot">-&gt;</span><span class="co"> </span><span class="st">"Outcome"</span></span>
-<span id="cb1-3"><a href=""></a><span class="co">  </span><span class="st">"Predictor 2"</span><span class="co"> </span><span class="ot">-&gt;</span><span class="co"> </span><span class="st">"Outcome"</span></span>
-<span id="cb1-4"><a href=""></a><span class="ot">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>flowchart LR
+  P1[Predictor 1] --&gt; O[Outcome]
+  P2[Predictor 2] --&gt; O</code></pre>
 </div>
 <div id="second-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
 <p>What you get:</p>
-<div class="cell" data-fig-height="2" data-fig-width="5" data-layout-align="default">
+<div class="cell" data-reveal="true" data-fig-width="4" data-layout-align="default">
 <div class="cell-output-display">
 <div>
 <p></p><figure class=""><p></p>
 <div>
-<svg width="480" height="192" viewbox="0.00 0.00 240.35 116.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 112)">
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-112 236.35,-112 236.35,4 -4,4"></polygon>
-<!-- Predictor 1 -->
-<g id="node1" class="node">
-<title>Predictor 1</title>
-<ellipse fill="none" stroke="black" cx="53.68" cy="-90" rx="53.85" ry="18"></ellipse>
-<text text-anchor="middle" x="53.68" y="-85.8" font-family="Times,serif" font-size="14.00">Predictor 1</text>
-</g>
-<!-- Outcome -->
-<g id="node2" class="node">
-<title>Outcome</title>
-<ellipse fill="none" stroke="black" cx="115.68" cy="-18" rx="46.37" ry="18"></ellipse>
-<text text-anchor="middle" x="115.68" y="-13.8" font-family="Times,serif" font-size="14.00">Outcome</text>
-</g>
-<!-- Predictor 1&#45;&gt;Outcome -->
-<g id="edge1" class="edge">
-<title>Predictor 1-&gt;Outcome</title>
-<path fill="none" stroke="black" d="M68.37,-72.41C76.09,-63.69 85.7,-52.85 94.24,-43.21"></path>
-<polygon fill="black" stroke="black" points="97.08,-45.28 101.09,-35.47 91.84,-40.64 97.08,-45.28"></polygon>
-</g>
-<!-- Predictor 2 -->
-<g id="node3" class="node">
-<title>Predictor 2</title>
-<ellipse fill="none" stroke="black" cx="178.68" cy="-90" rx="53.85" ry="18"></ellipse>
-<text text-anchor="middle" x="178.68" y="-85.8" font-family="Times,serif" font-size="14.00">Predictor 2</text>
-</g>
-<!-- Predictor 2&#45;&gt;Outcome -->
-<g id="edge2" class="edge">
-<title>Predictor 2-&gt;Outcome</title>
-<path fill="none" stroke="black" d="M163.75,-72.41C155.82,-63.61 145.94,-52.63 137.2,-42.92"></path>
-<polygon fill="black" stroke="black" points="139.79,-40.56 130.5,-35.47 134.59,-45.24 139.79,-40.56"></polygon>
-</g>
-</g>
-</svg>
+<pre class="mermaid mermaid-js">flowchart LR
+  P1[Predictor 1] --&gt; O[Outcome]
+  P2[Predictor 2] --&gt; O
+</pre>
 </div>
 <p></p></figure><p></p>
 </div>
@@ -1227,61 +1532,39 @@ Damien Dupré | DCU Business School
 </div>
 </div>
 </section>
-<section id="dot-language-1" class="slide level2">
-<h2>DOT Language</h2>
-<p>To modify the orientation and the shape of the box, add the following options:</p>
+<section id="mermaid-language-1" class="slide level2">
+<h2>Mermaid Language</h2>
+<p>To get straight arrows, place each variable yourself with a block diagram:</p>
+<ul>
+<li><code>block-beta</code> starts a block diagram</li>
+<li><code>columns 3</code> creates a grid of 3 columns, so every 3 cells start a new row</li>
+<li><code>space</code> leaves a cell empty</li>
+</ul>
 <div class="quarto-layout-panel" data-layout="[1,1]">
 <div class="quarto-layout-row">
 <div id="first-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource dot number-lines code-with-copy"><code class="sourceCode dot"><span id="cb2-1"><a href=""></a><span class="kw">digraph</span> <span class="ot">{</span></span>
-<span id="cb2-2"><a href=""></a><span class="co">  </span><span class="va">graph</span><span class="co"> </span><span class="ot">[</span><span class="at">rankdir</span><span class="co"> </span><span class="ot">=</span><span class="co"> </span><span class="va">LR</span><span class="ot">]</span></span>
-<span id="cb2-3"><a href=""></a><span class="co">  </span><span class="kw">node</span><span class="co"> </span><span class="ot">[</span><span class="at">shape</span><span class="co"> </span><span class="ot">=</span><span class="co"> </span><span class="va">box</span><span class="ot">]</span></span>
-<span id="cb2-4"><a href=""></a><span class="co">  </span></span>
-<span id="cb2-5"><a href=""></a><span class="co">  </span><span class="st">"Predictor 1"</span><span class="co"> </span><span class="ot">-&gt;</span><span class="co"> </span><span class="st">"Outcome"</span></span>
-<span id="cb2-6"><a href=""></a><span class="co">  </span><span class="st">"Predictor 2"</span><span class="co"> </span><span class="ot">-&gt;</span><span class="co"> </span><span class="st">"Outcome"</span></span>
-<span id="cb2-7"><a href=""></a><span class="ot">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>block-beta
+  columns 3
+  P1["Predictor 1"] space space
+  space space O["Outcome"]
+  P2["Predictor 2"] space space
+  P1 --&gt; O
+  P2 --&gt; O</code></pre>
 </div>
 <div id="second-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
-<div class="cell" data-fig-height="2" data-fig-width="5" data-layout-align="default">
+<div class="cell" data-reveal="true" data-fig-width="4" data-layout-align="default">
 <div class="cell-output-display">
 <div>
 <p></p><figure class=""><p></p>
 <div>
-<svg width="480" height="192" viewbox="0.00 0.00 189.13 98.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 94)">
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-94 185.13,-94 185.13,4 -4,4"></polygon>
-<!-- Predictor 1 -->
-<g id="node1" class="node">
-<title>Predictor 1</title>
-<polygon fill="none" stroke="black" points="77.73,-90 0.09,-90 0.09,-54 77.73,-54 77.73,-90"></polygon>
-<text text-anchor="middle" x="38.91" y="-67.8" font-family="Times,serif" font-size="14.00">Predictor 1</text>
-</g>
-<!-- Outcome -->
-<g id="node2" class="node">
-<title>Outcome</title>
-<polygon fill="none" stroke="black" points="181.29,-63 113.66,-63 113.66,-27 181.29,-27 181.29,-63"></polygon>
-<text text-anchor="middle" x="147.48" y="-40.8" font-family="Times,serif" font-size="14.00">Outcome</text>
-</g>
-<!-- Predictor 1&#45;&gt;Outcome -->
-<g id="edge1" class="edge">
-<title>Predictor 1-&gt;Outcome</title>
-<path fill="none" stroke="black" d="M77.78,-62.4C86.21,-60.27 95.2,-57.99 103.8,-55.81"></path>
-<polygon fill="black" stroke="black" points="104.84,-59.16 113.67,-53.31 103.12,-52.37 104.84,-59.16"></polygon>
-</g>
-<!-- Predictor 2 -->
-<g id="node3" class="node">
-<title>Predictor 2</title>
-<polygon fill="none" stroke="black" points="77.73,-36 0.09,-36 0.09,0 77.73,0 77.73,-36"></polygon>
-<text text-anchor="middle" x="38.91" y="-13.8" font-family="Times,serif" font-size="14.00">Predictor 2</text>
-</g>
-<!-- Predictor 2&#45;&gt;Outcome -->
-<g id="edge2" class="edge">
-<title>Predictor 2-&gt;Outcome</title>
-<path fill="none" stroke="black" d="M77.78,-27.6C86.21,-29.73 95.2,-32.01 103.8,-34.19"></path>
-<polygon fill="black" stroke="black" points="103.12,-37.63 113.67,-36.69 104.84,-30.84 103.12,-37.63"></polygon>
-</g>
-</g>
-</svg>
+<pre class="mermaid mermaid-js">block-beta
+  columns 3
+  P1["Predictor 1"] space space
+  space space O["Outcome"]
+  P2["Predictor 2"] space space
+  P1 --&gt; O
+  P2 --&gt; O
+</pre>
 </div>
 <p></p></figure><p></p>
 </div>
@@ -1290,79 +1573,36 @@ Damien Dupré | DCU Business School
 </div>
 </div>
 </div>
+<p>Here Predictor 1 is on the first row, Outcome on the second row and Predictor 2 on the third row.</p>
 </section>
-<section id="dot-language-2" class="slide level2 smaller">
-<h2>DOT Language</h2>
-<p>Unfortunately the way to plot an interaction is much trickier. You have to include an invisible box to design the arrow crossing the main arrow:</p>
+<section id="mermaid-language-2" class="slide level2">
+<h2>Mermaid Language</h2>
+<p>Unfortunately the way to plot an interaction is much trickier. It requires an invisible anchor (<code>J</code>) placed on the main arrow:</p>
 <div class="quarto-layout-panel" data-layout="[1,1]">
 <div class="quarto-layout-row">
 <div id="first-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode numberSource dot number-lines code-with-copy"><code class="sourceCode dot"><span id="cb3-1"><a href=""></a><span class="kw">digraph</span> <span class="ot">{</span></span>
-<span id="cb3-2"><a href=""></a><span class="co">  </span><span class="va">graph</span><span class="co"> </span><span class="ot">[</span><span class="at">rankdir</span><span class="co"> </span><span class="ot">=</span><span class="co"> </span><span class="va">LR</span><span class="ot">]</span><span class="co">  </span></span>
-<span id="cb3-3"><a href=""></a><span class="co">  </span><span class="kw">node</span><span class="co"> </span><span class="ot">[</span><span class="at">shape</span><span class="co"> </span><span class="ot">=</span><span class="co"> </span><span class="va">box</span><span class="ot">]</span></span>
-<span id="cb3-4"><a href=""></a><span class="co">  </span><span class="st">"Predictor 1"</span><span class="ot">;</span><span class="co"> </span><span class="st">"Predictor 2"</span><span class="ot">;</span><span class="co"> </span><span class="st">"Outcome"</span></span>
-<span id="cb3-5"><a href=""></a><span class="co">  </span><span class="kw">node</span><span class="co"> </span><span class="ot">[</span><span class="at">shape</span><span class="co"> </span><span class="ot">=</span><span class="co"> </span><span class="va">point</span><span class="co">, </span><span class="at">width</span><span class="co"> </span><span class="ot">=</span><span class="co"> </span><span class="dv">0</span><span class="co">, </span><span class="at">height</span><span class="co"> </span><span class="ot">=</span><span class="co"> </span><span class="dv">0</span><span class="ot">]</span></span>
-<span id="cb3-6"><a href=""></a><span class="co">  </span><span class="st">""</span></span>
-<span id="cb3-7"><a href=""></a><span class="co">  </span></span>
-<span id="cb3-8"><a href=""></a><span class="co">  </span><span class="st">"Predictor 2"</span><span class="co"> </span><span class="ot">-&gt;</span><span class="co"> </span><span class="st">""</span></span>
-<span id="cb3-9"><a href=""></a><span class="co">  </span><span class="st">"Predictor 1"</span><span class="co"> </span><span class="ot">-&gt;</span><span class="co"> </span><span class="st">""</span><span class="co"> </span><span class="ot">[</span><span class="at">arrowhead</span><span class="co"> </span><span class="ot">=</span><span class="co"> </span><span class="va">none</span><span class="ot">]</span></span>
-<span id="cb3-10"><a href=""></a><span class="co">  </span><span class="st">""</span><span class="co"> </span><span class="ot">-&gt;</span><span class="co"> </span><span class="va">Outcome</span></span>
-<span id="cb3-11"><a href=""></a><span class="co">  </span></span>
-<span id="cb3-12"><a href=""></a><span class="co">  </span><span class="kw">subgraph</span><span class="co"> </span><span class="ot">{</span></span>
-<span id="cb3-13"><a href=""></a><span class="co">    </span><span class="at">rank</span><span class="co"> </span><span class="ot">=</span><span class="co"> </span><span class="va">same</span><span class="ot">;</span><span class="co"> </span><span class="st">"Predictor 2"</span><span class="ot">;</span><span class="co"> </span><span class="st">""</span><span class="ot">;</span></span>
-<span id="cb3-14"><a href=""></a><span class="co">  </span><span class="ot">}</span></span>
-<span id="cb3-15"><a href=""></a><span class="ot">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre><code>block-beta
+  columns 3
+  space P2["Predictor 2"] space
+  P1["Predictor 1"] J((" ")) O["Outcome"]
+  P1 --&gt; O
+  P2 --&gt; J
+  style J fill:none,stroke:none</code></pre>
 </div>
 <div id="second-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
-<div class="cell" data-fig-height="2" data-fig-width="5" data-layout-align="default">
+<div class="cell" data-reveal="true" data-fig-width="5" data-layout-align="default">
 <div class="cell-output-display">
 <div>
 <p></p><figure class=""><p></p>
 <div>
-<svg width="480" height="192" viewbox="0.00 0.00 302.95 80.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none; display: block; margin: auto auto auto auto">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 76)">
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-76 298.95,-76 298.95,4 -4,4"></polygon>
-<!-- Predictor 1 -->
-<g id="node1" class="node">
-<title>Predictor 1</title>
-<polygon fill="none" stroke="black" points="77.73,-36 0.09,-36 0.09,0 77.73,0 77.73,-36"></polygon>
-<text text-anchor="middle" x="38.91" y="-13.8" font-family="Times,serif" font-size="14.00">Predictor 1</text>
-</g>
-<g id="node4" class="node">
-<title></title>
-<ellipse fill="black" stroke="black" cx="152.73" cy="-18" rx="0" ry="0"></ellipse>
-</g>
-<!-- Predictor 1&#45;&gt; -->
-<g id="edge2" class="edge">
-<title>Predictor 1-&gt;</title>
-<path fill="none" stroke="black" d="M77.76,-18C109.19,-18 149.14,-18 151.61,-18"></path>
-</g>
-<!-- Predictor 2 -->
-<g id="node2" class="node">
-<title>Predictor 2</title>
-<polygon fill="none" stroke="black" points="191.54,-72 113.91,-72 113.91,-36 191.54,-36 191.54,-72"></polygon>
-<text text-anchor="middle" x="152.73" y="-49.8" font-family="Times,serif" font-size="14.00">Predictor 2</text>
-</g>
-<!-- Predictor 2&#45;&gt; -->
-<g id="edge1" class="edge">
-<title>Predictor 2-&gt;</title>
-<path fill="none" stroke="black" d="M152.73,-35.86C152.73,-33.39 152.73,-30.92 152.73,-28.44"></path>
-<polygon fill="black" stroke="black" points="156.23,-28.28 152.73,-18.28 149.23,-28.28 156.23,-28.28"></polygon>
-</g>
-<!-- Outcome -->
-<g id="node3" class="node">
-<title>Outcome</title>
-<polygon fill="none" stroke="black" points="295.11,-36 227.48,-36 227.48,0 295.11,0 295.11,-36"></polygon>
-<text text-anchor="middle" x="261.29" y="-13.8" font-family="Times,serif" font-size="14.00">Outcome</text>
-</g>
-<!-- &#45;&gt;Outcome -->
-<g id="edge3" class="edge">
-<title>-&gt;Outcome</title>
-<path fill="none" stroke="black" d="M153.8,-18C155.6,-18 188.39,-18 217.12,-18"></path>
-<polygon fill="black" stroke="black" points="217.45,-21.5 227.45,-18 217.45,-14.5 217.45,-21.5"></polygon>
-</g>
-</g>
-</svg>
+<pre class="mermaid mermaid-js">block-beta
+  columns 3
+  space P2["Predictor 2"] space
+  P1["Predictor 1"] J((" ")) O["Outcome"]
+  P1 --&gt; O
+  P2 --&gt; J
+  style J fill:none,stroke:none
+</pre>
 </div>
 <p></p></figure><p></p>
 </div>
@@ -1371,28 +1611,30 @@ Damien Dupré | DCU Business School
 </div>
 </div>
 </div>
-<p>There are many more rules to make more complicated models, see for more details <a href="https://graphviz.org/doc/info/lang.html" class="uri">https://graphviz.org/doc/info/lang.html</a></p>
+<ul>
+<li><code>J((" "))</code> is an empty circle between Predictor 1 and Outcome</li>
+<li><code>style J fill:none,stroke:none</code> makes it invisible</li>
+<li><code>P2 --&gt; J</code> points the second arrow to the anchor, so it ends on the main arrow <code>P1 --&gt; O</code></li>
+</ul>
 </section>
-<section id="dotuml-extension-for-google-docs" class="slide level2">
-<h2>DotUML Extension for Google Docs</h2>
-<div class="quarto-layout-panel" data-layout="[1,1]">
-<div class="quarto-layout-row">
-<div id="first-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
-<p>This DOT language can easily be implemented with the DotUML extension in Google Docs.</p>
-<p>DotUML is developed by a company called BML Solutions but as far as I know it is a free plug-in (at least free of money).</p>
-<p>See <a href="https://dotuml.com" class="uri">https://dotuml.com</a> for more details.</p>
+<section id="mermaid-extension-for-google-docs" class="slide level2">
+<h2>Mermaid Extension for Google Docs</h2>
+<p>This Mermaid language can easily be used with the extension <strong>Mermaid - Diagramming and charting tool</strong> in Google Docs.</p>
+<ul>
+<li>It is developed by an independent developer (Renan Le Caro) and it is free and open source.</li>
+<li>To install it, go to Extensions &gt; Add-ons &gt; Get add-ons in Google Docs and search for “Mermaid”.</li>
+<li>See the <a href="https://workspace.google.com/marketplace/app/mermaid_diagramming_and_charting_tool/636321283856">Google Workspace Marketplace</a> page for more details.</li>
+</ul>
+<div class="callout callout-warning callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
-<div id="second-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure>
-<p><img data-src="https://dotuml.com/img/googledocs.200.png"></p>
-</figure>
+<p><strong>Not the same extension</strong></p>
 </div>
-</div>
-</div>
-<p>After installed the extension, use GraphViz and remove the code corresponding to the default example.</p>
+<div class="callout-content">
+<p>“Mermaid Chart for Google Docs” is a different extension and requires a Mermaid account.</p>
 </div>
 </div>
 </div>
@@ -1402,6 +1644,16 @@ Damien Dupré | DCU Business School
 <p>In the research paper you have selected, <strong>draw the model(s) tested.</strong></p>
 <p>Remember, there is only 1 Outcome variable per model and it is not possible to draw two models with the same Outcome variable.</p>
 <p>Send me your figure by email at damien.dupre@dcu.ie <strong>before the next lecture.</strong></p>
+</section>
+<section id="your-turn-with-ai" class="slide level2" data-background="#43464B">
+<h2><i class="fa-solid fa-robot" aria-label="robot"></i> Your Turn with AI!</h2>
+<p>Using the hypotheses of the research paper you have selected:</p>
+<ol type="1">
+<li>Ask an AI assistant to write the model as <strong>Mermaid code</strong></li>
+<li>Paste the code in the Mermaid extension in Google Docs to draw it</li>
+<li>Compare it with your own figure and the rules of a model (1 arrow per hypothesis, 1 Outcome, interaction with its main effects, black and white), then <strong>correct every mistake</strong></li>
+</ol>
+<p>Send me your prompt, the AI output, the list of mistakes you found and your corrected figure at damien.dupre@dcu.ie <strong>before the next lecture.</strong></p>
 </section></section>
 <section>
 <section id="understanding-the-equation-used-to-test-hypotheses" class="title-slide slide level1 center">
@@ -1410,30 +1662,30 @@ Damien Dupré | DCU Business School
 </section>
 <section id="a-basic-equation" class="slide level2">
 <h2>A Basic Equation</h2>
-<p>Let’s imagine the perfect scenario: <strong>your predictor Predictor variable explains perfectly the outcome variable</strong>.</p>
+<p>Let’s imagine the perfect scenario: <strong>your predictor variable explains perfectly the outcome variable</strong>.</p>
 <p>The corresponding equation is: <span class="math inline">\(Outcome = Predictor\)</span></p>
 <div class="quarto-layout-panel" data-layout="[1,1]">
 <div class="quarto-layout-row">
 <div id="first-column" class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <div class="cell">
 <div class="cell-output-display">
-<div id="ynwopynahq" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#ynwopynahq table {
+<div id="wdjttfnpjr" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#wdjttfnpjr table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#ynwopynahq thead, #ynwopynahq tbody, #ynwopynahq tfoot, #ynwopynahq tr, #ynwopynahq td, #ynwopynahq th {
+#wdjttfnpjr thead, #wdjttfnpjr tbody, #wdjttfnpjr tfoot, #wdjttfnpjr tr, #wdjttfnpjr td, #wdjttfnpjr th {
   border-style: none;
 }
 
-#ynwopynahq p {
+#wdjttfnpjr p {
   margin: 0;
   padding: 0;
 }
 
-#ynwopynahq .gt_table {
+#wdjttfnpjr .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1459,12 +1711,12 @@ Damien Dupré | DCU Business School
   border-left-color: #D3D3D3;
 }
 
-#ynwopynahq .gt_caption {
+#wdjttfnpjr .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#ynwopynahq .gt_title {
+#wdjttfnpjr .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1476,7 +1728,7 @@ Damien Dupré | DCU Business School
   border-bottom-width: 0;
 }
 
-#ynwopynahq .gt_subtitle {
+#wdjttfnpjr .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1488,7 +1740,7 @@ Damien Dupré | DCU Business School
   border-top-width: 0;
 }
 
-#ynwopynahq .gt_heading {
+#wdjttfnpjr .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1500,13 +1752,13 @@ Damien Dupré | DCU Business School
   border-right-color: #D3D3D3;
 }
 
-#ynwopynahq .gt_bottom_border {
+#wdjttfnpjr .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ynwopynahq .gt_col_headings {
+#wdjttfnpjr .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1521,7 +1773,7 @@ Damien Dupré | DCU Business School
   border-right-color: #D3D3D3;
 }
 
-#ynwopynahq .gt_col_heading {
+#wdjttfnpjr .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1541,7 +1793,7 @@ Damien Dupré | DCU Business School
   overflow-x: hidden;
 }
 
-#ynwopynahq .gt_column_spanner_outer {
+#wdjttfnpjr .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1553,15 +1805,15 @@ Damien Dupré | DCU Business School
   padding-right: 4px;
 }
 
-#ynwopynahq .gt_column_spanner_outer:first-child {
+#wdjttfnpjr .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ynwopynahq .gt_column_spanner_outer:last-child {
+#wdjttfnpjr .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ynwopynahq .gt_column_spanner {
+#wdjttfnpjr .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1573,11 +1825,11 @@ Damien Dupré | DCU Business School
   width: 100%;
 }
 
-#ynwopynahq .gt_spanner_row {
+#wdjttfnpjr .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#ynwopynahq .gt_group_heading {
+#wdjttfnpjr .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1603,7 +1855,7 @@ Damien Dupré | DCU Business School
   text-align: left;
 }
 
-#ynwopynahq .gt_empty_group_heading {
+#wdjttfnpjr .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1618,15 +1870,15 @@ Damien Dupré | DCU Business School
   vertical-align: middle;
 }
 
-#ynwopynahq .gt_from_md > :first-child {
+#wdjttfnpjr .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ynwopynahq .gt_from_md > :last-child {
+#wdjttfnpjr .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ynwopynahq .gt_row {
+#wdjttfnpjr .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1645,7 +1897,7 @@ Damien Dupré | DCU Business School
   overflow-x: hidden;
 }
 
-#ynwopynahq .gt_stub {
+#wdjttfnpjr .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1658,7 +1910,7 @@ Damien Dupré | DCU Business School
   padding-right: 5px;
 }
 
-#ynwopynahq .gt_stub_row_group {
+#wdjttfnpjr .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1672,15 +1924,15 @@ Damien Dupré | DCU Business School
   vertical-align: top;
 }
 
-#ynwopynahq .gt_row_group_first td {
+#wdjttfnpjr .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#ynwopynahq .gt_row_group_first th {
+#wdjttfnpjr .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#ynwopynahq .gt_summary_row {
+#wdjttfnpjr .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1690,16 +1942,16 @@ Damien Dupré | DCU Business School
   padding-right: 5px;
 }
 
-#ynwopynahq .gt_first_summary_row {
+#wdjttfnpjr .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#ynwopynahq .gt_first_summary_row.thick {
+#wdjttfnpjr .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#ynwopynahq .gt_last_summary_row {
+#wdjttfnpjr .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1709,7 +1961,7 @@ Damien Dupré | DCU Business School
   border-bottom-color: #D3D3D3;
 }
 
-#ynwopynahq .gt_grand_summary_row {
+#wdjttfnpjr .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1719,7 +1971,7 @@ Damien Dupré | DCU Business School
   padding-right: 5px;
 }
 
-#ynwopynahq .gt_first_grand_summary_row {
+#wdjttfnpjr .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1729,7 +1981,7 @@ Damien Dupré | DCU Business School
   border-top-color: #D3D3D3;
 }
 
-#ynwopynahq .gt_last_grand_summary_row_top {
+#wdjttfnpjr .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1739,11 +1991,11 @@ Damien Dupré | DCU Business School
   border-bottom-color: #D3D3D3;
 }
 
-#ynwopynahq .gt_striped {
+#wdjttfnpjr .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ynwopynahq .gt_table_body {
+#wdjttfnpjr .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1752,7 +2004,7 @@ Damien Dupré | DCU Business School
   border-bottom-color: #D3D3D3;
 }
 
-#ynwopynahq .gt_footnotes {
+#wdjttfnpjr .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1766,7 +2018,7 @@ Damien Dupré | DCU Business School
   border-right-color: #D3D3D3;
 }
 
-#ynwopynahq .gt_footnote {
+#wdjttfnpjr .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1775,7 +2027,7 @@ Damien Dupré | DCU Business School
   padding-right: 5px;
 }
 
-#ynwopynahq .gt_sourcenotes {
+#wdjttfnpjr .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1789,7 +2041,7 @@ Damien Dupré | DCU Business School
   border-right-color: #D3D3D3;
 }
 
-#ynwopynahq .gt_sourcenote {
+#wdjttfnpjr .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1797,72 +2049,72 @@ Damien Dupré | DCU Business School
   padding-right: 5px;
 }
 
-#ynwopynahq .gt_left {
+#wdjttfnpjr .gt_left {
   text-align: left;
 }
 
-#ynwopynahq .gt_center {
+#wdjttfnpjr .gt_center {
   text-align: center;
 }
 
-#ynwopynahq .gt_right {
+#wdjttfnpjr .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ynwopynahq .gt_font_normal {
+#wdjttfnpjr .gt_font_normal {
   font-weight: normal;
 }
 
-#ynwopynahq .gt_font_bold {
+#wdjttfnpjr .gt_font_bold {
   font-weight: bold;
 }
 
-#ynwopynahq .gt_font_italic {
+#wdjttfnpjr .gt_font_italic {
   font-style: italic;
 }
 
-#ynwopynahq .gt_super {
+#wdjttfnpjr .gt_super {
   font-size: 65%;
 }
 
-#ynwopynahq .gt_footnote_marks {
+#wdjttfnpjr .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#ynwopynahq .gt_asterisk {
+#wdjttfnpjr .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#ynwopynahq .gt_indent_1 {
+#wdjttfnpjr .gt_indent_1 {
   text-indent: 5px;
 }
 
-#ynwopynahq .gt_indent_2 {
+#wdjttfnpjr .gt_indent_2 {
   text-indent: 10px;
 }
 
-#ynwopynahq .gt_indent_3 {
+#wdjttfnpjr .gt_indent_3 {
   text-indent: 15px;
 }
 
-#ynwopynahq .gt_indent_4 {
+#wdjttfnpjr .gt_indent_4 {
   text-indent: 20px;
 }
 
-#ynwopynahq .gt_indent_5 {
+#wdjttfnpjr .gt_indent_5 {
   text-indent: 25px;
 }
 
-#ynwopynahq .katex-display {
+#wdjttfnpjr .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#ynwopynahq div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#wdjttfnpjr div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -1943,7 +2195,7 @@ Damien Dupré | DCU Business School
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="lecture_2_files/figure-revealjs/unnamed-chunk-21-1.png" width="960"></p>
+<p><img data-src="lecture_2_files/figure-revealjs/unnamed-chunk-24-1.png" width="960"></p>
 </figure>
 </div>
 </div>
@@ -1980,7 +2232,7 @@ Damien Dupré | DCU Business School
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="lecture_2_files/figure-revealjs/unnamed-chunk-22-1.png" width="960"></p>
+<p><img data-src="lecture_2_files/figure-revealjs/unnamed-chunk-25-1.png" width="960"></p>
 </figure>
 </div>
 </div>
@@ -2023,7 +2275,7 @@ Damien Dupré | DCU Business School
 <p>This expresses the idea that:</p>
 <ul>
 <li>The Outcome can be described by one or multiple predictors.</li>
-<li>The remaining part of the Outcome’s variability that is not explained by the predictors is call the Error.</li>
+<li>The remaining part of the Outcome’s variability that is not explained by the predictors is called the Error.</li>
 </ul>
 </section>
 <section id="equations-variables-and-effect-types" class="slide level2">
@@ -2060,7 +2312,7 @@ Damien Dupré | DCU Business School
 <section id="relevance-of-the-intercept-2" class="slide level2">
 <h2>Relevance of the Intercept</h2>
 
-<img data-src="lecture_2_files/figure-revealjs/unnamed-chunk-23-1.png" width="960" class="r-stretch"><p>If the intercept is not included, the intercept is zero and can lead to estimation errors</p>
+<img data-src="lecture_2_files/figure-revealjs/unnamed-chunk-26-1.png" width="960" class="r-stretch"><p>If the intercept is not included, the intercept is zero and can lead to estimation errors</p>
 </section>
 <section id="notes-on-the-equations" class="slide level2">
 <h2>Notes on the Equations</h2>
@@ -2080,7 +2332,7 @@ Damien Dupré | DCU Business School
 <div id="first-column" class="quarto-layout-cell" style="flex-basis: 40.0%;justify-content: flex-start;">
 <p>Exactly like with models, there are different ways to communicate an equation in Academic research outputs.</p>
 <p><br></p>
-<p>The least sophisticated approach would be to type the equation in Microsoft Words and to apply some italics and subscript style a posteriori.</p>
+<p>The least sophisticated approach would be to type the equation in Microsoft Word and to apply some italics and subscript style a posteriori.</p>
 </div>
 <div id="second-column" class="quarto-layout-cell" style="flex-basis: 60.0%;justify-content: flex-start;">
 <div class="cell">
@@ -2093,7 +2345,7 @@ Damien Dupré | DCU Business School
 </div>
 </div>
 <div class="smaller">
-<p>While there is nothing wrong with this approach, note that Microsoft Words has a tool to insert equations (Insert -&gt; Equations), then a GUI will help you to design special characters in equations.</p>
+<p>While there is nothing wrong with this approach, note that Microsoft Word has a tool to insert equations (Insert -&gt; Equations), then a GUI will help you to design special characters in equations.</p>
 </div>
 </div>
 </div>
@@ -2102,7 +2354,7 @@ Damien Dupré | DCU Business School
 <section id="representing-an-equation-1" class="slide level2">
 <h2>Representing an Equation</h2>
 <p>Now there is a better way, which is also more complicated.</p>
-<p><span class="math inline">\(\LaTeX\)</span> is used for entire manuscripts with all the specific design requirements imposed by ths style of academic journals. LaTex is the hell and we will see a specific approach to avoid it but the LaTex style for equations is the best.</p>
+<p><span class="math inline">\(\LaTeX\)</span> is used for entire manuscripts with all the specific design requirements imposed by the style of academic journals. LaTeX is the hell and we will see a specific approach to avoid it but the LaTeX style for equations is the best.</p>
 </section>
 <section id="representing-an-equation-2" class="slide level2">
 <h2>Representing an Equation</h2>
@@ -2122,9 +2374,11 @@ Damien Dupré | DCU Business School
 <section id="auto-latex-equations-for-google-docs" class="slide level2 smaller">
 <h2>Auto-LaTeX Equations for Google Docs</h2>
 <p>Another fantastic extension is available for Google Docs called Auto-LaTeX Equations</p>
-<p>Instead of using <code>\begin{equation}</code> and <code>\end{equation}</code>, use <code>$$</code> to open and close the equation</p>
-<p>Then, click on “Render Equation”, for the equation to be transformed in LaTex style</p>
-<p>Note that some website can help to create the latex code, see for example <a href="https://latex.codecogs.com/eqneditor/editor.php" class="uri">https://latex.codecogs.com/eqneditor/editor.php</a></p>
+<ul>
+<li><p>Instead of using <code>\begin{equation}</code> and <code>\end{equation}</code>, use <code>$$</code> to open and close the equation</p></li>
+<li><p>Then, click on “Render Equation”, for the equation to be transformed in LaTeX style</p></li>
+</ul>
+<p>Note that some websites can help to create the LaTeX code, see for example <a href="https://fxeditor.codecogs.com/" class="uri">https://fxeditor.codecogs.com/</a></p>
 
 <img data-src="https://mathpix.com/images/google-docs-power-point2.webp" class="r-stretch"></section>
 <section id="your-turn-1" class="slide level2" data-background="#43464B">
@@ -2146,23 +2400,23 @@ Damien Dupré | DCU Business School
 <p>Data</p>
 <div class="cell">
 <div class="cell-output-display">
-<div id="lfpocdnftb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#lfpocdnftb table {
+<div id="zmapnaotei" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#zmapnaotei table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#lfpocdnftb thead, #lfpocdnftb tbody, #lfpocdnftb tfoot, #lfpocdnftb tr, #lfpocdnftb td, #lfpocdnftb th {
+#zmapnaotei thead, #zmapnaotei tbody, #zmapnaotei tfoot, #zmapnaotei tr, #zmapnaotei td, #zmapnaotei th {
   border-style: none;
 }
 
-#lfpocdnftb p {
+#zmapnaotei p {
   margin: 0;
   padding: 0;
 }
 
-#lfpocdnftb .gt_table {
+#zmapnaotei .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -2188,12 +2442,12 @@ Damien Dupré | DCU Business School
   border-left-color: #D3D3D3;
 }
 
-#lfpocdnftb .gt_caption {
+#zmapnaotei .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#lfpocdnftb .gt_title {
+#zmapnaotei .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -2205,7 +2459,7 @@ Damien Dupré | DCU Business School
   border-bottom-width: 0;
 }
 
-#lfpocdnftb .gt_subtitle {
+#zmapnaotei .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -2217,7 +2471,7 @@ Damien Dupré | DCU Business School
   border-top-width: 0;
 }
 
-#lfpocdnftb .gt_heading {
+#zmapnaotei .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -2229,13 +2483,13 @@ Damien Dupré | DCU Business School
   border-right-color: #D3D3D3;
 }
 
-#lfpocdnftb .gt_bottom_border {
+#zmapnaotei .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#lfpocdnftb .gt_col_headings {
+#zmapnaotei .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2250,7 +2504,7 @@ Damien Dupré | DCU Business School
   border-right-color: #D3D3D3;
 }
 
-#lfpocdnftb .gt_col_heading {
+#zmapnaotei .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2270,7 +2524,7 @@ Damien Dupré | DCU Business School
   overflow-x: hidden;
 }
 
-#lfpocdnftb .gt_column_spanner_outer {
+#zmapnaotei .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2282,15 +2536,15 @@ Damien Dupré | DCU Business School
   padding-right: 4px;
 }
 
-#lfpocdnftb .gt_column_spanner_outer:first-child {
+#zmapnaotei .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#lfpocdnftb .gt_column_spanner_outer:last-child {
+#zmapnaotei .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#lfpocdnftb .gt_column_spanner {
+#zmapnaotei .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -2302,11 +2556,11 @@ Damien Dupré | DCU Business School
   width: 100%;
 }
 
-#lfpocdnftb .gt_spanner_row {
+#zmapnaotei .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#lfpocdnftb .gt_group_heading {
+#zmapnaotei .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2332,7 +2586,7 @@ Damien Dupré | DCU Business School
   text-align: left;
 }
 
-#lfpocdnftb .gt_empty_group_heading {
+#zmapnaotei .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2347,15 +2601,15 @@ Damien Dupré | DCU Business School
   vertical-align: middle;
 }
 
-#lfpocdnftb .gt_from_md > :first-child {
+#zmapnaotei .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#lfpocdnftb .gt_from_md > :last-child {
+#zmapnaotei .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#lfpocdnftb .gt_row {
+#zmapnaotei .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2374,7 +2628,7 @@ Damien Dupré | DCU Business School
   overflow-x: hidden;
 }
 
-#lfpocdnftb .gt_stub {
+#zmapnaotei .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2387,7 +2641,7 @@ Damien Dupré | DCU Business School
   padding-right: 5px;
 }
 
-#lfpocdnftb .gt_stub_row_group {
+#zmapnaotei .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2401,15 +2655,15 @@ Damien Dupré | DCU Business School
   vertical-align: top;
 }
 
-#lfpocdnftb .gt_row_group_first td {
+#zmapnaotei .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#lfpocdnftb .gt_row_group_first th {
+#zmapnaotei .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#lfpocdnftb .gt_summary_row {
+#zmapnaotei .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2419,16 +2673,16 @@ Damien Dupré | DCU Business School
   padding-right: 5px;
 }
 
-#lfpocdnftb .gt_first_summary_row {
+#zmapnaotei .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#lfpocdnftb .gt_first_summary_row.thick {
+#zmapnaotei .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#lfpocdnftb .gt_last_summary_row {
+#zmapnaotei .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2438,7 +2692,7 @@ Damien Dupré | DCU Business School
   border-bottom-color: #D3D3D3;
 }
 
-#lfpocdnftb .gt_grand_summary_row {
+#zmapnaotei .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2448,7 +2702,7 @@ Damien Dupré | DCU Business School
   padding-right: 5px;
 }
 
-#lfpocdnftb .gt_first_grand_summary_row {
+#zmapnaotei .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2458,7 +2712,7 @@ Damien Dupré | DCU Business School
   border-top-color: #D3D3D3;
 }
 
-#lfpocdnftb .gt_last_grand_summary_row_top {
+#zmapnaotei .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2468,11 +2722,11 @@ Damien Dupré | DCU Business School
   border-bottom-color: #D3D3D3;
 }
 
-#lfpocdnftb .gt_striped {
+#zmapnaotei .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#lfpocdnftb .gt_table_body {
+#zmapnaotei .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2481,7 +2735,7 @@ Damien Dupré | DCU Business School
   border-bottom-color: #D3D3D3;
 }
 
-#lfpocdnftb .gt_footnotes {
+#zmapnaotei .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2495,7 +2749,7 @@ Damien Dupré | DCU Business School
   border-right-color: #D3D3D3;
 }
 
-#lfpocdnftb .gt_footnote {
+#zmapnaotei .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -2504,7 +2758,7 @@ Damien Dupré | DCU Business School
   padding-right: 5px;
 }
 
-#lfpocdnftb .gt_sourcenotes {
+#zmapnaotei .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2518,7 +2772,7 @@ Damien Dupré | DCU Business School
   border-right-color: #D3D3D3;
 }
 
-#lfpocdnftb .gt_sourcenote {
+#zmapnaotei .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2526,72 +2780,72 @@ Damien Dupré | DCU Business School
   padding-right: 5px;
 }
 
-#lfpocdnftb .gt_left {
+#zmapnaotei .gt_left {
   text-align: left;
 }
 
-#lfpocdnftb .gt_center {
+#zmapnaotei .gt_center {
   text-align: center;
 }
 
-#lfpocdnftb .gt_right {
+#zmapnaotei .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#lfpocdnftb .gt_font_normal {
+#zmapnaotei .gt_font_normal {
   font-weight: normal;
 }
 
-#lfpocdnftb .gt_font_bold {
+#zmapnaotei .gt_font_bold {
   font-weight: bold;
 }
 
-#lfpocdnftb .gt_font_italic {
+#zmapnaotei .gt_font_italic {
   font-style: italic;
 }
 
-#lfpocdnftb .gt_super {
+#zmapnaotei .gt_super {
   font-size: 65%;
 }
 
-#lfpocdnftb .gt_footnote_marks {
+#zmapnaotei .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#lfpocdnftb .gt_asterisk {
+#zmapnaotei .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#lfpocdnftb .gt_indent_1 {
+#zmapnaotei .gt_indent_1 {
   text-indent: 5px;
 }
 
-#lfpocdnftb .gt_indent_2 {
+#zmapnaotei .gt_indent_2 {
   text-indent: 10px;
 }
 
-#lfpocdnftb .gt_indent_3 {
+#zmapnaotei .gt_indent_3 {
   text-indent: 15px;
 }
 
-#lfpocdnftb .gt_indent_4 {
+#zmapnaotei .gt_indent_4 {
   text-indent: 20px;
 }
 
-#lfpocdnftb .gt_indent_5 {
+#zmapnaotei .gt_indent_5 {
   text-indent: 25px;
 }
 
-#lfpocdnftb .katex-display {
+#zmapnaotei .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#lfpocdnftb div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#zmapnaotei div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -2648,7 +2902,7 @@ Damien Dupré | DCU Business School
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="lecture_2_files/figure-revealjs/unnamed-chunk-27-1.png" width="960"></p>
+<p><img data-src="lecture_2_files/figure-revealjs/unnamed-chunk-30-1.png" width="960"></p>
 </figure>
 </div>
 </div>
@@ -2658,7 +2912,7 @@ Damien Dupré | DCU Business School
 </div>
 <div class="cell">
 <div class="cell-output-display">
-<div class="countdown" id="timer_e2b72756" data-warn-when="60" data-update-every="1" tabindex="0" style="right:1;bottom:0;">
+<div class="countdown" id="timer_2a3b2f0a" data-warn-when="60" data-update-every="1" tabindex="0" style="right:1;bottom:0;">
 <div class="countdown-controls"><button class="countdown-bump-down">−</button><button class="countdown-bump-up">+</button></div>
 <code class="countdown-time"><span class="countdown-digits minutes">05</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
@@ -2674,7 +2928,7 @@ Damien Dupré | DCU Business School
 </ul>
 <p>Alternative Hypothesis:</p>
 <ul>
-<li><span class="math inline">\(H_a\)</span>: <strong>Exam Results</strong> <em>increases</em> when <strong>Sleep Time</strong> increases</li>
+<li><span class="math inline">\(H_a\)</span>: <strong>Exam Results</strong> <em>increase</em> when <strong>Sleep Time</strong> increases</li>
 <li>(<span class="math inline">\(H_0\)</span>: <strong>Exam Results</strong> <em>stay the same</em> when <strong>Sleep Time</strong> increases)</li>
 </ul>
 </section>
@@ -2727,23 +2981,23 @@ Damien Dupré | DCU Business School
 <p>Data</p>
 <div class="cell">
 <div class="cell-output-display">
-<div id="nxsbvjyhfx" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#nxsbvjyhfx table {
+<div id="wrjknxfxpm" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#wrjknxfxpm table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#nxsbvjyhfx thead, #nxsbvjyhfx tbody, #nxsbvjyhfx tfoot, #nxsbvjyhfx tr, #nxsbvjyhfx td, #nxsbvjyhfx th {
+#wrjknxfxpm thead, #wrjknxfxpm tbody, #wrjknxfxpm tfoot, #wrjknxfxpm tr, #wrjknxfxpm td, #wrjknxfxpm th {
   border-style: none;
 }
 
-#nxsbvjyhfx p {
+#wrjknxfxpm p {
   margin: 0;
   padding: 0;
 }
 
-#nxsbvjyhfx .gt_table {
+#wrjknxfxpm .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -2769,12 +3023,12 @@ Damien Dupré | DCU Business School
   border-left-color: #D3D3D3;
 }
 
-#nxsbvjyhfx .gt_caption {
+#wrjknxfxpm .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#nxsbvjyhfx .gt_title {
+#wrjknxfxpm .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -2786,7 +3040,7 @@ Damien Dupré | DCU Business School
   border-bottom-width: 0;
 }
 
-#nxsbvjyhfx .gt_subtitle {
+#wrjknxfxpm .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -2798,7 +3052,7 @@ Damien Dupré | DCU Business School
   border-top-width: 0;
 }
 
-#nxsbvjyhfx .gt_heading {
+#wrjknxfxpm .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -2810,13 +3064,13 @@ Damien Dupré | DCU Business School
   border-right-color: #D3D3D3;
 }
 
-#nxsbvjyhfx .gt_bottom_border {
+#wrjknxfxpm .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#nxsbvjyhfx .gt_col_headings {
+#wrjknxfxpm .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2831,7 +3085,7 @@ Damien Dupré | DCU Business School
   border-right-color: #D3D3D3;
 }
 
-#nxsbvjyhfx .gt_col_heading {
+#wrjknxfxpm .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2851,7 +3105,7 @@ Damien Dupré | DCU Business School
   overflow-x: hidden;
 }
 
-#nxsbvjyhfx .gt_column_spanner_outer {
+#wrjknxfxpm .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2863,15 +3117,15 @@ Damien Dupré | DCU Business School
   padding-right: 4px;
 }
 
-#nxsbvjyhfx .gt_column_spanner_outer:first-child {
+#wrjknxfxpm .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#nxsbvjyhfx .gt_column_spanner_outer:last-child {
+#wrjknxfxpm .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#nxsbvjyhfx .gt_column_spanner {
+#wrjknxfxpm .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -2883,11 +3137,11 @@ Damien Dupré | DCU Business School
   width: 100%;
 }
 
-#nxsbvjyhfx .gt_spanner_row {
+#wrjknxfxpm .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#nxsbvjyhfx .gt_group_heading {
+#wrjknxfxpm .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2913,7 +3167,7 @@ Damien Dupré | DCU Business School
   text-align: left;
 }
 
-#nxsbvjyhfx .gt_empty_group_heading {
+#wrjknxfxpm .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2928,15 +3182,15 @@ Damien Dupré | DCU Business School
   vertical-align: middle;
 }
 
-#nxsbvjyhfx .gt_from_md > :first-child {
+#wrjknxfxpm .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#nxsbvjyhfx .gt_from_md > :last-child {
+#wrjknxfxpm .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#nxsbvjyhfx .gt_row {
+#wrjknxfxpm .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2955,7 +3209,7 @@ Damien Dupré | DCU Business School
   overflow-x: hidden;
 }
 
-#nxsbvjyhfx .gt_stub {
+#wrjknxfxpm .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2968,7 +3222,7 @@ Damien Dupré | DCU Business School
   padding-right: 5px;
 }
 
-#nxsbvjyhfx .gt_stub_row_group {
+#wrjknxfxpm .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2982,15 +3236,15 @@ Damien Dupré | DCU Business School
   vertical-align: top;
 }
 
-#nxsbvjyhfx .gt_row_group_first td {
+#wrjknxfxpm .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#nxsbvjyhfx .gt_row_group_first th {
+#wrjknxfxpm .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#nxsbvjyhfx .gt_summary_row {
+#wrjknxfxpm .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -3000,16 +3254,16 @@ Damien Dupré | DCU Business School
   padding-right: 5px;
 }
 
-#nxsbvjyhfx .gt_first_summary_row {
+#wrjknxfxpm .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#nxsbvjyhfx .gt_first_summary_row.thick {
+#wrjknxfxpm .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#nxsbvjyhfx .gt_last_summary_row {
+#wrjknxfxpm .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3019,7 +3273,7 @@ Damien Dupré | DCU Business School
   border-bottom-color: #D3D3D3;
 }
 
-#nxsbvjyhfx .gt_grand_summary_row {
+#wrjknxfxpm .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -3029,7 +3283,7 @@ Damien Dupré | DCU Business School
   padding-right: 5px;
 }
 
-#nxsbvjyhfx .gt_first_grand_summary_row {
+#wrjknxfxpm .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3039,7 +3293,7 @@ Damien Dupré | DCU Business School
   border-top-color: #D3D3D3;
 }
 
-#nxsbvjyhfx .gt_last_grand_summary_row_top {
+#wrjknxfxpm .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3049,11 +3303,11 @@ Damien Dupré | DCU Business School
   border-bottom-color: #D3D3D3;
 }
 
-#nxsbvjyhfx .gt_striped {
+#wrjknxfxpm .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#nxsbvjyhfx .gt_table_body {
+#wrjknxfxpm .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -3062,7 +3316,7 @@ Damien Dupré | DCU Business School
   border-bottom-color: #D3D3D3;
 }
 
-#nxsbvjyhfx .gt_footnotes {
+#wrjknxfxpm .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -3076,7 +3330,7 @@ Damien Dupré | DCU Business School
   border-right-color: #D3D3D3;
 }
 
-#nxsbvjyhfx .gt_footnote {
+#wrjknxfxpm .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -3085,7 +3339,7 @@ Damien Dupré | DCU Business School
   padding-right: 5px;
 }
 
-#nxsbvjyhfx .gt_sourcenotes {
+#wrjknxfxpm .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -3099,7 +3353,7 @@ Damien Dupré | DCU Business School
   border-right-color: #D3D3D3;
 }
 
-#nxsbvjyhfx .gt_sourcenote {
+#wrjknxfxpm .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -3107,72 +3361,72 @@ Damien Dupré | DCU Business School
   padding-right: 5px;
 }
 
-#nxsbvjyhfx .gt_left {
+#wrjknxfxpm .gt_left {
   text-align: left;
 }
 
-#nxsbvjyhfx .gt_center {
+#wrjknxfxpm .gt_center {
   text-align: center;
 }
 
-#nxsbvjyhfx .gt_right {
+#wrjknxfxpm .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#nxsbvjyhfx .gt_font_normal {
+#wrjknxfxpm .gt_font_normal {
   font-weight: normal;
 }
 
-#nxsbvjyhfx .gt_font_bold {
+#wrjknxfxpm .gt_font_bold {
   font-weight: bold;
 }
 
-#nxsbvjyhfx .gt_font_italic {
+#wrjknxfxpm .gt_font_italic {
   font-style: italic;
 }
 
-#nxsbvjyhfx .gt_super {
+#wrjknxfxpm .gt_super {
   font-size: 65%;
 }
 
-#nxsbvjyhfx .gt_footnote_marks {
+#wrjknxfxpm .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#nxsbvjyhfx .gt_asterisk {
+#wrjknxfxpm .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#nxsbvjyhfx .gt_indent_1 {
+#wrjknxfxpm .gt_indent_1 {
   text-indent: 5px;
 }
 
-#nxsbvjyhfx .gt_indent_2 {
+#wrjknxfxpm .gt_indent_2 {
   text-indent: 10px;
 }
 
-#nxsbvjyhfx .gt_indent_3 {
+#wrjknxfxpm .gt_indent_3 {
   text-indent: 15px;
 }
 
-#nxsbvjyhfx .gt_indent_4 {
+#wrjknxfxpm .gt_indent_4 {
   text-indent: 20px;
 }
 
-#nxsbvjyhfx .gt_indent_5 {
+#wrjknxfxpm .gt_indent_5 {
   text-indent: 25px;
 }
 
-#nxsbvjyhfx .katex-display {
+#wrjknxfxpm .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#nxsbvjyhfx div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#wrjknxfxpm div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -3236,7 +3490,7 @@ Damien Dupré | DCU Business School
 <div class="cell-output-display">
 <div>
 <figure>
-<p><img data-src="lecture_2_files/figure-revealjs/unnamed-chunk-31-1.png" width="960"></p>
+<p><img data-src="lecture_2_files/figure-revealjs/unnamed-chunk-34-1.png" width="960"></p>
 </figure>
 </div>
 </div>
@@ -3246,7 +3500,7 @@ Damien Dupré | DCU Business School
 </div>
 <div class="cell">
 <div class="cell-output-display">
-<div class="countdown" id="timer_b68141ed" data-warn-when="60" data-update-every="1" tabindex="0" style="right:1;bottom:0;">
+<div class="countdown" id="timer_2b3a9f4d" data-warn-when="60" data-update-every="1" tabindex="0" style="right:1;bottom:0;">
 <div class="countdown-controls"><button class="countdown-bump-down">−</button><button class="countdown-bump-up">+</button></div>
 <code class="countdown-time"><span class="countdown-digits minutes">05</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">00</span></code>
 </div>
@@ -3263,7 +3517,7 @@ Damien Dupré | DCU Business School
 </ul>
 <p>Alternative Hypotheses:</p>
 <ul>
-<li><span class="math inline">\(H_{a_{1}}\)</span>: <strong>Exam Results</strong> <em>increases</em> when <strong>Sleep Time</strong> increases</li>
+<li><span class="math inline">\(H_{a_{1}}\)</span>: <strong>Exam Results</strong> <em>increase</em> when <strong>Sleep Time</strong> increases</li>
 <li><span class="math inline">\(H_{a_{2}}\)</span>: <strong>Exam Results</strong> of <strong>experienced students</strong> are <em>higher</em> than for <strong>beginner students</strong></li>
 <li><span class="math inline">\(H_{a_{3}}\)</span>: The effect of <strong>Sleep Time</strong> on <strong>Exam Results</strong> is <em>higher</em> for <strong>experienced</strong> than for <strong>beginner students</strong></li>
 </ul>
@@ -3417,13 +3671,13 @@ Damien Dupré | DCU Business School
 <h4 id="hypotheses">Hypotheses</h4>
 <ul>
 <li>Formulate your alternative hypotheses by using the proposed templates</li>
-<li>Any other formulation, even if it make sense, is not good practice (e.g.&nbsp;using the terms “has an impact”, “is related to”, “influences”, …)</li>
+<li>Any other formulation, even if it makes sense, is not good practice (e.g.&nbsp;using the terms “has an impact”, “is related to”, “influences”, …)</li>
 <li>An interaction hypothesis requires the formulation of the main effect hypothesis of each predictor involved</li>
 </ul>
 <h4 id="model">Model</h4>
 <ul>
 <li>A model should represent all your hypotheses and only your hypotheses</li>
-<li>Draw only model per Outcome variable (except is doing SEM analyses)</li>
+<li>Draw only one model per Outcome variable (except if doing SEM analyses)</li>
 <li>Use the same names or acronyms as your hypotheses</li>
 </ul>
 <h4 id="equation">Equation</h4>

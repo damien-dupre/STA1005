@@ -20,6 +20,10 @@ book:
         - name: "DCU Business School, Dublin City University"
   date: today
   date-format: "D MMMM YYYY"
+  # The cover is drawn by R/cover.R (run it again only if the title or the author changes).
+  # It is shown on the first page of the online book and is the cover of the EPUB.
+  cover-image: images/cover.png
+  cover-image-alt: "Cover of the book. The title Quantitative Research Methods, STA1005 course book, above a scatter plot of 20 points with a blue regression line and red residuals, and the name of the author, Damien Dupré, DCU Business School, Dublin City University."
   search: true
   reader-mode: true
   downloads: [pdf, epub]
@@ -55,6 +59,9 @@ format:
     code-tools:
       source: false
     fig-align: center
+    # A click on a figure opens it full size (useful for the jamovi screenshots).
+    lightbox: true
+    link-external-newwindow: true
   pdf:
     documentclass: scrbook
     # No dot after section and figure numbers ("3.1 Title", "Figure 3.1: ...").
@@ -70,12 +77,39 @@ format:
     # Figures stay where they are written. Without this, a floating figure placed next to a
     # table could make LaTeX drop text silently.
     fig-pos: "H"
-    # Long lines of code wrap instead of running into the margin.
     include-in-header:
       text: |
+        % Long lines of code wrap instead of running into the margin.
         \usepackage{fvextra}
         \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+        % The printed output of the code wraps too, so that a wide R output stays inside its box.
+        \AtBeginDocument{\renewenvironment{verbatim}{\VerbatimEnvironment\begin{Verbatim}[breaklines]}{\end{Verbatim}}}
+        % Pages are not stretched to a common height. Keep this line: with stretched
+        % pages, a box that continues on the next page can be printed over the boxes before it.
         \raggedbottom
+        % Colours of the book (same values as book.scss, epub.css and R/setup.R).
+        \definecolor{bookink}{HTML}{1A292C}
+        \definecolor{bookorange}{HTML}{EB811B}
+        \definecolor{booklink}{HTML}{B35A00}
+        \AtBeginDocument{\hypersetup{linkcolor=booklink, urlcolor=booklink, citecolor=booklink}}
+        % Titles in the ink colour, with an orange rule under the chapter title as in the HTML book.
+        \addtokomafont{disposition}{\color{bookink}}
+        \makeatletter
+        \renewcommand*{\chapterlinesformat}[3]{%
+          \@hangfrom{#2}{#3}\par\nobreak\vspace{0.35\baselineskip}%
+          {\color{bookorange}\hrule height 1.5pt}%
+        }
+        \makeatother
+        % The numbered exercises sit in a box with an orange bar.
+        \usepackage[skins,breakable]{tcolorbox}
+        \tcolorboxenvironment{exercise}{enhanced jigsaw, breakable, colback=bookorange!4!white, colframe=bookorange, boxrule=0pt, leftrule=1.2mm, arc=0mm, left=3mm, right=2mm, top=1.5mm, bottom=1.5mm, before skip=5mm, after skip=3mm}
+        % The cover (images/cover.png, drawn by R/cover.R) fills the first page of the PDF,
+        % before the title page. Delete the five lines below to start with the title page.
+        \extratitle{%
+          \begin{tikzpicture}[remember picture, overlay]
+            \node[inner sep=0pt] at (current page.center) {\includegraphics[width=\paperwidth, height=\paperheight]{images/cover.png}};
+          \end{tikzpicture}%
+        }
   epub:
     toc-depth: 2
     css: epub.css

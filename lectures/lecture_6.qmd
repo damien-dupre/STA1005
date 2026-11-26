@@ -136,7 +136,7 @@ raw_plot + linear_plot + loess_plot
 
 ## Assumption 1: Linearity
 
-If the shape of the data is non linear then even the best linear model will have very big residuals and therefore very high $MSE$ or $RMSE$.
+If the shape of the data is non-linear then even the best linear model will have very big residuals and therefore very high $MSE$ or $RMSE$.
 
 # 2. Independence (of observations) {background="#43464B"}
 
@@ -634,7 +634,7 @@ The ability to identify an effect if it exists (i.e., statistical power) depends
 
 ## Statistical Power
 
-The minimum level of statistical power to achieve is usually set at least 0.8 or 80% (i.e., we want at least a 80% probability that the test will return an accurate rejection of $H_0$).
+The minimum level of statistical power to achieve is usually set at least 0.8 or 80% (i.e., we want at least an 80% probability that the test will return an accurate rejection of $H_0$).
 
 - If all the criteria are known except $n$, then it is possible to approximate the $n$ necessary to obtain at least a 0.8 or 80% power to correctly reject $H_0$ before running the analysis (**prospective power analysis**).
 
@@ -721,7 +721,7 @@ There are multiple possibilities to perform a power analysis:
 - Websites hosted online such as <https://powerandsamplesize.com/> or <https://sample-size.net> (but none are satisfying)
 - Embedded in Statistical software such as SPSS or Jamovi (but none are satisfying)
 - Specific software such as G*power (free and the most used power analysis software)
-- Packages for coding languages (like {pwr} in R or `statsmodels` in python)
+- Packages for coding languages (like {pwr} in R or `statsmodels` in Python)
 
 ## Sample Size Estimation
 
@@ -884,7 +884,7 @@ However, you will see a lot of different metrics in research papers using differ
 
 - The $\eta^2_p$ for a particular estimate corresponds to the effect size when the other effects in the model are deliberately ignored.
 - Both $\omega^2$ and $\epsilon^2$ (and their partial counterparts, $\omega^2_p$ and $\epsilon^2_p$) are unbiased estimators of the population's $\eta^2$ (or $\eta^2_p$, respectively), which is especially important in small samples.
-- $\eta^2_p$ aims at estimating the effect size in a design where all the variables have been experimentally manipulated (e.g., experimental groups). However, some predictors can only be observed. For such cases, we can use generalized Eta squared $\eta^2_G$.
+- $\eta^2_p$ aims at estimating the effect size in a design where all the variables have been experimentally manipulated (e.g., experimental groups). However, some predictors can only be observed. For such cases, we can use generalised Eta squared $\eta^2_G$.
 :::
 
 # 5. Reasonable Statistics
@@ -899,7 +899,7 @@ Running statistical tests until finding a significant $p$-value is $p$-Hacking. 
 
 #### $p$-HARKing
 
-$p$-HARKing (Hypothesizing After the Results are Known) is defined as presenting a post hoc hypothesis (i.e., one based on or informed by one's results) in one's research report as if it were, in fact, an a priori hypotheses.
+$p$-HARKing (Hypothesizing After the Results are Known) is defined as presenting a post hoc hypothesis (i.e., one based on or informed by one's results) in one's research report as if it were, in fact, an a priori hypothesis.
 
 ## Bad vs Good Science
 
@@ -913,9 +913,9 @@ In order to avoid any kind of $p$-Hacking or $p$-HARKing, research pre-registrat
 
 Traditional AI assistants (like ChatGPT, Gemini, or Claude) respond to text prompts: you describe what you want and the AI generates text or code in return.
 
-Give them you hypotheses and your data, they will run the calculation and print out a good quality result section!
+Give them your hypotheses and your data, they will run the calculation and print out a good quality result section!
 
-Now, you need to supervise and check for misunderstanding (e.g., have the hypotheses tested in the same model? Are the Confidence Interval reported?)
+Now, you need to supervise and check for misunderstanding (e.g., have the hypotheses tested in the same model? Are the Confidence Intervals reported?)
 
 ### The issue is transparency!
 
@@ -962,7 +962,7 @@ This means Claude can operate **Jamovi Cloud** (<https://cloud.jamovi.org>) dire
 
 :::: {layout="[1.4,1]"}
 ::: {#first-column}
-For next lecture, **read Chapter 12 of "Learning Statistics with JAMOVI"** from <https://www.learnstatswithjamovi.com/>
+For the next lecture, **read Chapter 12 of "Learning Statistics with JAMOVI"** from <https://www.learnstatswithjamovi.com/>
 :::
 
 ::: {#second-column}

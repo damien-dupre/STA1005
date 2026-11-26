@@ -45,7 +45,7 @@ flowchart LR
   D -- Statistical<br>Test--> E[Discussion &<br>Conclusion]
 ```
 
-# 1. Model Representation in the Method Section of Academic Reseach Paper
+# 1. Model Representation in the Method Section
 
 ## Method Section in Academic Papers {.smaller}
 
@@ -126,17 +126,60 @@ Note: By default, an interaction effect involves the test of the main effect hyp
 
 ## Structure of Models
 
-Distinguish square and circles
+Distinguish squares and circles
 
 - **squares** are actual **measures/items**
 - **circles** are **latent variables** related to measures/items
 
 Example:
 
-- $Salary$ is directly measured (in $, €, or £) so it's a square.
+- $Salary$ is directly measured (in €) so it's a square.
 - $Job\,Satisfaction$ is a latent variable with several questions so it's a circle.
 
 Items used for latent variables can be omitted in a model, variables are the most important.
+
+## Squares versus Circles
+
+:::: {layout="[1,1]"}
+::: {#first-column .center}
+**Square: a directly measured variable**
+
+```{dot}
+//| fig-height: 3
+//| fig-width: 5
+
+digraph {
+  node [shape = box]
+  "Salary"
+}
+```
+
+One variable, one measure: the value is observed directly (£, €, $)
+:::
+
+::: {#second-column .center}
+**Circle: a latent variable measured by items**
+
+```{dot}
+//| fig-height: 3
+//| fig-width: 5
+
+digraph {
+  graph [rankdir = LR]
+  node [shape = ellipse]
+  "Job Satisfaction"
+  node [shape = box]
+  "Item 1"; "Item 2"; "Item 3"
+  
+  "Job Satisfaction" -> "Item 1"
+  "Job Satisfaction" -> "Item 2"
+  "Job Satisfaction" -> "Item 3"
+}
+```
+
+One variable, several items: the variable is inferred from the answers to the questions
+:::
+::::
 
 ## Main Effect Relationship
 
@@ -181,7 +224,7 @@ This model tests two main effect hypotheses
 
 ## Interaction Effect Relationship
 
-An interaction means that **the effect of a Predictor 1 on the Outcome variable will be different according the possibilities of a Predictor 2** (also called Moderation).
+An interaction means that **the effect of a Predictor 1 on the Outcome variable will be different according to the possibilities of a Predictor 2** (also called Moderation).
 
 :::: {layout="[1,1]"}
 ::: {#first-column}
@@ -228,27 +271,101 @@ digraph {
 :::
 ::::
 
+::: {.callout-note}
+## Hypotheses tested
+
 This model tests three hypotheses: 2 main effects and 1 interaction effect
+:::
 
 ## Types of Model {.smaller}
 
+::: {.panel-tabset}
+
 ### Simple Model
 
+:::: {layout="[1,1]"}
+::: {#first-column}
 - One or more predictors
 - Only one outcome
 - Made of main or/and interaction effects
+:::
 
-### Mediation Model (simple or moderated)
+::: {#second-column .center}
+```{dot}
+//| fig-height: 2
+//| fig-width: 4
 
-- At least 2 predictors (one call Mediator)
+digraph {
+  graph [rankdir = LR]
+  node [shape = box]
+  
+  "Predictor 1" -> "Outcome"
+  "Predictor 2" -> "Outcome"
+}
+```
+:::
+::::
+
+### Mediation Model
+
+:::: {layout="[1,1]"}
+::: {#first-column}
+- At least 2 predictors (one called Mediator)
 - Only one outcome
 - Made of main effects only for simple mediation / main and interaction effects for moderated mediation
+:::
 
-### Structural Equation Model (SEM)
+::: {#second-column .center}
+```{dot}
+//| fig-height: 2
+//| fig-width: 4
 
+digraph {
+  graph [rankdir = LR]
+  node [shape = box]
+  
+  "Predictor" -> "Mediator" -> "Outcome"
+  "Predictor" -> "Outcome"
+}
+```
+:::
+::::
+
+### Structural Equation Model
+
+:::: {layout="[1,1]"}
+::: {#first-column}
 - At least 2 predictors (usually latent variables)
 - One or more outcome
 - Made of main or/and interaction effects
+:::
+
+::: {#second-column .center}
+```{dot}
+//| fig-height: 2.5
+//| fig-width: 4
+
+digraph {
+  graph [rankdir = LR, nodesep = 0.15]
+  node [shape = ellipse]
+  "Latent\nPredictor 1"; "Latent\nPredictor 2"; "Latent\nOutcome"
+  node [shape = box]
+  "Item 1a"; "Item 1b"; "Item 2a"; "Item 2b"; "Item 3a"; "Item 3b"
+  
+  "Latent\nPredictor 1" -> "Item 1a"
+  "Latent\nPredictor 1" -> "Item 1b"
+  "Latent\nPredictor 2" -> "Item 2a"
+  "Latent\nPredictor 2" -> "Item 2b"
+  "Latent\nOutcome" -> "Item 3a"
+  "Latent\nOutcome" -> "Item 3b"
+  "Latent\nPredictor 1" -> "Latent\nOutcome"
+  "Latent\nPredictor 2" -> "Latent\nOutcome"
+}
+```
+:::
+::::
+
+:::
 
 ## Simple Model
 
@@ -425,189 +542,157 @@ Is it bad?
 
 ## Representing a Model
 
-:::: {layout="[0.6,0.4]"}
-::: {#first-column}
-The representation of a model can easily be done directly in a manuscript written with Microsoft Words
 
-For more details, is it also possible to draw the model in Microsoft PowerPoint and to copy-paste it in Microsoft Words.
-:::
+The representation of a model can easily be done directly in a manuscript written with Microsoft Word
 
-::: {#second-column}
-```{r}
-include_graphics("https://www.myofficetricks.com/wp-content/uploads/2020/09/myofficetricks.com_2020-09-23_01-58-57.gif")
-```
-:::
-::::
+For more details, it is also possible to draw the model in Microsoft PowerPoint and to copy-paste it in Microsoft Word.
 
 ::: {.callout-important}
 ## Warning
 
-- Do NOT fill boxes with any color, use only black and white colors.
+- Do NOT fill boxes with any colour, use only black and white colours.
 - Use line arrow, no thick arrows allowed.
 :::
 
 ## Representing a Model
 
-Beside MS Words and PowerPoint, there are some ways to draw models in a nicer way.
+Besides MS Word and PowerPoint, there are some ways to draw models in a nicer way.
 
 **Flowchart Software/Websites**
 
-There are many of them and google would find them very quickly but to my knowledge, <https://www.diagrams.net/> is free, easy to use and very efficient.
-
-## Representing a Model
+There are many of them and google would find them very quickly but to my knowledge, <https://www.drawio.com//> is free, easy to use and very efficient.
 
 **Flowchart Coding Languages**
 
-Going further into details of how to design academic models, flowchart coding languages are the ultimate steps.
+Going further into the details of how to design academic models, flowchart coding languages are the final step.
 
-Instead of using a GUI, it is possible to draw models from a couple of lines of code which is faster after practising a lot.
+Instead of using a GUI, it is possible to draw models from a couple of lines of code, which is faster after practising a lot and while using AI.
 
-To my knowledge, the main flowchart coding language tool implementing the [DOT style](https://en.wikipedia.org/wiki/DOT_(graph_description_language)) are:
+## Representing a Model
 
-- [mermaid-js](http://mermaid-js.github.io/mermaid/##/)
-- [viz-js](http://viz-js.com/)
-- [nomnoml](https://www.nomnoml.com/)
+The oldest is the **DOT language** (used by [Graphviz](https://graphviz.org/)), which dates back to the early 1990s and can be tried online with [viz-js](https://viz-js.com/).
 
-[But many more alternative can be used](https://modeling-languages.com/text-uml-tools-complete-list/)
+To my knowledge, the most used is **Mermaid** ([mermaid-js](https://mermaid.js.org/)), created in 2014 and displayed natively by GitHub. It has its own syntax (not DOT), can be tried online with the [Mermaid Live Editor](https://mermaid.live/) and is the one used in this module.
 
-## DOT Language
+All Mermaid rules are in:
 
-It is easy to start by following these rules:
+- <https://mermaid.js.org/syntax/flowchart.html>
+- <https://mermaid.js.org/syntax/block.html>
 
-- Variable names must not include space between words
-- Arrows are represented by the characters - and >
+Other tools such as [nomnoml](https://www.nomnoml.com/) also have their own syntax. [However, many more alternatives can be used](https://modeling-languages.com/text-uml-tools-complete-list/)
+
+## Mermaid Language
+
+- Start with `flowchart LR` (left to right)
+- Write each variable as `P1[Predictor 1]`, with `[ ]` for a square and `(( ))` for a circle
+- Draw an arrow with `-->`
 
 :::: {layout="[1,1]"}
 ::: {#first-column}
 What you type: 
-```{.dot}
-digraph {
-  "Predictor 1" -> "Outcome"
-  "Predictor 2" -> "Outcome"
-}
+```
+flowchart LR
+  P1[Predictor 1] --> O[Outcome]
+  P2[Predictor 2] --> O
 ```
 :::
 
 ::: {#second-column}
 What you get:
-```{dot}
-//| fig-height: 2
-//| fig-width: 5
-
-digraph {
-  "Predictor 1" -> "Outcome"
-  "Predictor 2" -> "Outcome"
-}
+```{mermaid}
+%%| fig-width: 4
+flowchart LR
+  P1[Predictor 1] --> O[Outcome]
+  P2[Predictor 2] --> O
 ```
 :::
 ::::
 
-## DOT Language
+## Mermaid Language
 
-To modify the orientation and the shape of the box, add the following options:
+To get straight arrows, place each variable yourself with a block diagram:
+
+- `block-beta` starts a block diagram
+- `columns 3` creates a grid of 3 columns, so every 3 cells start a new row
+- `space` leaves a cell empty
 
 :::: {layout="[1,1]"}
 ::: {#first-column}
-```{.dot}
-digraph {
-  graph [rankdir = LR]
-  node [shape = box]
-  
-  "Predictor 1" -> "Outcome"
-  "Predictor 2" -> "Outcome"
-}
+```
+block-beta
+  columns 3
+  P1["Predictor 1"] space space
+  space space O["Outcome"]
+  P2["Predictor 2"] space space
+  P1 --> O
+  P2 --> O
 ```
 :::
 
 ::: {#second-column}
-```{dot}
-//| fig-height: 2
-//| fig-width: 5
-
-digraph {
-  graph [rankdir = LR]
-  node [shape = box]
-  
-  "Predictor 1" -> "Outcome"
-  "Predictor 2" -> "Outcome"
-}
+```{mermaid}
+%%| fig-width: 4
+block-beta
+  columns 3
+  P1["Predictor 1"] space space
+  space space O["Outcome"]
+  P2["Predictor 2"] space space
+  P1 --> O
+  P2 --> O
 ```
 :::
 ::::
 
-## DOT Language {.smaller}
+Here Predictor 1 is on the first row, Outcome on the second row and Predictor 2 on the third row.
 
-Unfortunately the way to plot an interaction is much trickier. You have to include an invisible box to design the arrow crossing the main arrow:
+## Mermaid Language
+
+Unfortunately the way to plot an interaction is much trickier. It requires an invisible anchor (`J`) placed on the main arrow:
 
 :::: {layout="[1,1]"}
 ::: {#first-column}
-```{.dot}
-digraph {
-  graph [rankdir = LR]  
-  node [shape = box]
-  "Predictor 1"; "Predictor 2"; "Outcome"
-  node [shape = point, width = 0, height = 0]
-  ""
-  
-  "Predictor 2" -> ""
-  "Predictor 1" -> "" [arrowhead = none]
-  "" -> Outcome
-  
-  subgraph {
-    rank = same; "Predictor 2"; "";
-  }
-}
+```
+block-beta
+  columns 3
+  space P2["Predictor 2"] space
+  P1["Predictor 1"] J((" ")) O["Outcome"]
+  P1 --> O
+  P2 --> J
+  style J fill:none,stroke:none
 ```
 :::
 
 ::: {#second-column}
-```{dot}
-//| fig-height: 2
-//| fig-width: 5
-
-digraph {
-  graph [rankdir = LR]  
-  node [shape = box]
-  "Predictor 1"; "Predictor 2"; "Outcome"
-  node [shape = point, width = 0, height = 0]
-  ""
-  
-  "Predictor 2" -> ""
-  "Predictor 1" -> "" [arrowhead = none]
-  "" -> Outcome
-  
-  subgraph {
-    rank = same; "Predictor 2"; "";
-  }
-}
+```{mermaid}
+%%| fig-width: 5
+block-beta
+  columns 3
+  space P2["Predictor 2"] space
+  P1["Predictor 1"] J((" ")) O["Outcome"]
+  P1 --> O
+  P2 --> J
+  style J fill:none,stroke:none
 ```
 :::
 ::::
 
-There are many more rules to make more complicated models, see for more details <https://graphviz.org/doc/info/lang.html>
+- `J((" "))` is an empty circle between Predictor 1 and Outcome
+- `style J fill:none,stroke:none` makes it invisible
+- `P2 --> J` points the second arrow to the anchor, so it ends on the main arrow `P1 --> O`
 
-## DotUML Extension for Google Docs
+## Mermaid Extension for Google Docs
 
-:::: {layout="[1,1]"}
-::: {#first-column}
-This DOT language can easily be implemented with the DotUML extension in Google Docs.
+This Mermaid language can easily be used with the extension **Mermaid - Diagramming and charting tool** in Google Docs.
 
-DotUML is developed by a company called BML Solutions but as far as I know it is a free plug-in (at least free of money).
+- It is developed by an independent developer (Renan Le Caro) and it is free and open source.
+- To install it, go to Extensions > Add-ons > Get add-ons in Google Docs and search for "Mermaid".
+- See the [Google Workspace Marketplace](https://workspace.google.com/marketplace/app/mermaid_diagramming_and_charting_tool/636321283856) page for more details.
 
-See <https://dotuml.com> for more details.
+::: {.callout-warning}
+## Not the same extension
 
+"Mermaid Chart for Google Docs" is a different extension and requires a Mermaid account.
 :::
-
-::: {#second-column}
-
-```{r}
-include_graphics("https://dotuml.com/img/googledocs.200.png")
-```
-
-After installed the extension, use GraphViz and remove the code corresponding to the default example.
-
-:::
-::::
 
 ## {{< fa screwdriver-wrench >}}️ Your Turn! {background="#43464B"}
 
@@ -616,6 +701,16 @@ In the research paper you have selected, **draw the model(s) tested.**
 Remember, there is only 1 Outcome variable per model and it is not possible to draw two models with the same Outcome variable.
 
 Send me your figure by email at damien.dupre@dcu.ie **before the next lecture.**
+
+## {{< fa robot >}} Your Turn with AI! {background="#43464B"}
+
+Using the hypotheses of the research paper you have selected:
+
+1. Ask an AI assistant to write the model as **Mermaid code**
+2. Paste the code in the Mermaid extension in Google Docs to draw it
+3. Compare it with your own figure and the rules of a model (1 arrow per hypothesis, 1 Outcome, interaction with its main effects, black and white), then **correct every mistake**
+
+Send me your prompt, the AI output, the list of mistakes you found and your corrected figure at damien.dupre@dcu.ie **before the next lecture.**
 
 # 2. Understanding the Equation used to Test Hypotheses
 
@@ -630,7 +725,7 @@ df <-
   ) 
 ```
 
-Let's imagine the perfect scenario: **your predictor Predictor variable explains perfectly the outcome variable**.
+Let's imagine the perfect scenario: **your predictor variable explains perfectly the outcome variable**.
 
 The corresponding equation is: $Outcome = Predictor$
 
@@ -750,7 +845,7 @@ $$Outcome = b_0 + b_n \,Predictors + Error$$
 This expresses the idea that:
 
 - The Outcome can be described by one or multiple predictors.
-- The remaining part of the Outcome's variability that is not explained by the predictors is call the Error.
+- The remaining part of the Outcome's variability that is not explained by the predictors is called the Error.
 
 ## Equations, Variables and Effect Types
 
@@ -858,7 +953,7 @@ Exactly like with models, there are different ways to communicate an equation in
 
 <br>
 
-The least sophisticated approach would be to type the equation in Microsoft Words and to apply some italics and subscript style a posteriori.
+The least sophisticated approach would be to type the equation in Microsoft Word and to apply some italics and subscript style a posteriori.
 :::
 
 ::: {#second-column}
@@ -867,7 +962,7 @@ include_graphics("https://i.ytimg.com/vi/SRGaW3maK38/maxresdefault.jpg")
 ```
 
 ::: {.smaller}
-While there is nothing wrong with this approach, note that Microsoft Words has a tool to insert equations (Insert -> Equations), then a GUI will help you to design special characters in equations.
+While there is nothing wrong with this approach, note that Microsoft Word has a tool to insert equations (Insert -> Equations), then a GUI will help you to design special characters in equations.
 :::
 :::
 ::::
@@ -876,7 +971,7 @@ While there is nothing wrong with this approach, note that Microsoft Words has a
 
 Now there is a better way, which is also more complicated.
 
-$\LaTeX$ is used for entire manuscripts with all the specific design requirements imposed by ths style of academic journals. LaTex is the hell and we will see a specific approach to avoid it but the LaTex style for equations is the best.
+$\LaTeX$ is used for entire manuscripts with all the specific design requirements imposed by the style of academic journals. LaTeX is the hell and we will see a specific approach to avoid it but the LaTeX style for equations is the best.
 
 ## Representing an Equation
 
@@ -901,24 +996,14 @@ $$Outcome = b_0 + b_1\,Predictor 1 + b_2\,Predictor 2 +e$$
 
 Another fantastic extension is available for Google Docs called Auto-LaTeX Equations 
 
-Instead of using `\begin{equation}` and `\end{equation}`, use `$$` to open and close the equation
+- Instead of using `\begin{equation}` and `\end{equation}`, use `$$` to open and close the equation
 
-Then, click on "Render Equation", for the equation to be transformed in LaTex style
+- Then, click on "Render Equation", for the equation to be transformed in LaTeX style
 
-Note that some website can help to create the latex code, see for example <https://latex.codecogs.com/eqneditor/editor.php>
+Note that some websites can help to create the LaTeX code, see for example <https://fxeditor.codecogs.com/>
 
 ```{r}
 include_graphics("https://mathpix.com/images/google-docs-power-point2.webp")
-```
-
-## quiver
-
-quiver is a modern, graphical editor for commutative and pasting diagrams, capable of rendering high-quality diagrams for screen viewing, and exporting to LaTeX via tikz-cd or Typst via fletcher.
-
-<https://q.uiver.app/>
-
-```{r}
-include_graphics("raw.githubusercontent.com/varkor/quiver/refs/heads/master/screenshots/title.png")
 ```
 
 ## {{< fa screwdriver-wrench >}}️ Your Turn! {background="#43464B"}
@@ -983,7 +1068,7 @@ Variables:
 
 Alternative Hypothesis:
 
-- $H_a$: **Exam Results** *increases* when **Sleep Time** increases
+- $H_a$: **Exam Results** *increase* when **Sleep Time** increases
 - ($H_0$: **Exam Results** *stay the same* when **Sleep Time** increases)
 
 ## Example 1 {background="#43464B"}
@@ -1061,7 +1146,7 @@ Variables:
 
 Alternative Hypotheses: 
 
-- $H_{a_{1}}$: **Exam Results** *increases* when **Sleep Time** increases
+- $H_{a_{1}}$: **Exam Results** *increase* when **Sleep Time** increases
 - $H_{a_{2}}$: **Exam Results** of **experienced students** are *higher* than for **beginner students**
 - $H_{a_{3}}$: The effect of **Sleep Time** on **Exam Results** is *higher* for **experienced** than for **beginner students**
 
@@ -1139,13 +1224,13 @@ Send me your equation(s) by email at damien.dupre@dcu.ie **before the next lectu
 #### Hypotheses
 
   - Formulate your alternative hypotheses by using the proposed templates
-  - Any other formulation, even if it make sense, is not good practice (e.g. using the terms "has an impact", "is related to", "influences", ...)
+  - Any other formulation, even if it makes sense, is not good practice (e.g. using the terms "has an impact", "is related to", "influences", ...)
   - An interaction hypothesis requires the formulation of the main effect hypothesis of each predictor involved
   
 #### Model
 
   - A model should represent all your hypotheses and only your hypotheses
-  - Draw only model per Outcome variable (except is doing SEM analyses)
+  - Draw only one model per Outcome variable (except if doing SEM analyses)
   - Use the same names or acronyms as your hypotheses
   
 #### Equation

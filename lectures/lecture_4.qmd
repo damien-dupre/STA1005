@@ -80,7 +80,7 @@ The results section is always structured in the same way:
 2. Inferential Statistics
 
 - Indicating the relevance of the model
-- Communicating hypothesis testing results and conclude **if the alternative hypothesis considered as plausible or if the null hypothesis is not rejected.**
+- Communicating hypothesis testing results and conclude **if the alternative hypothesis is considered as plausible or if the null hypothesis is not rejected.**
 
 # 1. Regressions for Hypothesis Testing
 
@@ -100,7 +100,7 @@ A Linear Regression is used **to test all the hypotheses at once** and to calcul
 
 ## Vocabulary
 
-Specific tests are available for certain type of hypothesis such as T-test or ANOVA but as they are special cases of Linear Regressions, their importance is limited (see [Jonas Kristoffer Lindeløv's blog post: Common statistical tests are linear models](https://lindeloev.github.io/tests-as-linear/)).
+Specific tests are available for certain types of hypotheses such as T-test or ANOVA but as they are special cases of Linear Regressions, their importance is limited (see [Jonas Kristoffer Lindeløv's blog post: Common statistical tests are linear models](https://lindeloev.github.io/tests-as-linear/)).
 
 ```{r}
 include_graphics("https://psyteachr.github.io/msc-data-skills/images/memes/glm_meme.png")
@@ -122,7 +122,7 @@ Here, only **one test is taught to rule them all**: the General Linear Model (GL
 
 > The CEO of Organisation Beta has problems with the well-being of employees and wants to investigate the relationship between **Job Satisfaction (js_score)**, **salary** and **performance (perf)**.
 
-#### Therefore the CEO formulate 3 hypotheses:
+#### Therefore the CEO formulates 3 hypotheses:
 
 - $H_{a1}$: $js\_score$ increases when $salary$ increases 
 - $H_{a2}$: $js\_score$ increases when $perf$ increases
@@ -134,7 +134,7 @@ $$js\_score_i = b_{0} + b_{1}\,salary_i + b_{2}\,perf_i + b_{3}\,salary*perf_i +
 
 ## Finding the Best Line
 
-Draw all the possible lines on the frame. The best line, also called best fit, is the one which has the lowest amount or error. 
+Draw all the possible lines on the frame. The best line, also called best fit, is the one which has the lowest amount of error. 
 
 ```{r}
 tibble(
@@ -187,7 +187,7 @@ organisation_beta |>
 
 The line which obtains the lowest error, has the smallest residuals. This line is chosen by the linear regression.
 
-One common way to do this in statistics to use the "Mean-Square Error" (aka $MSE$) or the "Root-Mean-Square Error" (aka $RMSE$). We compute the difference between actual and predicted values, square them, sum them and divide them by $n$ observations (and the take the square root of them for the $RMSE$). 
+One common way to do this in statistics is to use the "Mean-Square Error" (aka $MSE$) or the "Root-Mean-Square Error" (aka $RMSE$). We compute the difference between actual and predicted values, square them, sum them and divide them by $n$ observations (and then take the square root of them for the $RMSE$). 
 
 $$MSE = \frac{\sum_{i=1}^{N}(y\,predicted_{i} - y\,actual_{i})^{2}}{N}$$ 
 
@@ -246,7 +246,7 @@ Technically, $b$ is a weight or multiplier applied to the Predictor's values to 
 - On the contrary, if $b_1, ..., b_n > 0\,or < 0$, then:
   - The regression line is positive (slope up) or negative (slope down)
   - When the Predictor increases by 1 unit, the Outcome variable increases/decreases by $b$
-  - **The alternative hypothesis considered as plausible**
+  - **The alternative hypothesis is considered as plausible**
 
 ## Significance of Effect's Estimate
 
@@ -260,7 +260,7 @@ The significance is the probability to obtain your results with your sample in t
 - Also called $p$-value
 - Is between 0% and 100% which corresponds to a value between 0.0 and 1.0
 
-**If the $p$-value is lower to 5% or 0.05, then the probability to obtain your results in the null hypothesis scenario is low enough to say that the null hypothesis scenario is rejected and there must be a link between the variables.**
+**If the $p$-value is lower than 5% or 0.05, then the probability to obtain your results in the null hypothesis scenario is low enough to say that the null hypothesis scenario is rejected and there must be a link between the variables.**
 
 Remember that the $p$-value is the probability of the data given the null hypothesis: $P(data|H_0)$.
 
@@ -268,7 +268,7 @@ Remember that the $p$-value is the probability of the data given the null hypoth
 
 As previously indicated, you will not have to calculate all the possible lines in your data to find the best fit, a software will do it for you:
 
-- JAMOVI, JASP or SPSS have a Graphic User Interface
+- JAMOVI, JASP or SPSS have a Graphical User Interface
 - R, Python or Julia are language based and have no interface
 
 ```{r}
@@ -284,7 +284,7 @@ The output of any software is two tables:
 
 The **Model Fit Measure** table tests the prediction **accuracy of your overall model** (all predictors taken into account).
 
-The **Model Coefficients** table provide an estimate to each predictor $b_1, ..., b_n$ (as well as the intercept $b_0$). the value of the estimate is statistically tested with a $p$-value to see if it is statistically different from 0 (null hypothesis). Therefore, this table is **used to test each hypotheses** separately.
+The **Model Coefficients** table provides an estimate to each predictor $b_1, ..., b_n$ (as well as the intercept $b_0$). The value of the estimate is statistically tested with a $p$-value to see if it is statistically different from 0 (null hypothesis). Therefore, this table is **used to test each hypothesis** separately.
 
 ## JAMOVI: Stats. Open. Now.
 
@@ -350,7 +350,7 @@ Expected variable type is displayed in bottom right corner of boxes
 #### Hypothesis:
 
 - $H_a$: $js\_score$ increases when $salary$ increases (i.e., $b_1>0$)
-- $H_0$: $js\_score$ stay the same when $salary$ increases (i.e., $b_1=0$)
+- $H_0$: $js\_score$ stays the same when $salary$ increases (i.e., $b_1=0$)
 
 #### Equation:
 
@@ -383,7 +383,7 @@ organisation_beta |>
   theme(text = element_text(size = 20))
 ```
 
-Figure 1: Scatterplot mapping every employee according their Salary and their Job Satisfaction.
+Figure 1: Scatterplot mapping every employee according to their Salary and their Job Satisfaction.
 :::
 
 ::: {#second-column}
@@ -447,8 +447,8 @@ include_img("jamovi_mfm.png")
 
 Default Columns:
 
-- The **Model** column indicate the reference of the model in case you want to compare multiple models
-- $R$ is the correlation between the outcome variable and all predictors taken into account (i.e., the closer to 1 or -1 the better, however in social science models with more that 0.2 or less than -0.2 are already excellent)
+- The **Model** column indicates the reference of the model in case you want to compare multiple models
+- $R$ is the correlation between the outcome variable and all predictors taken into account (i.e., the closer to 1 or -1 the better, however in social science models with more than 0.2 or less than -0.2 are already excellent)
 - $R^2$ is the % of variance from the outcome explained by the model (e.g., $R^2 = 0.73$ means the model explains 73% of the variance of the outcome variable). $R^2$ is also called **Coefficient of Determination**
 
 ## More Model Fit Measures {.smaller}
@@ -459,7 +459,7 @@ include_img("jamovi_mfm_full.png")
 
 - $Adjusted\,R^2$ is a more conservative version of $R^2$, usually not reported
 - $AIC$, $BIC$ and $RMSE$ are useful to compare multiple models, the lower the better
-- **Overall Model F Test** is the statistical test to show that your model have significantly better predictions than a model without any predictor.
+- **Overall Model F Test** is the statistical test to show that your model has significantly better predictions than a model without any predictor.
   - $F$ is the value of the statistical test comparing the results obtained with this sample using the full model with the results obtained with this sample using a model only with the intercept (i.e., $H_0$)
   - $df1$ is the degree of freedom "between group", its value corresponds to the amount of predictor in your model: $df1 = K$ (this is the easy explanation, see more details page 398 of "Learning Statistics with JAMOVI")
   - $df2$ is the degree of freedom "within group", its value corresponds to the amount of observation minus number of parameters minus 1: $df2 = N - K - 1$.
@@ -488,7 +488,7 @@ include_img("jamovi_mfm_full.png")
 
 ## Reporting the Model Coefficients Table {.smaller}
 
-The **Model Coefficients** table provide an estimate to each predictor $b_1, ..., b_n$ (as well as the intercept $b_0$). the value of the estimate is statistically tested with a $p$-value to see if it is statistically different from 0 (null hypothesis).
+The **Model Coefficients** table provides an estimate to each predictor $b_1, ..., b_n$ (as well as the intercept $b_0$). The value of the estimate is statistically tested with a $p$-value to see if it is statistically different from 0 (null hypothesis).
 
 ```{r}
 include_img("jamovi_mc.png")
@@ -497,8 +497,8 @@ include_img("jamovi_mc.png")
 Default Columns:
 
 - **Predictor** is the list of variables associated to parameters in your model (main and interaction) which includes the intercept
-- **Estimate** is the non-standardized relationship estimate of the best prediction line (expressed in the unit of the variable)
-- **SE** is the Standard Error and indicate how spread are the values around the estimate
+- **Estimate** is the non-standardised relationship estimate of the best prediction line (expressed in the unit of the variable)
+- **SE** is the Standard Error and indicates how spread are the values around the estimate
 - $t$ is the value of the statistical test comparing the estimate obtained with this sample with an estimate of 0 (i.e., $H_0$)
 - $p$ is the p-value, i.e the probability to obtain our prediction with our sample in the null hypothesis scenario 
 
@@ -542,7 +542,7 @@ include_img("jamovi_mc_full.png")
 
 The use of correlation tables is widespread in the literature, and they are a great tool for descriptive analysis but **do not test your hypotheses with correlation tables**. A good practice is to remove all $p$-values or $p$-stars from them.
 
-$p$-values should only be produced to test an hypothesis that has been already formulated, any other is use is called $p$**-hacking**.
+$p$-values should only be produced to test an hypothesis that has been already formulated, any other use is called $p$**-hacking**.
 
 ```{r}
 include_graphics("https://media.makeameme.org/created/what-is-something-5ea39c449c.jpg")
@@ -558,10 +558,10 @@ include_graphics("https://media.makeameme.org/created/what-is-something-5ea39c44
 #### Hypotheses
 
 - $H_{a_{1}}$: $js\_score$ increases when $salary$ increases (i.e., $b_1>0$) 
-  - $H_{0_{1}}$: $js\_score$ stay the same when $salary$ increases (i.e., $b_1=0$)
+  - $H_{0_{1}}$: $js\_score$ stays the same when $salary$ increases (i.e., $b_1=0$)
 
 - $H_{a_{2}}$: $js\_score$ increases when $perf$ increases (i.e., $b_2>0$) 
-  - $H_{0_{2}}$: $js\_score$ stay the same when $perf$ increases (i.e., $b_2=0$)
+  - $H_{0_{2}}$: $js\_score$ stays the same when $perf$ increases (i.e., $b_2=0$)
 
 - $H_{a_{3}}$: The effect of $salary$ on $js\_score$ increases when $perf$ increases (i.e., $b_3>0$) 
   - $H_{0_{3}}$: The effect of $salary$ on $js\_score$ is the same when $perf$ increases (i.e., $b_3=0$)
@@ -629,7 +629,7 @@ The interaction effect is not statistically significant, therefore $H_{0_{3}}$ c
 
 - Go to Estimated Marginal Means
 - Tick Marginal Means plot
-- Select both predictor and bring them in Marginal Mean box at once
+- Select both predictors and bring them in Marginal Mean box at once
 :::
 
 ::: {#second-column}
@@ -639,7 +639,7 @@ include_img("jamovi_lm_int_plot.png")
 :::
 ::::
 
-To plot the interaction between 2 continuous predictors, one of them has to be **transform into categorical ordinal variable** of 3 groups: **+1SD**, **Mean**, **-1SD**.
+To plot the interaction between 2 continuous predictors, one of them has to be **transformed into categorical ordinal variable** of 3 groups: **+1SD**, **Mean**, **-1SD**.
 
 ## Representing Interaction Effects
 
@@ -658,7 +658,7 @@ When representing the results of the linear regression **don't use the QQ-plot i
 ::: {.callout-important}
 ## Warning 2
 
-$salary*perf$ is a **two-way interaction** but interactions can three-, four-, n-way such as $salary*perf*gender$ or $salary*perf*gender*age$. However the more complex the interaction, the more difficult to interpret its effect.
+$salary*perf$ is a **two-way interaction** but interactions can be three-, four-, n-way such as $salary*perf*gender$ or $salary*perf*gender*age$. However the more complex the interaction, the more difficult to interpret its effect.
 :::
 
 ## {{< fa screwdriver-wrench >}}️ Your Turn! {background="#43464B"}

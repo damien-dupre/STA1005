@@ -20,6 +20,11 @@ $body-color: #000 !default;
 // $link-color: #EB811B !default;
 $selection-bg: #26351c;
 
+// Mermaid diagrams: black and white
+$mermaid-edge-color: #000;
+$mermaid-label-fg-color: #000;
+$mermaid-node-bg-color: $body-bg;
+
 // headings
 // $presentation-heading-font: "Palatino Linotype", "Book Antiqua", Palatino,
 //   FreeSerif, serif !default;

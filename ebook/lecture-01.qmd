@@ -6,15 +6,33 @@
 source("R/setup.R")
 ```
 
+```{r}
+#| label: setup-edition-2
+#| include: false
+library(patchwork)
+```
+
+::: {.callout-note .box-goals title="In this chapter"}
+After this chapter, you can:
+
+- describe the sections of a research paper and the concept that links each section to the next
+- explain why a paper written by AI from one prompt can have every number right and still be wrong
+- identify the type and the role of each variable of a study
+- write main effect and interaction effect hypotheses with the templates, together with their null hypotheses
+- check a hypothesis with the hypothesis checklist
+
+You need nothing but a pen, and the quantitative paper closest to your PhD for the last exercise.
+:::
+
 This chapter introduces a new way to teach statistics, built on three aims:
 
 1. **Understanding the basics**
-2. **Using open source software and coding languages** (jamovi and R)
+2. **Using an open source coding language** (R) <!-- check: the slide now reads "Using open source coding language (R)" and no longer names jamovi, but Lectures 4 to 6 still teach the analyses with jamovi -->
 3. **Applying this knowledge and these skills to the writing of research papers**
 
 In the end, I want you to become a data scientist with enough knowledge and skills to challenge bad science and wrong ideas, and to apply to data science positions.
 
-The chapter starts with general information about the module and the assignment (@sec-l01-general). It then looks at how a research paper is organised and why its structure matters for the statistics it reports (@sec-l01-papers). The last two sections follow the paper itself: the introduction, where the variables are presented (@sec-l01-intro), and the literature review, where the hypotheses are formulated (@sec-l01-hypotheses).
+The chapter starts with general information about the module and the assignment (@sec-l01-general). It then looks at how a research paper is organised and why its structure matters for the statistics it reports, and it tests this structure on a research paper written by a generative AI assistant in a few minutes (@sec-l01-papers). The last two sections follow the paper itself: the introduction presents the variables (@sec-l01-intro) and the literature review formulates the hypotheses (@sec-l01-hypotheses).
 
 ## General information {#sec-l01-general}
 
@@ -34,19 +52,19 @@ These books are helpful readings for the module:
 
 ### Details on the assignment
 
-Based on your research topic, I will provide real data in April. <!-- check: "April" and the deadline below are dated, confirm them for the current cohort --> Your task is to **write a publication-ready research paper** with:
+Based on your research topic, I will provide real data in April. <!-- check: "April" is dated, confirm it for the current cohort --> Your task is to **write a publication-ready research paper** with:
 
 - A concise **introduction** and **literature review** with a few references leading to your hypotheses
 - A **method section** describing the variables, a representation of the model, and the equation testing the hypotheses
 - A **results section** of publication quality, including hypothesis testing and conditions of application
 - A brief **discussion and conclusion**
 
-This paper will have **a maximum of 6 pages** and **a publication-ready design**. **The deadline is June 21st, 2026.** <!-- check: deadline as written on the slide (June 21st, 2026), which now looks dated -->
+This paper will have **a maximum of 6 pages** and **a publication-ready design**. **The deadline is June 21st, 2027.**
 
-::: {.callout-tip title="Your turn: find a paper close to your PhD"}
+::: {.callout-tip .box-yourturn title="Your turn: find a paper close to your PhD"}
 If you have not done it already, look for the **quantitative academic journal paper which is the closest to your Ph.D**.
 
-You need to download the PDF version of this paper and send it to my email damien.dupre@dcu.ie.
+You need to download the PDF version of this paper and send it to my email before the next lecture: damien.dupre@dcu.ie.
 
 **Warning:**
 
@@ -54,11 +72,76 @@ You need to download the PDF version of this paper and send it to my email damie
 - This paper should include a statistical analysis (e.g., regression analysis, ANOVA, $t$-test) and, if possible, the corresponding $p$-values
 :::
 
+### Introducing Organisation Beta {#sec-l01-beta}
+
+Imagine the following case study, which we will use throughout the module:
+
+> The CEO of **Organisation Beta** is concerned about the well-being of employees and wants to understand what explains their **Job Satisfaction**.
+
+The CEO shares `organisation_beta.csv`, a file with one row per employee (20 employees). @tbl-l01-beta-columns describes its main columns.
+
+| Column | Description |
+|----|------------------|
+| `gender` | Employee's gender (female or male) |
+| `location` | Country where the employee works (Ireland, France or Australia) |
+| `salary` | Salary in euros (from 28,451 to 31,516) |
+| `perf` | Job performance score (from 0 to 10) |
+| `js_score` | Job satisfaction score (from 0 to 10) |
+
+: The main columns of the file organisation_beta.csv. {#tbl-l01-beta-columns}
+
+The file also contains an `employee` number (1 to 20), `salary_c` and `perf_c` (grouped versions of `salary` and `perf`) and contrast codes (see @sec-lecture-05).
+
 ## Statistics and research papers {#sec-l01-papers}
 
 ### Anatomy of a paper
 
 The shape of the contents of a research paper resembles an hourglass: it **starts wide** (introduction), **then narrows** (hypotheses, method and results) and **finally opens** (discussion and conclusion).
+
+@fig-l01-hourglass draws this shape. Each band is a section of the paper, with what the section contains according to the list below.
+
+```{r}
+#| label: fig-l01-hourglass
+#| fig-cap: "The hourglass of a research paper: wide at the introduction, narrow from the literature review to the results, open again at the discussion and conclusion."
+#| fig-alt: "An hourglass made of five stacked bands. From top to bottom, the bands get narrower: Introduction (the research question and the variables), Literature review (how the variables are connected, ending with the hypotheses), Methods (the variables, the equation and the tests) and Results (the outcomes of the hypothesis tests), which is the narrowest. The last band, Discussion and conclusion (the interpretation of the findings, strengths and limitations), opens wide again. On the left, the words starts wide, narrows and opens mark the three parts of the shape."
+#| fig-height: 4.4
+paper_sections <- tribble(
+  ~section,                    ~content,                                                        ~y_top, ~y_bottom, ~width_top, ~width_bottom,
+  "Introduction",              "the research question\nand the variables",                      5.0,    4.0,       1.00,       0.68,
+  "Literature review",         "how the variables are connected,\nending with the hypotheses",  4.0,    3.0,       0.68,       0.38,
+  "Methods",                   "the variables, the equation\nand the tests",                    3.0,    2.2,       0.38,       0.20,
+  "Results",                   "the outcomes of the\nhypothesis tests",                         2.2,    1.4,       0.20,       0.12,
+  "Discussion and conclusion", "the interpretation of the findings,\nstrengths and limitations", 1.4,   0.0,       0.12,       1.00
+)
+
+hourglass_bands <- paper_sections |>
+  rowwise() |>
+  reframe(
+    section = section,
+    x = c(-width_top, width_top, width_bottom, -width_bottom),
+    y = c(y_top, y_top, y_bottom, y_bottom)
+  )
+
+section_labels <- paper_sections |>
+  mutate(y_middle = (y_top + y_bottom) / 2)
+
+shape_words <- tribble(
+  ~word,         ~y,
+  "starts wide", 4.5,
+  "narrows",     2.6,
+  "opens",       0.7
+)
+
+ggplot() +
+  geom_polygon(data = hourglass_bands, aes(x, y, group = section), fill = "#fdf0e1", colour = book_col("orange"), linewidth = 0.6) +
+  geom_segment(data = section_labels, aes(x = 1.08, xend = 1.18, y = y_middle, yend = y_middle), colour = book_col("grey"), linewidth = 0.4) +
+  geom_text(data = section_labels, aes(x = 1.25, y = y_middle + 0.17, label = section), hjust = 0, fontface = "bold", size = 4.6) +
+  geom_text(data = section_labels, aes(x = 1.25, y = y_middle - 0.03, label = content), hjust = 0, vjust = 1, size = 3.9, colour = "#43464b", lineheight = 0.9) +
+  geom_text(data = shape_words, aes(x = -1.12, y = y, label = word), hjust = 1, size = 4.4, fontface = "italic") +
+  scale_x_continuous(limits = c(-1.7, 3.4)) +
+  scale_y_continuous(limits = c(-0.05, 5.05)) +
+  theme_void()
+```
 
 ### A closer look at papers
 
@@ -104,6 +187,254 @@ flowchart TB
 
 Thus, it is essential to master the concepts of **variable**, **hypothesis**, **model**, and **equation** before the actual **statistical test**.
 
+@fig-l01-route follows these concepts for one question of the CEO of Organisation Beta: does job satisfaction increase with salary? This chapter covers the variables, the hypothesis and the model. The equation and the statistical test come in @sec-lecture-04.
+
+```{r}
+#| label: fig-l01-route
+#| fig-cap: "From the variables to the statistical test, for the effect of salary on job satisfaction in Organisation Beta."
+#| fig-alt: "Five boxes in a row joined by arrows. Variables: js_score and salary. Hypothesis: js_score increases when salary increases. Model: an arrow from salary to js_score. Equation: js_score = b0 + b1 salary + e. Test: is b1 different from 0?"
+#| fig-height: 1.6
+route <- tribble(
+  ~step,        ~detail,
+  "Variables",  "js_score\nand salary",
+  "Hypothesis", "js_score\nincreases when\nsalary increases",
+  "Model",      "an arrow\nfrom salary\nto js_score",
+  "Equation",   "js_score =\nb0 + b1 salary\n+ e",
+  "Test",       "is b1\ndifferent\nfrom 0?"
+)
+
+flow_chart(route)
+```
+
+### A first research paper, written by AI {#sec-l01-ai-paper}
+
+::: {.callout-tip .box-yourturn title="Your turn: write a research paper with one prompt"}
+Now that we have the basics, let's write our first **publication-ready research paper**.
+
+- **Author**: a generative AI assistant
+- **Data**: `organisation_beta.csv`, 20 rows, 12 columns. **No context, no idea how these data were collected.** Does the AI care?
+- **Our contribution**: one prompt
+
+> Attached is a dataset: organisation_beta.csv. Write a publication-ready research paper using these data, ready to submit to a good peer-reviewed management journal.
+
+Suggested time: 5 minutes.
+:::
+
+The paper that came back starts like this:
+
+> **Pay, Job Satisfaction, and Individual Performance: An Exploratory Analysis of a Small Multilocation Employee Dataset**
+>
+> *Abstract.* This exploratory study examines associations among employee job satisfaction, individual performance, and salary in a supplied dataset of 20 employee records from Australia, France, and Ireland. The file contains no missing values, but it does not document the sampling process, measurement instruments, salary currency, or score scales. Pearson correlations, Spearman rank correlations, and exploratory linear regression with HC3 heteroskedasticity-robust standard errors were used. Job satisfaction was strongly positively associated with salary (Pearson r = .855, 95% CI [.664, .941], p < .001; Spearman rho = .798, p < .001). The association remained positive after adjusting for recorded location and gender (unstandardized coefficient = 434.77 salary units per satisfaction-score unit, 95% CI [235.03, 634.50], p < .001). In contrast, job satisfaction was not associated with performance (r = .014, 95% CI [-.431, .454], p = .952), nor was salary (r = -.091, p = .704). Apparent location differences in performance were not robust across conventional ANOVA, Welch ANOVA, and Kruskal-Wallis tests. Given the small sample, undocumented measurement properties, and unknown data provenance, the findings are descriptive and cannot support causal claims or broad generalisation. The unusually strong salary-satisfaction association should be independently verified before substantive interpretation.
+
+It took about 11 minutes of machine time and **0 minutes of human time**.
+
+### Same prompt, same data, three papers
+
+The same prompt was run three times, in three independent sessions of the same AI model (25 October 2026). @tbl-l01-runs compares the three papers.
+
+|  | Run 1 | Run 2 | Run 3 |
+|---|---|---|---|
+| **Title** | *Does Pay Follow Performance, and Does Satisfaction Follow Pay?* | *When Pay Does Not Follow Performance* | *A Transparent Small-Sample Test of Equity-Theory Predictions* |
+| **Hypotheses** | 5 | 4 + 1 research question | 3 + 2 research questions |
+| **Interaction hypothesis** | performance × gender on salary | none | salary × performance on satisfaction |
+| **Big idea** | pay audits in small units | "a pay system can be gender-neutral without being meritocratic" | equity and relative pay |
+
+: Titles, hypotheses and big ideas of the three papers written from the same prompt and the same data. {#tbl-l01-runs}
+
+**Same data, three different papers.** Which one is "the" result?
+
+The three papers also share the same fingerprints (@tbl-l01-fingerprints).
+
+|  | Run 1 | Run 2 | Run 3 |
+|---|---|---|---|
+| Hypotheses supported | 1 of 5 | 1 of 4 | 1 of 3 |
+| "Significant" location effects | Ireland +1.31 (*p* = .021), performance by location (*p* = .048) | Australia below Ireland (*p* = .024), performance by location (*p* = .048) | Ireland *r* = .53 (*p* = .017) |
+| Words / references | 11,020 / 78 | 11,335 / 74 | 10,721 / 80 |
+| $p$-values in the text | 46 | 94 | 67 |
+| Lines of analysis code | 770 | 839 | 861 |
+| `[Author to complete]` placeholders | 23 | 22 | 19 |
+
+: Counts that characterise the three papers. {#tbl-l01-fingerprints}
+
+All of this comes from **20 employees**. These counts were computed from the three papers, which are not reproduced in this book. The "significant" location effects are reported with caveats in the papers, but they are reported.
+
+### Plot twist: the employees do not exist
+
+I simulated `organisation_beta.csv` in R (the full code is in @sec-lecture-04):
+
+```r
+tibble(
+  gender   = sample(c("male", "female"), 20, replace = TRUE),
+  location = sample(c("Ireland", "France", "Australia"), 20, replace = TRUE),
+  perf     = rnorm(20, mean = 4, sd = 2),
+  salary   = rnorm(20, mean = 30000, sd = 1000),
+  js_score = -55 + 0.002 * salary + rnorm(20, mean = 2, sd = 1)
+)
+```
+
+The data contain **one real effect**: +2 points of job satisfaction per 1,000 of salary. Gender, location and performance were **drawn at random**.
+
+::: {.callout-warning title="Before you copy me"}
+This dataset is simulated, so uploading it is harmless. **Never** upload your participants' data to an AI tool without checking your ethics approval and DCU's approved tools.
+:::
+
+### Review before submitting
+
+AI usually creates **placeholders for facts that only a human can supply**:
+
+> [AUTHOR TO CONFIRM: instrument and source citation, number of items, response format, scoring, internal consistency in this sample ...]
+
+It is 2 am, the deadline is at 9 am. What do you type in the brackets?
+
+::: {.callout-important title="Anything that did not happen is fabrication"}
+Inventing participants, measures, reliabilities or approvals is **research misconduct**, whoever (or whatever) wrote the rest of the paper.
+:::
+
+### Every number is right
+
+I re-ran their key results in R (@tbl-l01-lm). They are **all correct**:
+
+```{r}
+#| label: tbl-l01-lm
+#| echo: true
+#| tbl-cap: "Regression of job satisfaction on salary (in thousands), performance, gender and location."
+organisation_beta <- readr::read_csv(here::here("data/organisation_beta.csv"))
+
+lm(js_score ~ I(salary / 1000) + perf + gender + location, data = organisation_beta) |>
+  broom::tidy(conf.int = TRUE) |>
+  select(term, estimate, conf.low, conf.high, p.value) |>
+  kable(digits = 3)
+```
+
+The arithmetic was never the problem. **The problem is everything around the numbers.** The reference category here is Australia (alphabetical order), so the Ireland coefficient is +1.30 ($p$ = .024): the same "finding" as Run 2's "Australia below Ireland". Same numbers, different words.
+
+Because the data were simulated, the true value of each effect is known: 2 points of job satisfaction per 1,000 of salary, and 0 for performance, gender and location. @fig-l01-truth puts the estimates of @tbl-l01-lm next to these true values. The interval of salary contains its true value. The interval of Ireland does not contain 0, although the true effect of location is 0: this "finding" is produced by chance.
+
+```{r}
+#| label: fig-l01-truth
+#| fig-cap: "The estimates of the regression of @tbl-l01-lm with their 95% confidence intervals (blue) and the true values used to simulate the data (crosses). Gender is compared with female employees and location with Australia."
+#| fig-alt: "Dot and interval plot with one row per effect. The horizontal axis is the effect on js_score in points, with a dashed line at 0. Salary per 1,000: estimate 1.68, interval from 1.14 to 2.21, true value 2, labelled the one real effect. Perf: estimate 0.19, interval from -0.05 to 0.44, true value 0. Gender male: estimate -0.73, interval from -1.52 to 0.06, true value 0. Location France: estimate 0.51, interval from -0.57 to 1.59, true value 0. Location Ireland: estimate 1.30, interval from 0.20 to 2.40, true value 0, labelled the interval excludes 0, but the true effect is 0."
+#| fig-height: 3.2
+ai_paper_model <- lm(js_score ~ I(salary / 1000) + perf + gender + location, data = organisation_beta)
+
+true_values <- tribble(
+  ~term,             ~effect,               ~true_value,
+  "I(salary/1000)",  "salary (per 1,000)",  2,
+  "perf",            "perf",                0,
+  "gendermale",      "gender: male",        0,
+  "locationFrance",  "location: France",    0,
+  "locationIreland", "location: Ireland",   0
+)
+
+estimates_and_truth <- broom::tidy(ai_paper_model, conf.int = TRUE) |>
+  inner_join(true_values, by = "term") |>
+  mutate(effect = factor(effect, levels = rev(true_values$effect)))
+
+estimate_series <- "estimate and its 95% CI"
+truth_series <- "true value in the simulation"
+
+ggplot(estimates_and_truth, aes(y = effect)) +
+  geom_vline(xintercept = 0, colour = book_col("grey"), linetype = "dashed", linewidth = 0.6) +
+  geom_linerange(aes(xmin = conf.low, xmax = conf.high, colour = estimate_series), linewidth = 1.1) +
+  geom_point(aes(x = estimate, colour = estimate_series, shape = estimate_series), size = 3) +
+  geom_point(aes(x = true_value, colour = truth_series, shape = truth_series), size = 3, stroke = 1.2) +
+  annotate("text", x = 2.65, y = "salary (per 1,000)", label = "the one real effect", hjust = 0, size = 3.3) +
+  annotate("text", x = 2.65, y = "location: Ireland", label = "the interval excludes 0,\nbut the true effect is 0", hjust = 0, size = 3.3, lineheight = 0.95) +
+  scale_colour_manual(values = setNames(book_col("blue", "ink"), c(estimate_series, truth_series))) +
+  scale_shape_manual(values = setNames(c(16, 4), c(estimate_series, truth_series))) +
+  scale_x_continuous(limits = c(-1.7, 4.3), breaks = seq(-1, 3, 1)) +
+  labs(x = "Effect on js_score (points)", y = NULL, colour = NULL, shape = NULL)
+```
+
+### The references are real
+
+All the **references** of the papers were checked against Crossref, publishers and library catalogues: **all correct**, **none invented**. <!-- check: the longer AI deck of October counted 130 correct references out of 132 distinct entries, with one wrong DOI and one wrong page range; the slide now says "All correct" -->
+
+- In 2023, GPT-4 still fabricated 18% of its citations [(Walters & Wilder, 2023)](https://doi.org/10.1038/s41598-023-41032-5).
+- Today, wrong references are rare enough to slip through, while fabricated references in published papers are still rising [(Topaz et al., 2026)](https://doi.org/10.1016/S0140-6736%2826%2900603-3).
+
+::: {.callout-tip title="A correct reference is not a checked claim"}
+You still have to open each source and confirm that it says what your sentence says. Checking took four AI agents about 8 minutes: **verification is a good job for AI**, as long as you check the checkers on a sample.
+:::
+
+### The AI shortcut runs backwards
+
+Research goes from ideas to data (@fig-l01-research-order), whereas the 5-minute AI paper goes from data to ideas (@fig-l01-ai-order).
+
+<!-- layout: as for the two flowcharts above, the slides draw these two flowcharts from left to right; they run from top to bottom here -->
+
+```{mermaid}
+%%| label: fig-l01-research-order
+%%| fig-cap: "Research goes from ideas to data."
+%%| fig-alt: "Flowchart of five boxes from top to bottom, each followed by an arrow to the next: Theory and Literature, Hypotheses, Data, Statistical Test, and Conclusion."
+%%{init: {"flowchart": {"rankSpacing": 25, "nodeSpacing": 25, "padding": 10}}}%%
+flowchart TB
+  A[Theory &<br/>Literature] --> B[Hypotheses]
+  B --> C[Data]
+  C --> D[Statistical<br/>Test]
+  D --> E[Conclusion]
+```
+
+```{mermaid}
+%%| label: fig-l01-ai-order
+%%| fig-cap: "The 5-minute AI paper goes from data to ideas."
+%%| fig-alt: "Flowchart of five boxes from top to bottom, each followed by an arrow to the next: Data, Run many tests, Keep the significant ones, Write hypotheses to match, and Find a theory that fits."
+%%{init: {"flowchart": {"rankSpacing": 25, "nodeSpacing": 25, "padding": 10}}}%%
+flowchart TB
+  A[Data] --> B[Run many<br/>tests]
+  B --> C[Keep the<br/>significant ones]
+  C --> D[Write hypotheses<br/>to match]
+  D --> E[Find a theory<br/>that fits]
+```
+
+**Same sections, opposite order.** The $p$-values of the second paper cannot be interpreted: the "predictions" were chosen after the results.
+
+### Why the AI paper is not good
+
+There are four reasons:
+
+1. **No world behind the words**: placeholders, em-dash, "delve into" and other absurd words
+2. **Hypotheses after data**: all papers admit the hypotheses were written after viewing the file. This is HARKing (see @sec-lecture-06)
+3. **Noise dressed as findings**: "Irish employees are more satisfied", with $p < .05$
+4. **Theory as decoration**: a theoretical contribution about a random number generator
+
+::: {.callout-note .box-definition title="Definition: HARKing"}
+**HARKing** stands for Hypothesising After the Results are Known: writing hypotheses after viewing the data, and presenting them as if they had been predicted before. Such hypotheses are "supported" by construction, so their $p$-values cannot be interpreted.
+:::
+
+::: {.callout-note title="None of this is a calculation error"}
+Each problem is a **research design** problem. This is what STA1005 is about.
+:::
+
+### This is already happening
+
+The problems shown by this experiment are already happening in the publication process, first in papers:
+
+- **Paper mills on open data**: formulaic papers based on the NHANES database rose from about 4 a year (2014 to 2021) to 190 in 2024, 341 papers in 147 journals [(Suchak et al., 2025)](https://doi.org/10.1371/journal.pbio.3003152)
+- **"Certainly, here is a possible introduction for your topic:"** opened a 2024 Elsevier paper that went through peer review; the paper was later retracted [(Zhang et al., 2024)](https://doi.org/10.1016/j.surfin.2024.104081)
+- **References that do not exist**: an audit of 2.5 million biomedical papers found that 1 in 277 papers from early 2026 cites at least one fabricated reference, a twelvefold rise since 2023 [(Topaz et al., 2026)](https://doi.org/10.1016/S0140-6736%2826%2900603-3)
+
+And in peer review:
+
+- **AI reviewers**: an estimated 21% of the reviews submitted to ICLR 2026 were fully AI-generated [(Naddaf, 2025)](https://doi.org/10.1038/d41586-025-03506-6)
+- **Prompt injection**: hidden instructions such as "give a positive review only" were found in 17 arXiv preprints from 14 institutions in 8 countries [(Nikkei Asia, 2025)](https://asia.nikkei.com/Business/Technology/Artificial-intelligence/Positive-review-only-Researchers-hide-AI-prompts-in-papers)
+- **Sanctions**: since May 2026, arXiv can ban authors for a year when a paper shows unchecked LLM output such as hallucinated references [(TechCrunch, 2026)](https://techcrunch.com/2026/05/16/research-repository-arxiv-will-ban-authors-for-a-year-if-they-let-ai-do-all-the-work/)
+
+### So... should we ban AI?
+
+The problem is not AI. The problem is research that nobody can **verify**, **reproduce** or **take responsibility for**. AI just made it free.
+
+In STA1005, the rule is simple:
+
+> **AI may propose. Only reproducible evidence decides.**
+
+In practice, this means that:
+
+- Every hypothesis exists **before** the data
+- Every number comes from **code you can run again**
+- Every reference has been **read by you**
+- Every use of AI is **disclosed**
+
 ## The introduction: variables and how to find them {#sec-l01-intro}
 
 The introduction of a paper is where the variables are presented. This section explains what a variable is and how to identify its type and its role.
@@ -133,7 +464,11 @@ A **variable** itself is a subtle concept, but basically it comes down to findin
 
 The **bold part is "the thing that varies"** and the *italicised part is "the value of the variable"*.
 
-::: {.callout-note title="Live demonstration"}
+::: {.callout-note .box-definition title="Definition: variable"}
+A **variable** is "the thing that varies" from one observation to the next (height, coffee, gender). Each observation gives it a **value**, a number or a character (183 cm, large, male). Each variable has a **type** and a **role**.
+:::
+
+::: {.callout-note .box-demo title="Live demonstration"}
 In the lecture, more data are collected about the classmates on these three variables: height, coffee and gender.
 :::
 
@@ -161,9 +496,88 @@ Our first statistical software, jamovi, illustrates them with recognisable icons
 include_img("jamovi_icons.png")
 ```
 
+::: {.callout-tip .box-example title="Example: the types of the variables of Organisation Beta"}
+In `organisation_beta.csv`, `gender` (female, male) and `location` (Ireland, France, Australia) are **categorical nominal**: their categories cannot be ordered. `perf_c` (low, medium, high) is **categorical ordinal**: its categories can be ordered. `salary`, `perf` and `js_score` are **continuous**: their values are numbers.
+:::
+
+@fig-l01-types shows what each type looks like with the data of Organisation Beta. A categorical variable is described by the number of observations in each category. A continuous variable is described by the spread of its values along a scale.
+
+```{r}
+#| label: fig-l01-types
+#| fig-cap: "Three types of variable in organisation_beta.csv: the number of employees in each location (nominal) and in each group of performance (ordinal), and the spread of the job satisfaction scores (continuous)."
+#| fig-alt: "Three panels. Left, titled location, categorical nominal: grey bars for Australia (8 employees), France (6) and Ireland (6). Middle, titled perf_c, categorical ordinal: bars in three shades of blue from light to dark for low (3 employees), medium (14) and high (3). Right, titled js_score, continuous: a grey histogram of the 20 scores on a scale from 0 to 10, with values between about 3.6 and 10."
+#| fig-height: 3.2
+perf_levels <- c("low", "medium", "high")
+
+plot_nominal <- organisation_beta |>
+  count(location) |>
+  ggplot(aes(location, n)) +
+  geom_col(fill = book_col("grey"), width = 0.6) +
+  geom_text(aes(label = n), vjust = -0.4, size = 3.5) +
+  scale_y_continuous(limits = c(0, 16), breaks = seq(0, 15, 5)) +
+  labs(title = "location", subtitle = "categorical nominal", x = NULL, y = "Number of employees") +
+  theme(axis.text.x = element_text(size = 9))
+
+plot_ordinal <- organisation_beta |>
+  mutate(perf_c = factor(perf_c, levels = perf_levels)) |>
+  count(perf_c) |>
+  ggplot(aes(perf_c, n, fill = perf_c)) +
+  geom_col(width = 0.6, show.legend = FALSE) +
+  geom_text(aes(label = n), vjust = -0.4, size = 3.5) +
+  scale_fill_manual(values = setNames(unname(book_blues), perf_levels)) +
+  scale_y_continuous(limits = c(0, 16), breaks = seq(0, 15, 5)) +
+  labs(title = "perf_c", subtitle = "categorical ordinal", x = NULL, y = NULL)
+
+plot_continuous <- organisation_beta |>
+  ggplot(aes(js_score)) +
+  geom_histogram(binwidth = 1, boundary = 0, fill = book_col("grey"), colour = "white") +
+  scale_x_continuous(limits = c(0, 10), breaks = seq(0, 10, 2)) +
+  scale_y_continuous(limits = c(0, 16), breaks = seq(0, 15, 5)) +
+  labs(title = "js_score", subtitle = "continuous", x = "score (from 0 to 10)", y = NULL)
+
+plot_nominal + plot_ordinal + plot_continuous +
+  plot_layout(widths = c(1.25, 1, 1.15))
+```
+
+::: {.callout-warning .box-mistake title="Common mistake: judging the type by the look of the values"}
+Numbers are not always continuous. The column `employee` holds the numbers 1 to 20, but they only name the employees: they are categories written with numbers (the average employee number means nothing). Ask whether the values measure a quantity on a scale (continuous) or name a group (categorical).
+:::
+
 ::: {.callout-important title="Warning"}
 Variables can be converted to either categorical or continuous, but it is always better to keep them in their correct scale.
 :::
+
+@fig-l01-perf-groups shows what is lost when a continuous variable is converted into a categorical one. In `organisation_beta.csv`, `perf_c` groups the performance scores into low, medium and high, with limits at one standard deviation below and above the mean of `perf`. Employees 16 and 8 are both "medium", although their scores are `r format_number(abs(organisation_beta$perf[organisation_beta$employee == 8] - organisation_beta$perf[organisation_beta$employee == 16]))` points apart. Employees 8 and 20 are in different groups, although their scores are only `r format_number(abs(organisation_beta$perf[organisation_beta$employee == 20] - organisation_beta$perf[organisation_beta$employee == 8]))` points apart.
+
+```{r}
+#| label: fig-l01-perf-groups
+#| fig-cap: "The performance score (perf) of each employee and its group in perf_c. The dashed lines are the mean of perf minus and plus one standard deviation."
+#| fig-alt: "Dot plot with one row per employee, sorted by performance score on a horizontal axis from 0 to 10. Two dashed vertical lines, at about 2.5 and 6.3, split the axis into low, medium and high. Employees 1, 18 and 4 are low (light blue), employees 16 to 8 are medium (blue) and employees 20, 5 and 19 are high (dark blue). Employee 16, at about 2.6, and employee 8, at about 5.8, are both medium."
+#| fig-height: 4.6
+perf_mean <- mean(organisation_beta$perf)
+perf_sd <- sd(organisation_beta$perf)
+perf_limits <- tibble(limit = c(perf_mean - perf_sd, perf_mean + perf_sd))
+
+group_names <- tibble(
+  perf_c = perf_levels,
+  perf = c((0 + perf_mean - perf_sd) / 2, perf_mean, (perf_mean + perf_sd + 10) / 2)
+)
+
+organisation_beta |>
+  mutate(
+    perf_c = factor(perf_c, levels = perf_levels),
+    employee_name = fct_reorder(paste("employee", employee), perf)
+  ) |>
+  ggplot(aes(perf, employee_name)) +
+  geom_vline(data = perf_limits, aes(xintercept = limit), linetype = "dashed", colour = book_col("grey")) +
+  geom_point(aes(colour = perf_c), size = 2.8) +
+  geom_text(data = group_names, aes(x = perf, y = 21, label = perf_c), fontface = "bold", size = 3.6) +
+  scale_colour_manual(values = setNames(unname(book_blues), perf_levels)) +
+  scale_x_continuous(limits = c(0, 10), breaks = seq(0, 10, 2)) +
+  coord_cartesian(ylim = c(1, 21), clip = "off") +
+  labs(x = "perf (from 0 to 10)", y = NULL, colour = "perf_c") +
+  theme(axis.text.y = element_text(size = 8))
+```
 
 ### Role of variables: predictors, outcomes and controls {#sec-l01-roles}
 
@@ -180,6 +594,10 @@ Statistics is only about identifying the relationship between predictor and outc
 **Control variables** are variables not included in the model or in the hypotheses, but included in the equation. They are used to remove an irrelevant explanation of the variable changes.
 :::
 
+::: {.callout-tip .box-example title="Example: the roles of the variables of Organisation Beta"}
+The CEO wants to understand what explains Job Satisfaction, so `js_score` is the **outcome**. `salary`, `perf`, `gender` and `location` are possible **predictors**. If the CEO had hypotheses about salary only, but added `location` to the equation to remove an irrelevant explanation of the differences in job satisfaction, `location` would be a **control variable**.
+:::
+
 The objective is to find the best predictor variable(s) to predict the variability of the outcome! One predictor is simple to handle, but using more than one requires more understanding!
 
 ::: {.callout-note title="Outcome's variability is a birthday cake"}
@@ -187,6 +605,42 @@ The objective is to find the best predictor variable(s) to predict the variabili
 - If 1 guest eats a slice of the cake: 1 predictor explains only part of the outcome.
 - If there is more than 1 guest, they will all eat a slice of a different size: each predictor will explain its own part of the outcome.
 :::
+
+@fig-l01-cake-sketch draws the three cases of the cake. Each bar is the whole variability of the outcome: the coloured slices are the parts explained by the predictors, and the grey part is what no predictor explains.
+
+```{r}
+#| label: fig-l01-cake-sketch
+#| fig-cap: "The birthday cake as a bar: the whole variability of the outcome, the slices eaten by the predictors and the part left unexplained. The slices are drawn for the illustration and do not come from data."
+#| fig-alt: "Three horizontal bars from 0% to 100% of the variability of the outcome. First bar, 1 guest eats all the cake: one blue slice for predictor 1 covers the whole bar. Second bar, 1 guest eats a slice: a blue slice for predictor 1 covers less than half of the bar and the rest is grey, not explained. Third bar, 3 guests eat a slice each: a blue slice for predictor 1, a smaller red slice for predictor 2, a smaller green slice for predictor 3, and a grey part not explained."
+#| fig-height: 2.6
+slice_names <- c("predictor 1", "predictor 2", "predictor 3", "not explained")
+case_names <- c("1 guest eats all the cake", "1 guest eats a slice", "3 guests eat a slice each")
+
+cake_sketch <- tribble(
+  ~case,                         ~slice,          ~share,
+  "1 guest eats all the cake",   "predictor 1",   1.00,
+  "1 guest eats a slice",        "predictor 1",   0.45,
+  "1 guest eats a slice",        "not explained", 0.55,
+  "3 guests eat a slice each",   "predictor 1",   0.35,
+  "3 guests eat a slice each",   "predictor 2",   0.20,
+  "3 guests eat a slice each",   "predictor 3",   0.10,
+  "3 guests eat a slice each",   "not explained", 0.35
+) |>
+  mutate(
+    case = factor(case, levels = rev(case_names)),
+    slice = factor(slice, levels = rev(slice_names))
+  )
+
+ggplot(cake_sketch, aes(x = share, y = case, fill = slice)) +
+  geom_col(width = 0.6, colour = "white", linewidth = 1) +
+  scale_fill_manual(
+    values = setNames(book_col("blue", "red", "green", "grey"), slice_names),
+    breaks = slice_names
+  ) +
+  scale_x_continuous(labels = scales::label_percent(), expand = expansion(mult = c(0, 0.02))) +
+  labs(x = "Share of the variability of the outcome (the cake)", y = NULL, fill = NULL) +
+  theme(panel.grid.major.y = element_blank())
+```
 
 An effect between a predictor variable and an outcome variable corresponds to the model in @fig-l01-effect.
 
@@ -214,11 +668,61 @@ Causality analysis is another kind of test that involves:
 - That no other variable is explaining this relationship
 :::
 
+::: {.callout-warning .box-mistake title="Common mistake: reading an effect as a cause"}
+"Job satisfaction increases when salary increases" does not say that a higher salary makes employees more satisfied. The arrow of the model gives the role of each variable, not a cause. A causal claim needs the three conditions of the warning above, which a test of an effect does not check.
+:::
+
 A significant effect of a $Predictor$ on an $Outcome$ variable means that **a predictor is explaining enough variance of the outcome** variable. This shows a significant relationship.
 
 ::: {.callout-note title="Outcome's variability is a birthday cake"}
 A significant effect means the slice eaten by the predictor is large enough.
 :::
+
+```{r}
+#| label: example-cake-slices
+#| include: false
+share_salary <- summary(lm(js_score ~ salary, data = organisation_beta))$r.squared
+share_perf <- summary(lm(js_score ~ perf, data = organisation_beta))$r.squared
+```
+
+::: {.callout-tip .box-example title="Example: the slices of salary and performance"}
+In Organisation Beta, `salary` alone explains `r scales::percent(share_salary, accuracy = 0.01)` of the variability of `js_score`, whereas `perf` alone explains only `r scales::percent(share_perf, accuracy = 0.01)` of it (@fig-l01-cake-slices). Salary eats a large slice and performance almost nothing. Whether a slice is large enough is decided by the statistical test of @sec-lecture-04, where this share is called $R^2$.
+:::
+
+```{r}
+#| label: fig-l01-cake-slices
+#| fig-cap: "The slice of the variability of job satisfaction eaten by salary alone and by performance alone, in the data of Organisation Beta."
+#| fig-alt: "Two horizontal bars from 0% to 100% of the variability of js_score. Salary: a blue part of 73.12% is explained and a grey part of 26.88% is not explained. Perf: the explained part, 0.02%, is too thin to see, as the label under the bar says, and the grey part covers 99.98% of the bar."
+#| fig-height: 2.5
+part_names <- c("eaten by the predictor (explained)", "not eaten (not explained)")
+
+cake_slices <- tribble(
+  ~predictor, ~part,                                ~share,
+  "salary",   "eaten by the predictor (explained)", share_salary,
+  "salary",   "not eaten (not explained)",          1 - share_salary,
+  "perf",     "eaten by the predictor (explained)", share_perf,
+  "perf",     "not eaten (not explained)",          1 - share_perf
+) |>
+  mutate(
+    predictor = factor(predictor, levels = c("perf", "salary")),
+    part = factor(part, levels = rev(part_names)),
+    label = scales::percent(share, accuracy = 0.01)
+  ) |>
+  group_by(predictor) |>
+  arrange(desc(part), .by_group = TRUE) |>
+  mutate(label_position = cumsum(share) - share / 2) |>
+  ungroup()
+
+ggplot(cake_slices, aes(x = share, y = predictor, fill = part)) +
+  geom_col(width = 0.6, colour = "white", linewidth = 1) +
+  geom_text(data = filter(cake_slices, share > 0.1), aes(x = label_position, label = label), colour = "white", fontface = "bold", size = 4) +
+  geom_text(data = filter(cake_slices, share <= 0.1), aes(x = 0, y = as.numeric(predictor) - 0.4, label = paste(label, "explained: the blue slice is too thin to see")), hjust = 0, vjust = 1, size = 3.5) +
+  scale_fill_manual(values = setNames(book_col("blue", "grey"), part_names), breaks = part_names) +
+  scale_x_continuous(labels = scales::label_percent(), expand = expansion(mult = c(0, 0.02))) +
+  scale_y_discrete(expand = expansion(add = c(0.9, 0.6))) +
+  labs(x = "Share of the variability of js_score", y = NULL, fill = NULL) +
+  theme(panel.grid.major.y = element_blank())
+```
 
 If there is **no effect** between the variables, they are not sharing enough of their variability. If there is a **significant effect** between the variables, they are sharing a big part of their variability. @fig-l01-venn shows both situations.
 
@@ -248,7 +752,7 @@ VennDiagram::draw.pairwise.venn(
 
 To decide if the part of the shared variability is big enough, a statistical test is required.
 
-::: {.callout-tip title="Your turn: identify the variables of your paper"}
+::: {.callout-tip .box-yourturn title="Your turn: identify the variables of your paper"}
 In the research paper you have selected, **identify the variables that are used to produce statistical results (e.g. $p$-values).**
 
 Indicate their type and role by using the following table:
@@ -259,7 +763,9 @@ Indicate their type and role by using the following table:
 | ...           | ...           | ...           |
 | var n         | type          | role          |
 
-Send me the table by email at damien.dupre@dcu.ie **before the next lecture.**
+Then, and only then: upload the PDF to an AI assistant and ask for the same table. Where do you and the AI disagree? Who is right?
+
+Send me both tables by email at damien.dupre@dcu.ie **before the next lecture.**
 :::
 
 ## Literature review: formulate your hypotheses {#sec-l01-hypotheses}
@@ -291,6 +797,10 @@ Every hypothesis has to state a change (between groups or according to values). 
 
 **Statistics are used to estimate the probability of obtaining the observed results, assuming the null hypothesis is correct. If this probability is low, the null hypothesis is rejected and the alternative hypothesis is considered more plausible.**
 
+::: {.callout-note .box-definition title="Definition: alternative and null hypotheses"}
+The **alternative hypothesis** ($H_a$) predicts a change: a difference between groups, or a change of the outcome according to the values of the predictor. The **null hypothesis** ($H_0$) is its counterpart: no difference and no change. A test never proves $H_a$: it rejects $H_0$ or it does not, and when $H_0$ is rejected, $H_a$ is considered more plausible.
+:::
+
 ### Main effect hypotheses {#sec-l01-main-effect}
 
 A **main effect hypothesis** is the **predicted relationship between one $Predictor$ and one $Outcome$ variable**.
@@ -320,7 +830,7 @@ The {**outcome**} of {**predictor category 1**} is {*higher/lower/different*} th
 
 For example:
 
-> The **job satisfaction** of **EU employees** is *higher* than the **job satisfaction** of **non EU employees**
+> The **job satisfaction** of **EU employees** is *higher* than the **job satisfaction** of **non-EU employees**
 
 **Case 3: the predictor is categorical (3 or more categories)**
 
@@ -329,6 +839,67 @@ The {**outcome**} of at least one of the {**predictor**} is {*higher/lower/diffe
 For example:
 
 > The **job satisfaction** of at least one of the **company's departments** is *higher* than the **job satisfaction** of the other **company's departments**
+
+::: {.callout-tip .box-example title="Example: three main effect hypotheses for Organisation Beta"}
+With `js_score` as the outcome, each predictor of `organisation_beta.csv` takes the template of its type:
+
+- Case 1, `salary` (continuous). $H_a$: **job satisfaction** *increases* when **salary** increases. $H_0$: **job satisfaction** does not change when **salary** increases.
+- Case 2, `gender` (2 categories). $H_a$: the **job satisfaction** of **female employees** is *higher* than the **job satisfaction** of **male employees**. $H_0$: there is no difference between them.
+- Case 3, `location` (3 categories). $H_a$: the **job satisfaction** of at least one of the **locations** is *different* from the **job satisfaction** of the other **locations**. $H_0$: there is no difference between the three locations.
+:::
+
+@fig-l01-main-sketch shows what the first two templates predict. With a continuous predictor, the alternative hypothesis predicts a line going up or down and the null hypothesis a flat line. With a categorical predictor, the alternative hypothesis predicts that the average outcome of one category is higher or lower than that of the other, and the null hypothesis predicts the same average.
+
+```{r}
+#| label: fig-l01-main-sketch
+#| fig-cap: "What a main effect hypothesis predicts, for a continuous predictor (top) and for a categorical predictor with 2 categories (bottom). The lines and points are drawn for the illustration and do not come from data."
+#| fig-alt: "Six small panels in two rows. Top row, job satisfaction against salary: a blue line going up titled Ha: increases, a blue line going down titled Ha: decreases, and a flat red line titled H0: does not change. Bottom row, average job satisfaction of EU and non-EU employees: two blue points with EU higher, titled Ha: higher; two blue points with EU lower, titled Ha: lower; and two red points at the same height, titled H0: no difference."
+#| fig-height: 5
+hypothesis_colours <- setNames(book_col("blue", "red"), c("alternative hypothesis", "null hypothesis"))
+
+continuous_panels <- c("Ha: increases", "Ha: decreases", "H0: does not change")
+continuous_predictor <- tribble(
+  ~panel,                ~hypothesis,              ~start, ~end,
+  "Ha: increases",       "alternative hypothesis", 2,      8,
+  "Ha: decreases",       "alternative hypothesis", 8,      2,
+  "H0: does not change", "null hypothesis",        5,      5
+) |>
+  mutate(panel = factor(panel, levels = continuous_panels))
+
+plot_continuous_predictor <- ggplot(continuous_predictor) +
+  geom_segment(aes(x = 0, xend = 10, y = start, yend = end, colour = hypothesis), linewidth = 1.1) +
+  facet_wrap(~panel) +
+  scale_colour_manual(values = hypothesis_colours) +
+  scale_y_continuous(limits = c(0, 10)) +
+  labs(x = "salary", y = "job satisfaction", colour = NULL) +
+  theme(axis.text = element_blank())
+
+categorical_panels <- c("Ha: higher", "Ha: lower", "H0: no difference")
+categorical_predictor <- tribble(
+  ~panel,              ~hypothesis,              ~employees, ~average,
+  "Ha: higher",        "alternative hypothesis", "EU",       7,
+  "Ha: higher",        "alternative hypothesis", "non-EU",   4,
+  "Ha: lower",         "alternative hypothesis", "EU",       4,
+  "Ha: lower",         "alternative hypothesis", "non-EU",   7,
+  "H0: no difference", "null hypothesis",        "EU",       5.5,
+  "H0: no difference", "null hypothesis",        "non-EU",   5.5
+) |>
+  mutate(panel = factor(panel, levels = categorical_panels))
+
+plot_categorical_predictor <- ggplot(categorical_predictor, aes(employees, average, colour = hypothesis)) +
+  geom_line(aes(group = panel), linewidth = 0.6, linetype = "dotted", show.legend = FALSE) +
+  geom_point(size = 3.5, show.legend = FALSE) +
+  facet_wrap(~panel) +
+  scale_colour_manual(values = hypothesis_colours) +
+  scale_x_discrete(expand = expansion(add = 0.6)) +
+  scale_y_continuous(limits = c(0, 10)) +
+  labs(x = "employees", y = "average job satisfaction", colour = NULL) +
+  theme(axis.text.y = element_blank())
+
+(plot_continuous_predictor / plot_categorical_predictor) +
+  plot_layout(guides = "collect") &
+  theme(legend.position = "top")
+```
 
 #### Examples of main effect hypotheses
 
@@ -410,6 +981,10 @@ Main effect hypothesis:
 ### Interaction effect hypotheses {#sec-l01-interaction}
 
 An **interaction effect hypothesis** predicts **the influence of a second predictor on the relationship between a first predictor and an outcome variable**.
+
+::: {.callout-note .box-definition title="Definition: main effect and interaction effect"}
+A **main effect** is the effect of one predictor on the outcome. An **interaction effect** means that the effect of a first predictor on the outcome is not the same for all the values of a second predictor (the moderator). An interaction always comes with the main effects of its two predictors.
+:::
 
 ::: {.callout-important title="Warning"}
 - The second predictor is also called moderator.
@@ -522,6 +1097,37 @@ tribble(
 ```
 
 Here, the effect of **salary** on **job satisfaction** is *higher* for **Irish employees** than it is for **French employees** because their line is steeper.
+
+@fig-l01-interaction-sketch compares the two situations. Without an interaction, the two lines are parallel: salary has the same effect for Irish and French employees, even if one group is more satisfied than the other. With an interaction, the lines have different slopes: the effect of salary depends on the origin.
+
+```{r}
+#| label: fig-l01-interaction-sketch
+#| fig-cap: "No interaction (left): the effect of salary is the same in both groups and the lines are parallel. Interaction (right): the effect of salary is higher for Irish employees and the lines have different slopes. The lines are drawn for the illustration and do not come from data."
+#| fig-alt: "Two panels of job satisfaction against salary, each with a blue line for Irish employees and a red line for French employees. Left, titled No interaction: parallel lines, both lines rise with the same slope, the blue line above the red one. Right, titled Interaction: different slopes, the blue line rises steeply and crosses the red line, which rises gently."
+#| fig-height: 3.2
+origin_colours <- setNames(book_col("blue", "red"), c("Irish employees", "French employees"))
+interaction_panels <- c("No interaction: parallel lines", "Interaction: different slopes")
+
+interaction_sketch <- tribble(
+  ~panel,                           ~origin,            ~start, ~end,
+  "No interaction: parallel lines", "Irish employees",  3,      7,
+  "No interaction: parallel lines", "French employees", 2,      6,
+  "Interaction: different slopes",  "Irish employees",  2,      9,
+  "Interaction: different slopes",  "French employees", 3,      5
+) |>
+  mutate(
+    panel = factor(panel, levels = interaction_panels),
+    origin = factor(origin, levels = names(origin_colours))
+  )
+
+ggplot(interaction_sketch) +
+  geom_segment(aes(x = 0, xend = 10, y = start, yend = end, colour = origin), linewidth = 1.1) +
+  facet_wrap(~panel) +
+  scale_colour_manual(values = origin_colours) +
+  scale_y_continuous(limits = c(0, 10)) +
+  labs(x = "salary", y = "job satisfaction", colour = NULL) +
+  theme(axis.text = element_blank())
+```
 
 #### Templates for interaction effect hypotheses
 
@@ -655,7 +1261,7 @@ include_img("ex1_title.png")
 include_img("ex1_hyp.png")
 ```
 
-The second one studies the role of occupational emotional labour requirements in the relationship between surface acting and job satisfaction (@fig-l01-paper2-title) and states three hypotheses (@fig-l01-paper2-hyp1 and @fig-l01-paper2-hyp2).
+The second one studies the role of occupational emotional labour requirements in the relationship between surface acting and job satisfaction (@fig-l01-paper2-title). It states three hypotheses (@fig-l01-paper2-hyp1 and @fig-l01-paper2-hyp2).
 
 ```{r}
 #| label: fig-l01-paper2-title
@@ -689,9 +1295,25 @@ When formulating a hypothesis, check that:
 - Your hypothesis includes both predictor and outcome variables
 - These variables are included in your dataset
 
+::: {.callout-warning .box-mistake title="Common mistake: a question or an equality instead of a prediction"}
+"Does salary influence job satisfaction?" is a question, not a hypothesis: write "Job satisfaction *increases* when salary increases". "Male and female employees have the same job satisfaction" states an equality, which is the null hypothesis: the alternative hypothesis states a difference, such as "The job satisfaction of female employees is *different* from the job satisfaction of male employees".
+:::
+
 ::: {.callout-note title="Note about hypotheses in academic papers"}
 - Don't trust research papers, most of them have incorrect formulations.
 - Use the templates shown previously (@sec-l01-main-effect and @sec-l01-interaction).
+:::
+
+### AI as your Reviewer 2 {#sec-l01-reviewer}
+
+A good use of AI is **criticising** your hypotheses, not writing them. For example, with this prompt:
+
+> Here are my hypotheses: [paste]. Here are the templates and the checklist used in my statistics course: [paste]. For each hypothesis, list the problems only (missing predictor or outcome, no direction, variable not in my dataset, equality instead of a difference, question instead of a prediction). Do not rewrite them. Do not invent variables. If a hypothesis has no problem, say so.
+
+Then **you** decide whether each criticism is right.
+
+::: {.callout-note title='Why "do not rewrite them"?'}
+If the AI rewrites your hypotheses, you learn nothing and they stop being yours. Asking for problems only keeps you as the author and the AI as a sparring partner.
 :::
 
 ### Special case: mediation hypotheses
@@ -772,7 +1394,7 @@ Mediation effect hypothesis:
 
 ### Practising hypotheses
 
-::: {.callout-tip title="Your turn: find the variables in these hypotheses"}
+::: {.callout-tip .box-yourturn title="Your turn: find the variables in these hypotheses"}
 In the following hypotheses, find the outcome variable and the predictor(s):
 
 1. Overweight adults who value longevity are more likely than other overweight adults to lose their excess weight.
@@ -783,7 +1405,7 @@ In the following hypotheses, find the outcome variable and the predictor(s):
 Suggested time: 5 minutes.
 :::
 
-::: {.callout-note title="Solution" collapse="true"}
+::: {.callout-note .box-solution title="Solution" collapse="true"}
 **Hypothesis 1:**
 
 - Outcome = excess weight
@@ -799,13 +1421,13 @@ Suggested time: 5 minutes.
 - Outcome = suffering lice
 - Predictor = trout type (rainbow *vs* other)
 
-**Hypothesis 4:** <!-- check: the slide labels this fourth solution "Hypothesis 3" a second time, numbered 4 here -->
+**Hypothesis 4:**
 
 - Outcome = rapport with graduate students
 - Predictor = teaching method (student-centred *vs* teacher-centred)
 :::
 
-::: {.callout-tip title="Your turn: make your own hypotheses"}
+::: {.callout-tip .box-yourturn title="Your turn: make your own hypotheses"}
 Formulate one hypothesis for each row of @tbl-l01-own-hypotheses.
 
 | Outcome          | Predictor 1          | Predictor 2                    | Hypothesis type    |
@@ -822,7 +1444,7 @@ Formulate one hypothesis for each row of @tbl-l01-own-hypotheses.
 Suggested time: 5 minutes.
 :::
 
-::: {.callout-note title="Solution" collapse="true"}
+::: {.callout-note .box-solution title="Solution" collapse="true"}
 1. The **work motivation** of **female employees** is *higher* than the **work motivation** of **male employees**
 2. The effect of **gender** on **work motivation** is *higher* for **Irish employees** than it is for **French employees**
 3. The effect of **employee origin** on **work motivation** is *higher* for **female employees** than it is for **male employees** <!-- check: this solution swaps the two predictors of the table row (gender is predictor 1 and origin has 3 categories), whereas the template for 3 categories would read "for at least one of the origins" -->
@@ -831,16 +1453,197 @@ Suggested time: 5 minutes.
 6. The effect of **stress** on **job satisfaction** *increases* when **employee's age** increases
 :::
 
-::: {.callout-tip title="Homework: formulate the hypotheses of your paper"}
+::: {.callout-tip .box-yourturn title="Homework: formulate the hypotheses of your paper"}
 In the research paper that you have selected, **formulate the tested hypotheses using the templates seen in this lecture and the variables that you have previously determined**.
+
+Then use the Reviewer 2 prompt (@sec-l01-reviewer) on your own hypotheses and keep a note of one criticism you accepted and one you rejected (and why).
 
 Send me your hypotheses by email at damien.dupre@dcu.ie **before the next lecture.**
 :::
 
-::: {.callout-note title="Key points"}
-- A research paper has the shape of an hourglass and its sections are linked: variables (introduction), hypotheses (literature review), model and equation (methods), and the statistical test (results).
+::: {.callout-note .box-keypoints title="Key points"}
+- A research paper has the shape of an hourglass. Its sections are linked: variables (introduction), hypotheses (literature review), model and equation (methods), and the statistical test (results).
+- A paper written by AI from one prompt can have every number right and still be wrong, because its hypotheses were written after the data. In STA1005, AI may propose, but only reproducible evidence decides.
 - Every variable has a type (categorical nominal, categorical ordinal or continuous) and a role (outcome, predictor or control).
 - An effect is a relationship between a predictor and an outcome, not a causal claim. It is significant when the predictor explains enough of the variability of the outcome, which a statistical test decides.
-- A hypothesis is a prediction that includes the predictor(s), the outcome and the direction of the effect, and every alternative hypothesis has a null counterpart. Templates help to write main effect, interaction effect and mediation hypotheses.
-- An interaction hypothesis also needs the main effect hypotheses of both predictors, and a mediation hypothesis involves three requirements.
+- A hypothesis is a prediction that includes the predictor(s), the outcome and the direction of the effect. Every alternative hypothesis has a null counterpart. Templates help to write main effect, interaction effect and mediation hypotheses.
+- An interaction hypothesis also needs the main effect hypotheses of both predictors.
+- A mediation needs three conditions. The first predictor has a main effect on the outcome and on the second predictor. Its effect on the outcome disappears when the second predictor is taken into account.
+:::
+
+## Exercises {#sec-l01-exercises}
+
+These exercises are done by reading and with a pen: no software is needed. They use the file `organisation_beta.csv` as described in @tbl-l01-beta-columns, the abstract of the AI paper (@sec-l01-ai-paper) and, for the last one, the paper closest to your PhD.
+
+::: {#exr-l01-vocabulary}
+## True or false?
+
+Say whether each statement is true or false, and correct the false ones.
+
+a. An effect of salary on job satisfaction shows that a higher salary causes a higher job satisfaction.
+b. The variable `location` of Organisation Beta is categorical ordinal.
+c. A hypothesis can predict that two groups have the same average.
+d. Every alternative hypothesis has a null hypothesis counterpart.
+e. An interaction hypothesis also needs the main effect hypotheses of both predictors.
+f. Control variables are included in the hypotheses.
+g. A significant effect means that the predictor explains enough of the variability of the outcome.
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+a. False. An effect is a relationship between a predictor and an outcome. It is reciprocal and does not involve causality. A causal claim needs three conditions: a correlation, one variable being the antecedent of the other, and no other variable explaining the relationship.
+b. False. Ireland, France and Australia cannot be ordered, so `location` is categorical nominal.
+c. False. Hypotheses can only test differences or effects. "The same average" is the null hypothesis; the alternative hypothesis states that the averages are different (or that one is higher or lower).
+d. True. The alternative hypothesis $H_a$ states a change and the null hypothesis $H_0$ states no change.
+e. True. The main effect of each predictor must be hypothesised as well.
+f. False. Control variables are not included in the model or in the hypotheses, but they are included in the equation.
+g. True. Whether the slice eaten by the predictor is large enough is decided by a statistical test.
+:::
+
+::: {#exr-l01-beta-variables}
+## The variables of Organisation Beta
+
+The CEO of Organisation Beta wants to understand what explains Job Satisfaction.
+
+1. Give the type of each of these columns of `organisation_beta.csv`: `employee`, `gender`, `location`, `salary`, `perf`, `js_score`, `salary_c` (low, high) and `perf_c` (low, medium, high).
+2. Give the role of `js_score`, `salary`, `perf`, `gender` and `location` in the question of the CEO.
+3. A colleague wants to use `perf_c` instead of `perf` as a predictor. What do you advise?
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+1. The types are:
+
+| Column | Type | Why |
+|:--|:--|:--|
+| `employee` | categorical nominal | the numbers only name the employees |
+| `gender` | categorical nominal | female and male cannot be ordered |
+| `location` | categorical nominal | Ireland, France and Australia cannot be ordered |
+| `salary` | continuous | a number of euros |
+| `perf` | continuous | a score from 0 to 10 |
+| `js_score` | continuous | a score from 0 to 10 |
+| `salary_c` | categorical ordinal | low and high can be ordered |
+| `perf_c` | categorical ordinal | low, medium and high can be ordered |
+
+2. `js_score` is the outcome, the variable to be explained. `salary`, `perf`, `gender` and `location` are predictors, the variables doing the explaining. `employee` has no role: it identifies the rows.
+3. Keep `perf`. Variables can be converted, but it is always better to keep them in their correct scale. `perf_c` puts employees with very different scores in the same group (employees 16 and 8 in @fig-l01-perf-groups) and employees with close scores in different groups (employees 8 and 20).
+:::
+
+::: {#exr-l01-find-variables}
+## Predictor, outcome and type
+
+For each hypothesis, give the outcome, the predictor(s) and their type, and say which template it uses (main effect or interaction effect, and which case).
+
+1. Job satisfaction decreases when the number of working hours increases.
+2. The job satisfaction of employees working in Ireland is higher than the job satisfaction of employees working in France.
+3. The performance of at least one of the company's departments is different from the performance of the other departments.
+4. The effect of salary on job satisfaction is lower for male employees than it is for female employees.
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+1. Outcome: job satisfaction (continuous). Predictor: number of working hours (continuous). Main effect, case 1 (continuous predictor), with the direction *decreases*.
+2. Outcome: job satisfaction (continuous). Predictor: location, with 2 categories here, Ireland and France (categorical nominal). Main effect, case 2 (2 categories), with the direction *higher*.
+3. Outcome: performance (continuous). Predictor: department (categorical nominal, 3 or more categories). Main effect, case 3 (3 or more categories), with the direction *different*.
+4. Outcome: job satisfaction (continuous). Predictor 1: salary (continuous). Predictor 2, the moderator: gender (categorical nominal, 2 categories). Interaction effect, case 2 (the second predictor has 2 categories), with the direction *lower*. The main effects of salary and of gender must also be hypothesised.
+:::
+
+::: {#exr-l01-repair}
+## Repair the hypotheses
+
+A student writes these hypotheses for Organisation Beta. Use the hypothesis checklist to say what is wrong with each one, then rewrite it with a template. For the first one, also write the null hypothesis.
+
+1. Does salary influence job satisfaction?
+2. Male and female employees are equally satisfied with their job.
+3. Job satisfaction increases.
+4. Job satisfaction increases when employees' age increases.
+5. Salary has an effect on job satisfaction depending on gender.
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+Other directions are possible: the direction comes from the theory and the literature, not from the template.
+
+1. It is a question, not a prediction. $H_a$: **Job satisfaction** *increases* when **salary** increases. $H_0$: **Job satisfaction** does not change when **salary** increases.
+2. It states an equality between groups, which is the null hypothesis. $H_a$: The **job satisfaction** of **female employees** is *different* from (or *higher* or *lower* than) the **job satisfaction** of **male employees**.
+3. It has no predictor. For example: **Job satisfaction** *increases* when **performance** increases.
+4. Age is not a variable of `organisation_beta.csv`. Use a variable of the dataset instead (for example: **Job satisfaction** *increases* when **salary** increases), or collect the age of the employees before testing this hypothesis.
+5. It follows no template and gives no direction. With the template of case 2, gender being the moderator: The effect of **salary** on **job satisfaction** is *higher* for **female employees** than it is for **male employees**. The main effects of salary and of gender must also be hypothesised.
+:::
+
+::: {#exr-l01-write-hypotheses}
+## From a model in words to hypotheses
+
+The CEO thinks that job satisfaction increases with performance, and that this effect of performance is not the same in the three locations of the company (Ireland, France and Australia).
+
+1. Give the outcome and the predictors, with their type. Which predictor is the moderator?
+2. Write all the alternative hypotheses that the model needs, with the templates.
+3. Write the null hypothesis of each of them.
+4. Describe the diagram that represents this model.
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+1. Outcome: `js_score` (continuous). Predictor 1: `perf` (continuous). Predictor 2: `location` (categorical nominal, 3 categories), which is the moderator because it changes the effect of `perf`.
+2. Three hypotheses:
+    - Main effect of performance (case 1): **Job satisfaction** *increases* when **performance** increases.
+    - Main effect of location (case 3): The **job satisfaction** of at least one of the **locations** is *different* from the **job satisfaction** of the other **locations**. The CEO gives no direction, so *different* is used.
+    - Interaction (case 3, the second predictor has 3 categories): The effect of **performance** on **job satisfaction** is *different* for at least one of the **locations**.
+3. Job satisfaction does not change when performance increases. There is no difference of job satisfaction between the three locations. The effect of performance on job satisfaction is the same in the three locations.
+4. As in @fig-l01-interaction: an arrow from Performance to Job Satisfaction, and an arrow from Location pointing to the middle of this arrow. The same model can be drawn as in @fig-l01-interaction-terms, with three arrows to Job Satisfaction: from Performance, from Location and from Performance X Location.
+:::
+
+```{r}
+#| label: exercise-abstract-solution
+#| include: false
+salary_as_outcome <- lm(salary ~ js_score + location + gender, data = organisation_beta)
+coefficient_of_js_score <- coef(salary_as_outcome)[["js_score"]]
+```
+
+::: {#exr-l01-abstract}
+## Reading the AI abstract
+
+Read again the abstract of the paper written by AI (@sec-l01-ai-paper).
+
+1. List the variables named in the abstract and give their type.
+2. One result is reported as "unstandardized coefficient = 434.77 salary units per satisfaction-score unit", after "adjusting for recorded location and gender". In this regression, which variable is the outcome, which is the predictor and which are control variables? Is this the question of the CEO?
+3. Compare the abstract with the order of research in @fig-l01-research-order. What is missing?
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+1. Job satisfaction, performance and salary are continuous. Location (Australia, France, Ireland) and gender are categorical nominal.
+2. The coefficient is expressed in salary units for one unit of satisfaction score, so **salary is the outcome** and job satisfaction is the predictor; location and gender are control variables. The regression `lm(salary ~ js_score + location + gender)` gives a coefficient of `r format_number(coefficient_of_js_score)` for `js_score`, the value of the abstract. The CEO wants to explain job satisfaction, so `js_score` should be the outcome: the roles are reversed. An effect is reciprocal, so the association still shows, but the number answers another question: how much salary changes for one more point of job satisfaction.
+3. There is no theory and no hypothesis: the study calls itself "exploratory". The abstract lists many tests (Pearson and Spearman correlations, regressions, ANOVA, Welch ANOVA and Kruskal-Wallis) run on data whose origin is unknown. It follows the order of @fig-l01-ai-order, from data to tests, not the order of research, from theory and hypotheses to data.
+:::
+
+::: {#exr-l01-mistakes}
+## Find the mistakes
+
+A student writes the following paragraph at the end of a literature review. Find at least five problems.
+
+> After exploring the data of Organisation Beta, we noticed that Irish employees were more satisfied, so we formulated our hypotheses. H1: Does salary affect job satisfaction? H2: The job satisfaction of male employees is the same as the job satisfaction of female employees. H3: The effect of salary on job satisfaction is higher for Irish employees than it is for French employees. H4: Job satisfaction increases when employees' age increases. If H1 is supported, it will prove that a higher salary causes a higher job satisfaction.
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+- **The hypotheses come after the data.** They were written after viewing the file: this is HARKing, and their $p$-values cannot be interpreted. In these simulated data, the difference of the Irish employees is a chance "finding" (@fig-l01-truth).
+- **H1 is a question**, not a prediction: "Job satisfaction *increases* when salary increases".
+- **H2 states an equality**, which is the null hypothesis. The alternative hypothesis states a difference.
+- **H3 lacks its main effects.** An interaction hypothesis needs the main effect hypotheses of both predictors, salary and location, and H1 is not a valid main effect hypothesis yet.
+- **H4 uses a variable that is not in the dataset**: `organisation_beta.csv` has no age.
+- **"Prove" and "causes" are wrong.** A test does not prove a hypothesis: it rejects the null hypothesis or not. An effect does not involve causality.
+:::
+
+::: {#exr-l01-own-paper}
+## Your reference paper
+
+Take the quantitative paper closest to your PhD.
+
+1. Mark the five sections of the paper. Does it follow the hourglass of @fig-l01-hourglass?
+2. Where are the variables presented, and where are the hypotheses stated?
+3. Rewrite each hypothesis with the templates of this chapter and check it with the hypothesis checklist.
+4. Is there any sign that some hypotheses were written after the results (for example a hypothesis that appears only in the results or the discussion)?
+:::
+
+::: {.callout-note .box-solution collapse="true" title="Solution"}
+The answers depend on your paper. Check that:
+
+1. You found an introduction, a literature review, a method section, a results section and a discussion with a conclusion, even if their titles differ. Many papers merge the introduction and the literature review: the hourglass is still there if the paper starts with the general problem, narrows to the hypotheses, the method and the results, then opens again in the discussion.
+2. The variables should appear in the introduction, ending with the research question. The hypotheses should end the literature review, before the method section.
+3. Each rewritten hypothesis is a prediction, names its predictor(s) and its outcome, gives a direction (*increases*, *higher*, *different* ...), and uses only variables measured in the paper. An interaction hypothesis comes with the main effect hypotheses of both predictors. Remember that many published hypotheses are badly formulated: yours can be better than the original.
+4. Hypotheses belong at the end of the literature review, before the data. A hypothesis that appears for the first time in the results or in the discussion may have been written after the results: note it, and read the $p$-value that tests it with caution.
 :::

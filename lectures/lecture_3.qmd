@@ -43,10 +43,10 @@ include_graphics("https://www.memesmonkey.com/images/memesmonkey/f1/f1a0708d5337
 
 What are Big Data?
 
-- In general {{< fa circle-right >}} Spreadsheet that are too large or too complex to be handled by conventional tools
-- For me {{< fa circle-right >}} Spreadsheet that are larger then Microsoft Excel’s Limits (2016)
+- In general {{< fa circle-right >}} Spreadsheets that are too large or too complex to be handled by conventional tools
+- For me {{< fa circle-right >}} Spreadsheets that are larger than Microsoft Excel’s Limits (2016)
     - Total number of rows: 1,048,576 rows
-    - Total number columns: 16,384 columns
+    - Total number of columns: 16,384 columns
 
 ## Collecting Data
 
@@ -117,7 +117,7 @@ Online Survey Software are replacing the paper-pencil method. Here is a list of 
 Platforms to find and reward participants:
 
 - Amazon MTurk (<https://www.mturk.com/> mainly US and India)
-- Prolific Academic (<https://www.prolific.co/> world wide)
+- Prolific Academic (<https://www.prolific.co/> worldwide)
 - Qualtrics (<https://www.qualtrics.com/uk/research-services/online-sample/>)
 - Survey Monkey (<https://www.surveymonkey.com/mp/find-survey-participants/>)
 
@@ -202,7 +202,7 @@ include_graphics("https://www.publichealthnotes.com/wp-content/uploads/2018/08/5
 - *(PU1)* Using MS EXCEL would improve my performance in statistical analysis 
 - *(PU2)* Using MS EXCEL would increase my productivity in statistical analysis
 - *(PU3)* Using MS EXCEL would enhance my effectiveness in statistical analysis
-- *(PU4)* Using MS EXCELR would make it easier for me to engage in statistical analysis 
+- *(PU4)* Using MS EXCEL would make it easier for me to engage in statistical analysis 
 - *(PU5)* I think using MS EXCEL is very useful for me to engage in statistical analysis 
 
 **Perceived Ease-Of-Use:**
@@ -268,7 +268,7 @@ From a Qualtrics survey
 ::: {.callout-important}
 ## Warning
 
-- Always save the unmodified raw version of your data on the cloud (e.g., google drive, dropbox, one drive, ...)
+- Always save the unmodified raw version of your data on the cloud (e.g., Google Drive, Dropbox, OneDrive, ...)
 - Make sure you can download them as a .csv file.
 :::
 
@@ -310,7 +310,7 @@ include_img("clean_answer.png")
 
 An addition to Michael's list would be to transform headers with a proper naming convention
 
-My suggestion is **snake_case**: all small letter and words separated by "_"
+My suggestion is **snake_case**: all small letters and words separated by "_"
 
 ```{r}
 include_img("name_convention.jpg")
@@ -335,7 +335,7 @@ Better format and keeps only the current sheet
 
 ## {{< fa screwdriver-wrench >}}️ Your Turn! {background="#43464B"}
 
-On the module Loop page, got to "Lecture Data" and download the document called "unicef.xlsx"
+On the module Loop page, go to "Lecture Data" and download the document called "unicef.xlsx"
 
 **Open and clean the 1st sheet of this file but only until column P, remove all other columns**
 
@@ -396,7 +396,7 @@ In MS Excel:
 #### For numeric values
   - Numeric operator ( + - / *)
   - $ (freeze row and/or column)
-  - COUNT(), MIN(), MAX(), SUM(), AVERAGE (), STDEV()
+  - COUNT(), MIN(), MAX(), SUM(), AVERAGE(), STDEV()
 
 #### For character strings
   - LEFT()
@@ -426,12 +426,12 @@ In MS Excel:
 ::: {.callout-important}
 ## Warning
 
-- Rows already filtered have a row index are coloured in blue
+- Rows already filtered have a row index coloured in blue
 - Copy-Paste filtered table in a new document if you want to work only on these values
 :::
 
 ```{r}
-#| fig.cap: "Example of data filtered buy the column Country to keep only values corresponding to USA"
+#| fig.cap: "Example of data filtered by the column Country to keep only values corresponding to USA"
 include_graphics("https://www.excel-easy.com/data-analysis/images/filter/filter-result.png")
 ```
 
@@ -512,7 +512,7 @@ include_img("combination_img.png")
 
 ## {{< fa screwdriver-wrench >}}️ Your Turn! {background="#43464B"}
 
-On the module Loop page, got to "Lecture Data" and download the document called "organisation_alpha.xls"
+On the module Loop page, go to "Lecture Data" and download the document called "organisation_alpha.xls"
 
 1. **Extension**: Create a new variable/column which is the average response to all the questions from the survey for each employee (q1 to q9)
 2. **Reduction**: Filter employee’s 2019 salary to keep only employees with a salary higher than 30k
@@ -593,9 +593,9 @@ Recording a Macro:
 
 Researchers are measuring how good at chess are LLM Algorithms (ChatGPT, Gemini, ...), they want to test the following hypotheses:
 
-`H1: The average number of move to win at a chess game is different for at least 1 of the LLM Algorithms`
+`H1: The average number of moves to win at a chess game is different for at least 1 of the LLM Algorithms`
 
-**Reshape the datafile "chess_llm.csv" to have 1 predictor variable called "llm_algorithm" and 1 outcome variable called n_moves_to_win"**
+**Reshape the datafile "chess_llm.csv" to have 1 predictor variable called "llm_algorithm" and 1 outcome variable called "n_moves_to_win"**
 
 ```{r}
 countdown(minutes = 10, warn_when = 60)

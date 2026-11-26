@@ -8,7 +8,20 @@ $font-family-sans-serif: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe
 $headings-font-family: $font-family-sans-serif;
 $font-family-monospace: "Fira Mono", "Roboto Mono", SFMono-Regular, Menlo, Consolas, monospace;
 
-$body-color: #1a292c;
+// The palette of the book. The figures use the same values (R/setup.R) and so does
+// the EPUB (epub.css). Change a colour in the three files to keep them in step.
+$book-ink: #1a292c;
+$book-slate: #43464b;
+$book-grey: #8a9396;
+$book-blue: #0072B2;
+$book-red: #CC3311;
+$book-orange: #eb811b;
+$book-green: #009E73;
+$book-purple: #882255;
+$book-teal: #0f7c8a;
+$book-violet: #7a5195;
+
+$body-color: $book-ink;
 // The slide accent (#eb811b) is too light for link text on white, so links use a darker orange.
 $link-color: #b35a00;
 $link-hover-color: #7a3d00;
@@ -21,18 +34,168 @@ h1, h2, h3, h4 {
 
 // Accent bar under chapter and section titles, as on the slides.
 h1.title, h2.anchored {
-  border-bottom: 3px solid #eb811b;
+  border-bottom: 3px solid $book-orange;
   padding-bottom: 0.25em;
 }
 
-// Figures and captions
+h2.anchored {
+  margin-top: 2.6rem;
+}
+
+h3.anchored {
+  margin-top: 2rem;
+  color: $book-slate;
+}
+
+// Figures and captions -----------------------------------------------------------
+
+figure {
+  margin: 1.6rem 0 1.8rem;
+}
+
 figcaption, .figure-caption {
   font-size: 0.85em;
-  color: #43464b;
+  color: $book-slate;
+  text-align: center;
 }
 
 // Keep wide images inside the page
 img {
   max-width: 100%;
   height: auto;
+}
+
+// Tables ----------------------------------------------------------------------
+
+main table.table > thead {
+  border-bottom: 2px solid $book-slate;
+}
+
+main table.table > caption, .table-caption, .quarto-float-tbl > figcaption {
+  font-size: 0.85em;
+  color: $book-slate;
+}
+
+// Quotations: the slides use them for example hypotheses and report sentences.
+main blockquote {
+  border-left: 4px solid $book-orange;
+  background-color: #fdf6ee;
+  color: $book-ink;
+  padding: 0.7rem 1rem;
+  margin: 1.1rem 0;
+  border-radius: 0 0.3rem 0.3rem 0;
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Boxes -----------------------------------------------------------------------
+// Every box is a Quarto callout with one more class that says what it is for:
+//
+//   .box-goals       In this chapter      what you can do after the chapter
+//   .box-definition  Definition: ...      a term to know
+//   .box-example     Example: ...         the idea applied to a case
+//   .box-howto       In jamovi / In R     a procedure, step by step
+//   .box-report      How to report        the sentence for a results section
+//   .box-mistake     Common mistake       an error that is easy to make
+//   .box-yourturn    Your turn: ...       an exercise done during the lecture
+//   .box-solution    Solution             the answer, closed until clicked
+//   .box-keypoints   Key points           the summary at the end of a chapter
+//   .box-further     Going further: ...   optional reading, closed until clicked
+//   .box-demo        Live demonstration   what is shown live in class
+//
+// In the PDF and the EPUB the class is ignored and the box keeps the colour of its
+// callout type (note, tip, warning or important), so the title carries the meaning.
+
+div.callout.callout-style-default {
+  border-radius: 0.35rem;
+  border-left-width: 5px;
+  margin: 1.4rem 0;
+  box-shadow: 0 1px 2px rgba(26, 41, 44, 0.06);
+
+  > .callout-header {
+    font-size: 0.95rem;
+    opacity: 1;
+    padding-top: 0.35em;
+    padding-bottom: 0.35em;
+  }
+}
+
+// One mixin gives a box its colour and its icon. The icon is a glyph of the
+// Bootstrap Icons font, which Quarto already ships with the book.
+@mixin book-box($colour, $glyph) {
+  border-left-color: $colour !important;
+
+  > .callout-header {
+    background-color: rgba($colour, 0.11) !important;
+    color: $book-ink;
+
+    .callout-icon::before {
+      background-image: none !important;
+      font-family: "bootstrap-icons";
+      content: $glyph;
+      color: $colour;
+      font-size: 1.05rem;
+      line-height: 1;
+      width: auto;
+      height: auto;
+      margin-right: 0.45rem;
+      vertical-align: -0.1em;
+    }
+  }
+}
+
+div.callout.box-goals      { @include book-box($book-orange, "\f1de"); }  // bullseye
+div.callout.box-definition { @include book-box($book-blue,   "\f194"); }  // book
+div.callout.box-example    { @include book-box($book-green,  "\f341"); }  // eye
+div.callout.box-howto      { @include book-box($book-teal,   "\f473"); }  // list-check
+div.callout.box-report     { @include book-box($book-violet, "\f4ca"); }  // pencil-square
+div.callout.box-mistake    { @include book-box($book-red,    "\f33b"); }  // exclamation-triangle
+div.callout.box-yourturn   { @include book-box($book-green,  "\f5db"); }  // tools
+div.callout.box-solution   { @include book-box($book-grey,   "\f270"); }  // check2-circle
+div.callout.box-keypoints  { @include book-box($book-slate,  "\f44f"); }  // key
+div.callout.box-further    { @include book-box($book-grey,   "\f2d1"); }  // compass
+div.callout.box-demo       { @include book-box($book-purple, "\f4f3"); }  // play-circle
+
+// The opening box of a chapter is a little larger than the others.
+div.callout.box-goals {
+  background-color: #fffaf4;
+
+  > .callout-header {
+    font-size: 1.05rem;
+  }
+}
+
+// The summary box at the end of a chapter.
+div.callout.box-keypoints {
+  background-color: #f6f7f7;
+}
+
+// A solution sits directly under its exercise.
+div.callout.box-solution {
+  margin-top: 0.4rem;
+  margin-bottom: 2rem;
+}
+
+// Exercises -------------------------------------------------------------------
+// The numbered exercises at the end of a chapter ("Exercise 4.1").
+div.theorem.exercise {
+  border: 1px solid #dfe3e4;
+  border-left: 5px solid $book-orange;
+  border-radius: 0.35rem;
+  background-color: #fffdfa;
+  padding: 0.85rem 1.1rem 0.25rem 1.1rem;
+  margin: 1.8rem 0 0.4rem;
+
+  .theorem-title strong {
+    color: #b35a00;
+  }
+}
+
+// Code ------------------------------------------------------------------------
+
+details.code-fold > summary {
+  color: $book-slate;
+  font-size: 0.85rem;
 }
