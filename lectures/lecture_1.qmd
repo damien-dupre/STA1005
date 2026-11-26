@@ -1147,7 +1147,7 @@ countdown(minutes = 5, warn_when = 60)
 
 In the research paper that you have selected, **formulate the tested hypotheses using the templates seen in the slide of the lecture and the variables that you have previously determined**
 
-Then use the Reviewer 2 prompt on your own hypotheses and keep a note of one criticism you accepted and one you rejected (and why).
+Then, ask AI to identify the hypostheses tested in the paper and check the differences.
 
 Send me your hypotheses by email at damien.dupre@dcu.ie **before the next lecture.**
 
