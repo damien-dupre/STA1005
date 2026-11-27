@@ -154,7 +154,7 @@ digraph {
 }
 ```
 
-One variable, one measure: the value is observed directly (£, €, $)
+One variable, one measure: the value is observed directly (in €)
 :::
 
 ::: {#second-column .center}
@@ -696,7 +696,7 @@ This Mermaid language can easily be used with the extension **Mermaid - Diagramm
 
 ## {{< fa screwdriver-wrench >}}️ Your Turn! {background="#43464B"}
 
-In the research paper you have selected, **draw the model(s) tested.**
+In the research paper you have selected, using word or powerpoint, **draw the model(s) tested.**
 
 Remember, there is only 1 Outcome variable per model and it is not possible to draw two models with the same Outcome variable.
 
